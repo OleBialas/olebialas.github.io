@@ -6,11 +6,18 @@ tags = ['Python', 'science', 'visualization']
 cover = 'posts/matplotlib/example.png'
 +++
 
-"An image says more than a thousand words" is a platitude, but when it comes to communicating the results of your research it is definitely true. Figures are probably the most important part of a research paper and most readers will first look at them before reading a paper in detail. Scientific figures must summarize rich and dense information in a clear and concise manner.
+"An image says more than a thousand words" is a platitude, but when it comes to communicating the results of your research it is definitely true. Figures are probably the most important part of a paper and most readers will first look at them before reading the text in detail. 
 
-This usually requires dividing the figure into multiple subplots, each highlighting a different aspect of the data. It is important that the figure is clearly laid out and does not appear cluttered so that the reader can absorb it's information without being confused. Many scientists I know use graphical design software such as Photoshop or Illustrator to lay out their figures, but the Python library Matplotlib provides all the tools that you need for generating complex, beautiful figures directly from code.
+In this blog post I will use the Python library Matplotlib and reproduce the figure in the title step-by-step.
+If you want to follow along, you can download the data by [clicking here](\example_data.npy) or use Python to fetch it:
 
-In this blog post, I will go over the steps for reproducing the figure in the cover which is taken from a [paper](https://www.biorxiv.org/content/10.1101/2023.05.03.539222v1.abstract) I published. I will not explain the shown data (if you are interested in that you can read the paper) but instead focus on how to use Matplotlib to achieve this layout.
+```python
+import urllib
+print()
+```
+
+The data contains electroencephalographic (EEG) recordings of participants who localized sounds played from different positions. I won't explain the results (if interested, see [this paper](https://www.biorxiv.org/content/10.1101/2023.05.03.539222v1.abstract), but instead focus on visualizing them.
+
 
 # Why do this?
 Why should you write code to generate your figures rather than arranging them with a graphical design program (that you may already be familiar with)? I think that there are several good reasons:

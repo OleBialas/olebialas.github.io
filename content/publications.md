@@ -5,10 +5,10 @@
 
 # Science communication
 - post 1
-- [post](post) 2
+- post 2
 
 # Presentations
 - [Cognition and Natural Sensory Processing Initiative ](/cnsp2023.pdf)(Sep 19th, 2023, Online)
 
 # Posters
-- [Advances and Perspectives in Auditory Neuroscience](/apan2023.pdf) (Nov 10th 2023, Washington DC)`
+- [Advances and Perspectives in Auditory Neuroscience](/apan2023.pdf) (Nov 10th 2023, Washington DC)

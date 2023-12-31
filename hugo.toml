@@ -94,9 +94,9 @@ paginate = 5
         name = "Projects"
         url = "/projects"
       [[languages.en.menu.main]]
-        identifier = "talks"
-        name = "Talks"
-        url = "/talks"
+        identifier = "publications"
+        name = "Publications"
+        url = "/publications"
 
 [module]
   # In case you would like to make changes to the theme and keep it locally in you repository,

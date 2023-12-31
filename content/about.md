@@ -10,5 +10,5 @@ where I can follow my passion for data analysis and software development.
 
 # On this website, you can
 - Read [blog posts](/posts) on topics around science and software
-- Take a look at my research and software [projects](/projects)
-- Download the content of [talks](/talks) I gave
+- Take a look at research and software [projects](/projects) I work on
+- View a list of my [publications](/publications)
