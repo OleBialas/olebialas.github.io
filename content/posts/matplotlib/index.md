@@ -9,7 +9,7 @@ cover = 'posts/matplotlib/example.png'
 "An image says more than a thousand words" is a platitude, but when it comes to communicating the results of your research it is definitely true. Figures are probably the most important part of a paper and most readers will first look at them before reading the text in detail. 
 
 In this blog post I will use the Python library Matplotlib and reproduce the figure in the title step-by-step.
-If you want to follow along, you can download the data by [clicking here](\example_data.npy) or use Python to fetch it:
+If you want to follow along, you can download the data by [clicking here](/example_data.npy) or use Python to fetch it:
 
 ```python
 import urllib
