@@ -11,7 +11,8 @@ Figures are probably the most important part of a paper and most readers will **
 For this purpose I'll reproduce a figure from a [recent paper](https://www.biorxiv.org/content/10.1101/2023.05.03.539222v1.abstract) step-by-step.
 
 # Prerequisites
-If you want to follow along, you'll have to install the **dependencies**:
+In this blog post I will use the Python library Matplotlib and reproduce the figure in the title step-by-step.
+If you want to follow along, you can download the data by [clicking here](/example_data.npy) or use Python to fetch it:
 
 ```sh
 pip install matplotlib numpy mne
