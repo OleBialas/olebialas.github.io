@@ -1,37 +1,29 @@
 +++
 title = 'S(ound)lab: A python package for running psychoacoustic experiments'
-date = 2023-11-06T13:29:06-05:00
 draft = false
 description = 'Slab was designed for creating and running experiments on acoustic perception while providing a good learning experience for users lacking prior experience in coding.'
 tags = ['Python', 'science', 'sound', 'signal processing']
-cover = 'fbank.png'
 +++
 
-## Why slab?
-Many researchers who lack formal training in coding turn to software providing graphical user interfaces to select and configure components for their experiment. Unfortunately, this reduces transparency and reproducibility and limits the users understanding and control of the experiment.
+# Motivation
+When I started to do research in auditory neuroscience, I quickly realized that studying Biology **did not teach** me the coding skills I needed for designing and running my own experiments. Many students at the start of their research careers share this experience. Thus, they either **delay** their research by first learning how to code or they turn to programs that allow them to arrange experiments by clicking and dragging predefined components. While these programs offer a quick solution, they are often **opaque** and limit understanding in the long run.
 
-Slab addresses this problem by providing researchers with a way to flexibly design their experiments that facilitates learning and understanding of the underlying code and procedures.
-Slab is routinely used in behavioral and neurimaging experiments and was published in the academic Journal of Open Source Software [^1].
+We wanted to create a toolbox that quickly enabled inexperienced users to run experiments while **teaching** them fundamentals in coding, digital signal processing and experimental design. At the same time, it should be **comprehensive** and **flexible** enough to implement complex and innovative auditory experiments [^1].
 
 ## Design
+Rather than ready-made solutions, slab provides basic **building blocks** that are implemented in complementary modules.
+This allows new users to focus on individual modules, provides **flexibility** and keeps code **clean** and maintainable.
+While slab provides useful functions with sensible defaults it does not limit the user to those - any slab data structure can be instantiated from a **Numpy array**, granting maximal flexibility.
 
-Rather than providing ready-made solutions, slab provides basic building blocks, allowing flexible experimental design with clean and maintainable code. These building blocks are implemented in several classes:
-
-- **Signal**: base class for sounds and filters. Typically not directly accessed.
-- **Sound** (inherits from Signal): generate simple sounds, like white noise or pure tones, manipulate and play them. 
-- **Filter** (inherits from Signal): Create and apply filters (shown in the title title figure), for example to equalize loudspeakers.
-- **HRTF** (inherits from Filter): stands for head-related transfer function - a special kind of filter for simulating spatial audio.
-- **Trialsequence/Staircase**: generate and iterate trough different experimental sequences and record responses.
-
+Because slab is teaching-oriented, it provides extensive online documentation with hands-on **tutorials** on all core functions.
+We developed slab in close interaction with the students who tested it to make sure it is **intuitive** to beginners.
 
 ## Example
-
 For a demonstration of slab, let's consider the implementation of a pure tone
-audiogram which measures the hearing threshold across different frequencies.
+**audiogram**.
+The code below generates different tones and uses a staircase procedure to estimate the **hearing threshold** at each frequency
 
-In the code below, we generate pure tones with different `frequencies` using the `slab.Sound.tone()` method. Then, we run a `staircase` sequence which determines the level at which the tone is played. The method `staircase.present_tone_trial()` plays the tone, waits for the listeners response (press 1 if you heard it and 2 if you didn't) and adjusts the sound level accordingly. 
-
-The `staircase` will decrease the tone's level until you can't hear it anymore, then increase it until you hear it again, then decrease it again and so on, until a certain number of reversals is reached (here 5). The threshold at a given frequency is then calculated as the mean intensity of all reversal points.
+The method `staircase.present_tone_trial()` **plays** the tone, waits for the listeners **response** (press 1 if you heard it and 2 if you didn't) and then decreases of increases the sound's **level** depending on whether or not it was heard. This goes on until a certain number of reversals have happened (here 5). The threshold at a given frequency is given by the mean intensity of all reversal points.
 
 ```python
 import slab
@@ -51,16 +43,16 @@ for frequency in freqs:
 plt.plot(freqs, threshs) # plot the audiogram
 ```
 
-The resulting curve indicates the hearing threshold across frequencies. Note that, since the setup is not calibrated, these thresholds can not be interpreted in absolute terms, but only relative to each other. The curve's minimum should be between 2 and 4 kHz, where the human ear is most sensitive, coinciding with the main frequency range of speech.
+If we plot the estimated threshold **levels** against the **frequencies**, we can see how the ability to detect a tone changes with its frequency [^2]:
 
 ![audiogram plots](/audiogram.png)
 
 ## Further reading
+If you are interested in using slab, you can check out the projects [GitHub page](https://github.com/DrMarc/slab) and [online documentation](https://slab.readthedocs.io/en/latest/). You may also want to read the [corresponding paper](https://joss.theoj.org/papers/10.21105/joss.03284.pdf) we published in the Journal of Open Source Software [^3].
 
-If you are interested in learning more about slab you should check out the projects 
-[online documentation](https://slab.readthedocs.io/en/latest/index.html), which provides detailed tutorials and examples for the different 
-functionalities of the toolbox.
+## Footnotes
+[^1]:Slab does not implement any visual components, it focuses on purely auditory experiments
 
-## References
+[^2]:If the setup is not calibrated with a sound meter, the threshold intensities can't be interpreted as absolute magnitudes but only relative to each other
 
-[^1]:Schönwiesner, M., & Bialas, O. (2021). s(ound) lab: An easy to learn Python package for designing and running psychoacoustic experiments. Journal of Open Source Software, 6(62), 3284.
+[^3]:See: Schönwiesner, M., & Bialas, O. (2021). s(ound) lab: An easy to learn Python package for designing and running psychoacoustic experiments
