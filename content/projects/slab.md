@@ -1,8 +1,8 @@
 +++
 title = 'S(ound)lab: A python package for running psychoacoustic experiments'
 draft = false
-description = 'Slab was designed for creating and running experiments on acoustic perception while providing a good learning experience for users lacking prior experience in coding.'
-tags = ['Python', 'science', 'sound', 'signal processing']
+description = 'Slab was designed for creating and running experiments on acoustic perception while providing a good learning experience for users lacking prior experience in coding. It is routinely used by students and researchers in auditory neuroscience.'
+tags = ['Python', 'acoutics', 'signal processing']
 +++
 
 # Motivation
