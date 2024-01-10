@@ -47,7 +47,7 @@ If we plot the estimated threshold **levels** against the **frequencies**, we ca
 
 ![audiogram plots](/audiogram.png)
 
-## Further reading
+## Resources
 If you are interested in using slab, you can check out the projects [GitHub page](https://github.com/DrMarc/slab) and [online documentation](https://slab.readthedocs.io/en/latest/). You may also want to read the [corresponding paper](https://joss.theoj.org/papers/10.21105/joss.03284.pdf) we published in the Journal of Open Source Software [^3].
 
 ## Footnotes
