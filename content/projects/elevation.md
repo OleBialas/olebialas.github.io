@@ -2,7 +2,7 @@
 title = 'Investigating how the brain encodes sound source elevation'
 draft = false
 description='We investigated how the human brain represents sound elevation by measuring brain responses to sounds from different locations using lectroencephalography. We show that elevation can be decoded from those responses and that decoding predicts localization accuracy. '
-tags = ['research', 'EEG', 'spatial hearing']
+tags = ['neuroscience', 'EEG', 'spatial hearing']
 +++
 
 # Motivation

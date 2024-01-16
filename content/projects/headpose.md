@@ -3,6 +3,7 @@ title = 'Images-based headpose estimation with convolutional networks and OpenCV
 description = 'This Python package estimates the headpose from individual images. It was written to track the head position of participants during experiments in a sound-attenuated chamber.'
 date = 2024-01-08T15:19:15-05:00
 draft = false
+tags =['Python', 'computer vision', 'deep learning']
 +++
 
 # Motivation

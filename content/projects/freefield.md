@@ -2,6 +2,9 @@
 title = 'A custom-built experimental setup to study how humans localize sounds in space'
 date = 2024-01-05T16:11:25-05:00
 draft = false
+description = 'We established an experimental setup to study sound localization behavior in a controlled environment using arrays of loudspeakers, digital signal processors, infra-red cameras and custom Python code.'
+
+tags = ['acoustics', 'signal processing', 'engineering', 'Python']
 +++
 
 # Motivation
