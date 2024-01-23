@@ -1,7 +1,7 @@
 +++
 title = "EEG preprocessing I: detrending, denoising and referencing"
 date = "2024-01-16T12:53:03-05:00"
-cover = "posts/eeg_preprocessing/evoked.png"
+cover = "posts/eeg_preprocessing/evoked1.png"
 tags = ["Python", "EEG", "signal processing"]
 description = "Preprocessing is an important and controversial topic in EEG research. Here, I discuss it's necessity and present a minimal preprocessing pipeline that deals with the most common sources of noise while avoiding to distort the data. I demonstrate each step using publicly available data."
 +++
