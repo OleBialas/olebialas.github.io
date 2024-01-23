@@ -1,5 +1,5 @@
 +++
-title = "Automated EEG preprocessing I: detrending, denoising and referencing"
+title = "EEG preprocessing I: detrending, denoising and referencing"
 date = "2024-01-16T12:53:03-05:00"
 cover = "posts/eeg_preprocessing/evoked.png"
 tags = ["Python", "EEG", "signal processing"]
