@@ -171,7 +171,7 @@ epochs = Epochs(raw, events, event_id, tmin=-0.1, tmax=0.4, baseline=None)
 epochs.average().plot()
 ```
 
-![Evoked](./evoked.png)
+![Evoked](./evoked1.png)
 
 
 # What next?
