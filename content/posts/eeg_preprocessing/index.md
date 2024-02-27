@@ -1,7 +1,7 @@
 +++
 title = "EEG preprocessing I: detrending, denoising and referencing"
 date = "2024-01-16T12:53:03-05:00"
-cover = "posts/eeg_preprocessing/evoked.png"
+cover = "posts/eeg_preprocessing/evoked1.png"
 tags = ["Python", "EEG", "signal processing"]
 description = "Preprocessing is an important and controversial topic in EEG research. Here, I discuss it's necessity and present a minimal preprocessing pipeline that deals with the most common sources of noise while avoiding to distort the data. I demonstrate each step using publicly available data."
 +++
@@ -173,11 +173,9 @@ epochs.average().plot()
 
 ![Evoked](./evoked1.png)
 
-
 # What next?
 We removed offsets, drifts and power-line noise, re-referenced the data to a robust average and epoched them. 
 Now the epochs may be **ready for statistical analysis** or it they may require more cleaning. In the next post on preprocessing I will explain how to **remove eye blink artifacts** and identify and **remove data segments** that are beyond saving.
-  
 
 # Footnotes
 [^1]: Delorme, A. (2023). EEG is better left alone. Scientific reports, 13(1), 2372.

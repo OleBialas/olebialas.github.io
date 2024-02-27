@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Statistics on ~/obi</title>
+    <link>//localhost:1313/tags/statistics/</link>
+    <description>Recent content in Statistics on ~/obi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 11 Jan 2024 15:08:12 -0500</lastBuildDate><atom:link href="//localhost:1313/tags/statistics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mTRFpy: A Python package for multivariate linear modeling of neural time-series data</title>
+      <link>//localhost:1313/projects/mtrfpy/</link>
+      <pubDate>Thu, 11 Jan 2024 15:08:12 -0500</pubDate>
+      
+      <guid>//localhost:1313/projects/mtrfpy/</guid>
+      <description>Motivation The multivariate Temporal Response Function (mTRF) is widely used tool for modeling brain responses to continuous speech. The most popular package for using these models is the mTRF-Toolbox written in Matlab. We wrote mTRFpy to create an implementation that is open source and improves upon the intuitive and simple design of the original Matlab toolbox. Because researchers from various medical sub-fields (e.g. Psychiatry, Pediatrics) are increasingly interested in mTRF methods, we also provided extensive online tutorials that explain the technical details.</description>
+      <content>&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;The &lt;strong&gt;m&lt;/strong&gt;ultivariate &lt;strong&gt;T&lt;/strong&gt;emporal &lt;strong&gt;R&lt;/strong&gt;esponse &lt;strong&gt;F&lt;/strong&gt;unction (mTRF) is widely used tool for modeling brain responses to continuous speech.
+The most popular package for using these models is the &lt;a href=&#34;https://github.com/mickcrosse/mTRF-Toolbox&#34;&gt;mTRF-Toolbox&lt;/a&gt; written in Matlab.
+We wrote mTRFpy to create an implementation that is &lt;strong&gt;open source&lt;/strong&gt; and improves upon the intuitive and simple design of the original Matlab toolbox.
+Because researchers from various medical sub-fields (e.g. Psychiatry, Pediatrics) are increasingly interested in mTRF methods, we also provided extensive &lt;strong&gt;online tutorials&lt;/strong&gt; that explain the technical details.&lt;/p&gt;
+&lt;h1 id=&#34;design&#34;&gt;Design&lt;/h1&gt;
+&lt;p&gt;The original mTRF-Toolbox was a set of functions.
+We instead used an &lt;strong&gt;object oriented&lt;/strong&gt; design that allows the user to perform most mTRF analyses by interacting with only the &lt;code&gt;TRF&lt;/code&gt; class.
+This class stores all important properties such as the models sampling rate, time points and &lt;strong&gt;model weights&lt;/strong&gt; associated with different features.&lt;/p&gt;
+&lt;p&gt;Because we wanted to make the transition for users of the original toolbox easy and &lt;strong&gt;intuitive&lt;/strong&gt;, we used similar naming patters for our class methods (e.g. the method &lt;code&gt;TRF.train()&lt;/code&gt; in mTRFpy corresponds the function &lt;code&gt;mTRFtrain()&lt;/code&gt; in the original toolbox).
+We also use an automated &lt;strong&gt;testing pipeline&lt;/strong&gt; to ensure that mTRFpy and the mTRF-Toolbox produce the same result for the same analysis &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;In addition to the &lt;code&gt;TRF&lt;/code&gt; class, mTRFpy also provides a &lt;code&gt;stats&lt;/code&gt; module that implements functions for statistical inference that were not part of the original mTRF-toolbox.
+These functions include nested &lt;strong&gt;cross-validation&lt;/strong&gt; and &lt;strong&gt;permutation&lt;/strong&gt; which allows the user to compute &lt;strong&gt;unbiased&lt;/strong&gt; estimates of model accuracy and test their significance &lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;To keep the toolbox &lt;strong&gt;light&lt;/strong&gt; with a &lt;strong&gt;minimal&lt;/strong&gt; number of dependencies, we implemented everything in pure Python and Numpy.
+This makes mTRFpy easily &lt;strong&gt;compatible&lt;/strong&gt; with most existing analysis pipelines and leverages potential synergies with the Python machine learning ecosystem.&lt;/p&gt;
+&lt;h1 id=&#34;example&#34;&gt;Example&lt;/h1&gt;
+&lt;p&gt;In the blow example, we are computing a model which &lt;strong&gt;predicts&lt;/strong&gt; one persons EEG responses as they were listening to an &lt;strong&gt;audiobook&lt;/strong&gt; based on a 16-band spectrogram of said audiobook.
+This data is provided by mTRFpy and can be obtained via the function &lt;code&gt;load_sample_data&lt;/code&gt;, which also segments and normalizes the data.&lt;/p&gt;
+&lt;p&gt;Then, we define the range of &lt;strong&gt;time lags&lt;/strong&gt; across which the model is computed and define a list of regularization coefficients &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;.
+Those variables are passed to the &lt;code&gt;TRF.train()&lt;/code&gt; method which tests all candidate regularization values and finds the one that yields the most &lt;strong&gt;accurate&lt;/strong&gt; model.&lt;/p&gt;
+&lt;p&gt;Finally, we visualize the optimized model by computing the &lt;strong&gt;global field power&lt;/strong&gt; (i.e. the standard deviation across all recorded EEG channels) for each spectral band.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; mtrf &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; TRF, load_sample_data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;stimulus, response, fs &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; load_sample_data(n_segments&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, normalize&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tmin, tmax &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0.4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;regularization &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10000&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;100000&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;trf &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; TRF()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;r &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; trf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;train(stimulus, response, fs, tmin, tmax, regularization)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Best model: regularization=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;trf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;regularization&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;, r=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;r&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;max()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;round(&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;trf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;plot(channel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gfp&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The below plot can be interpreted as the &lt;strong&gt;expected change&lt;/strong&gt; in the neural response following a change in the predictor. For example, the peaks indicate that there is an increase in the neural response roughly &lt;strong&gt;150 milliseconds&lt;/strong&gt; after there was an increase in spectral power in the respective bands.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;trf&#34; src=&#34;//localhost:1313/trf.png&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;resources&#34;&gt;Resources&lt;/h1&gt;
+&lt;p&gt;You can install mTRFpy from PyPI via &lt;code&gt;pip install mtrf&lt;/code&gt;.
+You can find extensive tutorials on the &lt;a href=&#34;https://mtrfpy.readthedocs.io/en/latest/&#34;&gt;project&amp;rsquo;s website&lt;/a&gt; and view the &lt;a href=&#34;https://github.com/powerfulbean/mTRFpy&#34;&gt;source code on GitHub&lt;/a&gt;.
+A &lt;a href=&#34;https://joss.theoj.org/papers/10.21105/joss.05657&#34;&gt;corresponding paper&lt;/a&gt; can be found in the Journal of Open Source science.&lt;/p&gt;
+&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;There will be some negligible differences due to differences in the underlying matrix multiplications carried out in Matlab and Numpy.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;Per default, mTRFpy uses Pearson&amp;rsquo;s correlation but other metrics for accuracy can be specified.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;The values are log-spaced because this is an easy and efficient way of sampling the parameter space.&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>

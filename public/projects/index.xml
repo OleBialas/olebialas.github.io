@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on ~/obi</title>
+    <link>//localhost:1313/projects/</link>
+    <description>Recent content in Projects on ~/obi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 11 Jan 2024 15:08:12 -0500</lastBuildDate><atom:link href="//localhost:1313/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>mTRFpy: A Python package for multivariate linear modeling of neural time-series data</title>
+      <link>//localhost:1313/projects/mtrfpy/</link>
+      <pubDate>Thu, 11 Jan 2024 15:08:12 -0500</pubDate>
+      
+      <guid>//localhost:1313/projects/mtrfpy/</guid>
+      <description>Motivation The multivariate Temporal Response Function (mTRF) is widely used tool for modeling brain responses to continuous speech. The most popular package for using these models is the mTRF-Toolbox written in Matlab. We wrote mTRFpy to create an implementation that is open source and improves upon the intuitive and simple design of the original Matlab toolbox. Because researchers from various medical sub-fields (e.g. Psychiatry, Pediatrics) are increasingly interested in mTRF methods, we also provided extensive online tutorials that explain the technical details.</description>
+      <content>&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;The &lt;strong&gt;m&lt;/strong&gt;ultivariate &lt;strong&gt;T&lt;/strong&gt;emporal &lt;strong&gt;R&lt;/strong&gt;esponse &lt;strong&gt;F&lt;/strong&gt;unction (mTRF) is widely used tool for modeling brain responses to continuous speech.
+The most popular package for using these models is the &lt;a href=&#34;https://github.com/mickcrosse/mTRF-Toolbox&#34;&gt;mTRF-Toolbox&lt;/a&gt; written in Matlab.
+We wrote mTRFpy to create an implementation that is &lt;strong&gt;open source&lt;/strong&gt; and improves upon the intuitive and simple design of the original Matlab toolbox.
+Because researchers from various medical sub-fields (e.g. Psychiatry, Pediatrics) are increasingly interested in mTRF methods, we also provided extensive &lt;strong&gt;online tutorials&lt;/strong&gt; that explain the technical details.&lt;/p&gt;
+&lt;h1 id=&#34;design&#34;&gt;Design&lt;/h1&gt;
+&lt;p&gt;The original mTRF-Toolbox was a set of functions.
+We instead used an &lt;strong&gt;object oriented&lt;/strong&gt; design that allows the user to perform most mTRF analyses by interacting with only the &lt;code&gt;TRF&lt;/code&gt; class.
+This class stores all important properties such as the models sampling rate, time points and &lt;strong&gt;model weights&lt;/strong&gt; associated with different features.&lt;/p&gt;
+&lt;p&gt;Because we wanted to make the transition for users of the original toolbox easy and &lt;strong&gt;intuitive&lt;/strong&gt;, we used similar naming patters for our class methods (e.g. the method &lt;code&gt;TRF.train()&lt;/code&gt; in mTRFpy corresponds the function &lt;code&gt;mTRFtrain()&lt;/code&gt; in the original toolbox).
+We also use an automated &lt;strong&gt;testing pipeline&lt;/strong&gt; to ensure that mTRFpy and the mTRF-Toolbox produce the same result for the same analysis &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;In addition to the &lt;code&gt;TRF&lt;/code&gt; class, mTRFpy also provides a &lt;code&gt;stats&lt;/code&gt; module that implements functions for statistical inference that were not part of the original mTRF-toolbox.
+These functions include nested &lt;strong&gt;cross-validation&lt;/strong&gt; and &lt;strong&gt;permutation&lt;/strong&gt; which allows the user to compute &lt;strong&gt;unbiased&lt;/strong&gt; estimates of model accuracy and test their significance &lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;To keep the toolbox &lt;strong&gt;light&lt;/strong&gt; with a &lt;strong&gt;minimal&lt;/strong&gt; number of dependencies, we implemented everything in pure Python and Numpy.
+This makes mTRFpy easily &lt;strong&gt;compatible&lt;/strong&gt; with most existing analysis pipelines and leverages potential synergies with the Python machine learning ecosystem.&lt;/p&gt;
+&lt;h1 id=&#34;example&#34;&gt;Example&lt;/h1&gt;
+&lt;p&gt;In the blow example, we are computing a model which &lt;strong&gt;predicts&lt;/strong&gt; one persons EEG responses as they were listening to an &lt;strong&gt;audiobook&lt;/strong&gt; based on a 16-band spectrogram of said audiobook.
+This data is provided by mTRFpy and can be obtained via the function &lt;code&gt;load_sample_data&lt;/code&gt;, which also segments and normalizes the data.&lt;/p&gt;
+&lt;p&gt;Then, we define the range of &lt;strong&gt;time lags&lt;/strong&gt; across which the model is computed and define a list of regularization coefficients &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;.
+Those variables are passed to the &lt;code&gt;TRF.train()&lt;/code&gt; method which tests all candidate regularization values and finds the one that yields the most &lt;strong&gt;accurate&lt;/strong&gt; model.&lt;/p&gt;
+&lt;p&gt;Finally, we visualize the optimized model by computing the &lt;strong&gt;global field power&lt;/strong&gt; (i.e. the standard deviation across all recorded EEG channels) for each spectral band.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; mtrf &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; TRF, load_sample_data
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;stimulus, response, fs &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; load_sample_data(n_segments&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, normalize&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tmin, tmax &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;0.4&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;regularization &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;100&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10000&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;100000&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;trf &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; TRF()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;r &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; trf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;train(stimulus, response, fs, tmin, tmax, regularization)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Best model: regularization=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;trf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;regularization&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;, r=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;r&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;max()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;round(&lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;)&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;trf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;plot(channel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;gfp&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The below plot can be interpreted as the &lt;strong&gt;expected change&lt;/strong&gt; in the neural response following a change in the predictor. For example, the peaks indicate that there is an increase in the neural response roughly &lt;strong&gt;150 milliseconds&lt;/strong&gt; after there was an increase in spectral power in the respective bands.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;trf&#34; src=&#34;//localhost:1313/trf.png&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;resources&#34;&gt;Resources&lt;/h1&gt;
+&lt;p&gt;You can install mTRFpy from PyPI via &lt;code&gt;pip install mtrf&lt;/code&gt;.
+You can find extensive tutorials on the &lt;a href=&#34;https://mtrfpy.readthedocs.io/en/latest/&#34;&gt;project&amp;rsquo;s website&lt;/a&gt; and view the &lt;a href=&#34;https://github.com/powerfulbean/mTRFpy&#34;&gt;source code on GitHub&lt;/a&gt;.
+A &lt;a href=&#34;https://joss.theoj.org/papers/10.21105/joss.05657&#34;&gt;corresponding paper&lt;/a&gt; can be found in the Journal of Open Source science.&lt;/p&gt;
+&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;There will be some negligible differences due to differences in the underlying matrix multiplications carried out in Matlab and Numpy.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;Per default, mTRFpy uses Pearson&amp;rsquo;s correlation but other metrics for accuracy can be specified.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;The values are log-spaced because this is an easy and efficient way of sampling the parameter space.&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Images-based headpose estimation with convolutional networks and OpenCV</title>
+      <link>//localhost:1313/projects/headpose/</link>
+      <pubDate>Mon, 08 Jan 2024 15:19:15 -0500</pubDate>
+      
+      <guid>//localhost:1313/projects/headpose/</guid>
+      <description>Motivation For our experimental setup for studying sound localization 1, we wanted a way to determine a participants head pose from images. That way, we could instruct them to localize sounds by simply looking towards them. Other labs use magnetic trackers for this purpose but we were afraid that their signal might interfere with simultaneous neural recordings.
+There exist some ready-made solutions for video tracking using openCV. However, because we only needed the participants head pose at very specific moments, pose-estimation from single images was more appropriate</description>
+      <content>&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;For our experimental setup for studying sound localization &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;, we wanted a way to determine a participants head pose from images. That way, we could instruct them to localize sounds by simply looking &lt;strong&gt;towards&lt;/strong&gt; them.
+Other labs use magnetic trackers for this purpose but we were afraid that their signal might &lt;strong&gt;interfere&lt;/strong&gt; with simultaneous neural recordings.&lt;/p&gt;
+&lt;p&gt;There exist some ready-made solutions for video tracking using openCV.
+However, because we only needed the participants head pose at very &lt;strong&gt;specific&lt;/strong&gt; moments, pose-estimation from &lt;strong&gt;single&lt;/strong&gt; images was more appropriate&lt;/p&gt;
+&lt;h1 id=&#34;design&#34;&gt;Design&lt;/h1&gt;
+&lt;p&gt;The &lt;code&gt;headpose&lt;/code&gt; package has one simple purpose: return the head-pose as &lt;strong&gt;spherical coordinates&lt;/strong&gt; (pitch, roll and yawn) from a single image.
+Because the default algorithms provided by OpenCV performed poorly under the bad lighting in our sound-attenuated chamber, I used a convolutional network to detect &lt;strong&gt;facial landmark&lt;/strong&gt; features in the image &lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;From the annotated facial landmarks, a few are selected to solve the &lt;strong&gt;perspective-n-problem&lt;/strong&gt; using a standardized head-model &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;.
+This yields a rotation matrix from which we can extract the desired angles: pitch, roll and yawn.&lt;/p&gt;
+&lt;h1 id=&#34;example&#34;&gt;Example&lt;/h1&gt;
+&lt;p&gt;Headpose estimation works on any image that contains a &lt;strong&gt;single&lt;/strong&gt; face.
+We can either download an image with a face or use OpenCV to take an image with a webcam:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; cv2
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# take an image using the webcam (alternatively, you could load an image)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cam &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cv2&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;VideoCapture(&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; range(cv2&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;CAP_PROP_FRAME_COUNT):
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    cam&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;grab()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ret, image &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cam&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;retrieve()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;image &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; cv2&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;cvtColor(image, cv2&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;COLOR_BGR2GRAY)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;cam&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;release()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Then we can use headpose to obtain the pitch, roll and yawn &lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt; of the face in the image.
+By setting &lt;code&gt;plot=True&lt;/code&gt;, the acquired image and detected landmark points are shown.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; headpose.detect &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; PoseEstimator
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;est &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; PoseEstimator()  &lt;span style=&#34;color:#75715e&#34;&gt;#load the model&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;est&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;detect_landmarks(image, plot&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;)  &lt;span style=&#34;color:#75715e&#34;&gt;# plot the result of landmark detection&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;roll, pitch, yawn &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; est&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;pose_from_image(image)  &lt;span style=&#34;color:#75715e&#34;&gt;# estimate the head pose&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img alt=&#34;landmarks&#34; src=&#34;//localhost:1313/landmarks.png&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;resources&#34;&gt;Resources&lt;/h1&gt;
+&lt;p&gt;Headpose can be installed along with it&amp;rsquo;s dependencies from PyPI:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-sh&#34; data-lang=&#34;sh&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;pip install headpose
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The code can also be found &lt;a href=&#34;https://github.com/OleBialas/headpose&#34;&gt;on GitHub&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;This setup is described in detail in &lt;a href=&#34;//localhost:1313/posts/freefield&#34;&gt;another blog post&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;Now OpenCV has built-in functions to use convolutional networks for landmark detection but it didn&amp;rsquo;t at the time.&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;The perspective-n-problem results from mapping a two-dimensional image to a three dimensional model. The mathematical background is nicely explained in &lt;a href=&#34;https://learnopencv.com/head-pose-estimation-using-opencv-and-dlib/&#34;&gt;this blogpost&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34;&gt;
+&lt;p&gt;Note that the pose is realtive to the camera. Getting the pose with respect to some external coordinate frame requires calibration.&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>A custom-built experimental setup to study how humans localize sounds in space</title>
+      <link>//localhost:1313/projects/freefield/</link>
+      <pubDate>Fri, 05 Jan 2024 16:11:25 -0500</pubDate>
+      
+      <guid>//localhost:1313/projects/freefield/</guid>
+      <description>Motivation To study how humans localize sounds, we have to be able to present sounds from various sources across space. Ideally, there should be no echoes as if one was standing in an open field. To meet these requirements we built a three-dimensional loudspeaker array in a sound attenuated chamber and wrote custom software to present sounds across space with millisecond precision.
+Design The setup consists of 48 spherical loudspeakers that are mounted on 7 hanging arches.</description>
+      <content>&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;To study how humans &lt;strong&gt;localize sounds&lt;/strong&gt;, we have to be able to present sounds from various sources across space.
+Ideally, there should be no &lt;strong&gt;echoes&lt;/strong&gt; as if one was standing in an open field. To meet these requirements we built a three-dimensional loudspeaker array in a &lt;strong&gt;sound attenuated&lt;/strong&gt; chamber and wrote custom software to present sounds across space with &lt;strong&gt;millisecond&lt;/strong&gt; precision.&lt;/p&gt;
+&lt;h1 id=&#34;design&#34;&gt;Design&lt;/h1&gt;
+&lt;p&gt;The setup consists of 48 spherical &lt;strong&gt;loudspeakers&lt;/strong&gt; that are mounted on 7 hanging &lt;strong&gt;arches&lt;/strong&gt;.
+The arches are oriented in &lt;strong&gt;parallel&lt;/strong&gt; to each other and positioned on slices of an imaginary &lt;strong&gt;sphere&lt;/strong&gt; that surrounds the listener.
+Because they sit on sphere, all loudspeakers have the same &lt;strong&gt;distance&lt;/strong&gt; to the listener.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;dome&#34; src=&#34;//localhost:1313/dome.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The individual arches are &lt;strong&gt;mobile&lt;/strong&gt; which allows us to assemble them in various configurations.
+They can be &lt;strong&gt;folded&lt;/strong&gt; so that as the distance of the listener to the speakers changes, the imaginary sphere &lt;strong&gt;shrinks or expands&lt;/strong&gt; and the vertical and horizontal angles between speakers (alpha and beta in the image above) stay &lt;strong&gt;constant&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;segment&#34; src=&#34;//localhost:1313/segment.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We wanted to make sure that there are no substantial differences between the &lt;strong&gt;transfer functions&lt;/strong&gt; of individual loudspeakers that could potentially &lt;strong&gt;bias&lt;/strong&gt; experiments.
+Thus, we contacted the manufacturer to request loudspeakers that were produced in the &lt;strong&gt;same batch&lt;/strong&gt;, to minimize variability.
+Additionally, we measured each speakers transfer function and computed filters to &lt;strong&gt;equalize&lt;/strong&gt; them. &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;We also mounted three small &lt;strong&gt;cameras&lt;/strong&gt; on the arches in between the loudspeakers.
+The cameras take pictures of the listener to estimate their head pose so the listeners can &lt;strong&gt;localize&lt;/strong&gt; sounds by turning their heads &lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.
+Because the pose from each camera is in a different &lt;strong&gt;camera-centered&lt;/strong&gt; reference frame, we calibrate the setup by having the participants face several predefined locations.
+The cameras are sensitive to &lt;strong&gt;infrared&lt;/strong&gt; which allows us to take pictures even when the room is darkened.&lt;/p&gt;
+&lt;h1 id=&#34;software&#34;&gt;Software&lt;/h1&gt;
+&lt;p&gt;The loudspeakers are driven by two &lt;strong&gt;digital signal processors&lt;/strong&gt; allowing us to display sounds with milliseconds accuracy.
+However, they are controlled by the manufacturer&amp;rsquo;s proprietary software that can be configured via a visual interface and is very &lt;strong&gt;opaque&lt;/strong&gt; and difficult to debug.
+Fortunately, they provide a &lt;strong&gt;Python API&lt;/strong&gt; for setting parameters, playing and recording sounds.
+We are using a predefined set of simple programs for handling &lt;strong&gt;basic operations&lt;/strong&gt; (like reading a sound into memory and playing it from a specific channel) and use a custom Python toolbox for all remaining tasks.
+This toolbox also controls the cameras and thus provides a &lt;strong&gt;single interface&lt;/strong&gt; for running experiments. &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;For filtering, we used our custom Python toolbox &amp;lsquo;soundlab&amp;rsquo; which is described in &lt;a href=&#34;//localhost:1313/projects/slab/&#34;&gt;another post&lt;/a&gt;.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;We used a convolutional network and the OpenCV library to estimate the head pose from images as described in &lt;a href=&#34;//localhost:1313/projects/headpose/&#34;&gt;this post&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;The toolbox is called &amp;ldquo;freefield&amp;rdquo; and can be found &lt;a href=&#34;https://github.com/OleBialas/freefield&#34;&gt;on GitHub&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>Investigating how the brain encodes sound source elevation</title>
+      <link>//localhost:1313/projects/elevation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//localhost:1313/projects/elevation/</guid>
+      <description>Motivation How does our brain know where a sound comes from? 1 An important cue are the time and intensity differences between the ears: if a sound is located to your right, it will be louder at the right ear and arrive there first. These interaural differences inform the brain about the sound&amp;rsquo;s azimuth but they are not informative about its elevation - for example, a sound in front and straight above you will be the same at both ears.</description>
+      <content>&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;How does our brain know &lt;strong&gt;where&lt;/strong&gt; a sound comes from? &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; An important cue are the time and intensity differences &lt;strong&gt;between the ears&lt;/strong&gt;: if a sound is located to your right, it will be louder at the right ear and arrive there first. These interaural differences inform the brain about the sound&amp;rsquo;s &lt;strong&gt;azimuth&lt;/strong&gt; but they are not informative about its &lt;strong&gt;elevation&lt;/strong&gt; - for example, a sound in front and straight above you will be the same at both ears.&lt;/p&gt;
+&lt;p&gt;We can detect a sound&amp;rsquo;s elevation thanks to the convoluted shape of our ear cups. Because of their asymmetry, the way in which our ears &lt;strong&gt;filter&lt;/strong&gt; incoming sounds changes across space. Our brain can then &lt;strong&gt;reverse-engineer&lt;/strong&gt; the sounds location from the applied filter. &lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;But even though sound localization cues have been researched for over a century , it remains unclear how the human cortex &lt;strong&gt;represents&lt;/strong&gt; them - especially what concerns elevation. There is one previous study that found evidence for a cortical representation of sound elevation.&lt;/p&gt;
+&lt;p&gt;However, that study used functional magnetic resonance imaging (fMRI) which can accurately localize sources but is &lt;strong&gt;temporally imprecise&lt;/strong&gt;. &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt; Also, an fMRI is quite restricting in terms of experimental design because the participant has to lay still is the scanner. For those reasons, we investigated how the brain represents sound elevation using electroencephalography (EEG), which directly measures &lt;strong&gt;neural activity&lt;/strong&gt; with electrodes on the scalp and allows the participant to move around to some extent.&lt;/p&gt;
+&lt;h1 id=&#34;approach&#34;&gt;Approach&lt;/h1&gt;
+&lt;p&gt;One downside of EEG is that it can&amp;rsquo;t measure specific brain sources but instead picks up a &lt;strong&gt;mixture&lt;/strong&gt; of all signals coming from the brain. What&amp;rsquo;s more, those signals have to travel through the skull before they reach the electrodes on the scalp which further damps and smears them. This means the effect of interest may be very small.&lt;/p&gt;
+&lt;p&gt;To overcome this problem we used an &lt;strong&gt;adapter-probe&lt;/strong&gt; design which leverages the fact that neurons decrease their response to sustained stimulation. The probe (white noise played trough open headphones) preceded every stimulus (burst of noise from one of four loudspeakers). Probe and stimulus were &lt;strong&gt;cross-faded&lt;/strong&gt; so that sound intensity remained constant during the transition &lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;Exposition to the probe &lt;strong&gt;attenuates&lt;/strong&gt; sound-responsive neurons, so that the response to the stimulus is dominated by neurons that are sensitive to the change in &lt;strong&gt;elevation&lt;/strong&gt;. Occasionally, after hearing the stimulus, the participant was asked to indicate &lt;sup id=&#34;fnref:5&#34;&gt;&lt;a href=&#34;#fn:5&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;5&lt;/a&gt;&lt;/sup&gt; where the sound came from which ensured they paid attention.&lt;/p&gt;
+&lt;h1 id=&#34;key--results&#34;&gt;Key  Results&lt;/h1&gt;
+&lt;p&gt;We found that neural responses &lt;strong&gt;decreased in amplitude&lt;/strong&gt; with &lt;strong&gt;increasing elevation&lt;/strong&gt;.
+This was the first time someone demonstrated cortical encoding of sound elevation with EEG, and the result was &lt;strong&gt;similar&lt;/strong&gt; to the aforementioned fMRI study.
+This is compelling because the fact that the neural processes of sound localization can be measured in the same way with fMRI and EEG &lt;strong&gt;constrains&lt;/strong&gt; possible origins &lt;sup id=&#34;fnref:6&#34;&gt;&lt;a href=&#34;#fn:6&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;6&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;To quantify how &lt;strong&gt;distinctly&lt;/strong&gt; different sound sources are represented we &lt;strong&gt;decoded&lt;/strong&gt; elevation from the brain responses using multivariate logistic regression.
+We found that elevation could be decoded for a &lt;strong&gt;sustained&lt;/strong&gt; duration after hearing the stimulus and that decoding accuracy was greater the &lt;strong&gt;further&lt;/strong&gt; the sound sources were apart (panel A in the plot below).
+Across participants, the overall decoding accuracy was &lt;strong&gt;predictive&lt;/strong&gt; of how well they did in the localization task.
+This suggests that the &lt;strong&gt;representations&lt;/strong&gt; we found are not just related to acoustic correlates but really &lt;strong&gt;underlie&lt;/strong&gt; the perception of sound elevation.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;elevation decoding&#34; src=&#34;//localhost:1313/elevation_decoding.png&#34;&gt;&lt;/p&gt;
+&lt;h1 id=&#34;resources&#34;&gt;Resources&lt;/h1&gt;
+&lt;p&gt;If you are interested in reading about this project in detail you can find it as a &lt;a href=&#34;https://www.biorxiv.org/content/10.1101/2023.05.03.539222v1.abstract&#34;&gt;preprint on bioArXiv&lt;/a&gt;. The manuscript is currently &lt;strong&gt;under review&lt;/strong&gt; at an academic journal. All data and code are publicly available. They can be obtained using the software &lt;a href=&#34;https://www.datalad.org/&#34;&gt;datalad&lt;/a&gt;:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;datalad install https://github.com/OleBialas/elevation-encoding.git
+cd elevation-encoding
+datalad get *
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This will download all of the code and data (~19GB)&lt;/p&gt;
+&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;I wrote a blog post on this question (in German): &lt;a href=&#34;https://scilogs.spektrum.de/thinky-brain/wo-die-musik-spielt-wie-wir-wissen-woher-ein-geraeusch-kommt/&#34;&gt;&amp;ldquo;Wo die Musik spielt: Wie wir wissen, woher ein Geräusch kommt&amp;rdquo;&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;So darwin was wrong when he stated that &lt;em&gt;&amp;ldquo;The whole external shell of the ear may be considered a rudiment, together with the various folds and prominences&amp;rdquo;&lt;/em&gt; (The Descent of Man, and Selection in Relation to Sex, 1871)&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;That is because fMRI does not measure neural activity directly but instead measures local changes in blood oxygenation due to the metabolic demand of active neurons.&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34;&gt;
+&lt;p&gt;The loudspeaker arrangement is explained in more detail in the &lt;a href=&#34;//localhost:1313/projects/freefield/&#34;&gt;post on our experimental setup&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:5&#34;&gt;
+&lt;p&gt;We instructed the participants to turn their head to the direction of the perceived sound and used a deep neural network to estimate their head pose - this procedure is described in &lt;a href=&#34;//localhost:1313/posts/headpose&#34;&gt;another post&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:5&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:6&#34;&gt;
+&lt;p&gt;Often fMRI and EEG don&amp;rsquo;t co-vary like this. For example, the neural firing rate could decrease (lower fMRI signal) but at the same time they could synchronize more (higher EEG signal).&amp;#160;&lt;a href=&#34;#fnref:6&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+    </item>
+    
+    <item>
+      <title>S(ound)lab: A python package for running psychoacoustic experiments</title>
+      <link>//localhost:1313/projects/slab/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>//localhost:1313/projects/slab/</guid>
+      <description>Motivation When I started to do research in auditory neuroscience, I quickly realized that studying Biology did not teach me the coding skills I needed for designing and running my own experiments. Many students at the start of their research careers share this experience. Thus, they either delay their research by first learning how to code or they turn to programs that allow them to arrange experiments by clicking and dragging predefined components.</description>
+      <content>&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;When I started to do research in auditory neuroscience, I quickly realized that studying Biology &lt;strong&gt;did not teach&lt;/strong&gt; me the coding skills I needed for designing and running my own experiments. Many students at the start of their research careers share this experience. Thus, they either &lt;strong&gt;delay&lt;/strong&gt; their research by first learning how to code or they turn to programs that allow them to arrange experiments by clicking and dragging predefined components. While these programs offer a quick solution, they are often &lt;strong&gt;opaque&lt;/strong&gt; and limit understanding in the long run.&lt;/p&gt;
+&lt;p&gt;We wanted to create a toolbox that quickly enabled inexperienced users to run experiments while &lt;strong&gt;teaching&lt;/strong&gt; them fundamentals in coding, digital signal processing and experimental design. At the same time, it should be &lt;strong&gt;comprehensive&lt;/strong&gt; and &lt;strong&gt;flexible&lt;/strong&gt; enough to implement complex and innovative auditory experiments &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;design&#34;&gt;Design&lt;/h2&gt;
+&lt;p&gt;Rather than ready-made solutions, slab provides basic &lt;strong&gt;building blocks&lt;/strong&gt; that are implemented in complementary modules.
+This allows new users to focus on individual modules, provides &lt;strong&gt;flexibility&lt;/strong&gt; and keeps code &lt;strong&gt;clean&lt;/strong&gt; and maintainable.
+While slab provides useful functions with sensible defaults it does not limit the user to those - any slab data structure can be instantiated from a &lt;strong&gt;Numpy array&lt;/strong&gt;, granting maximal flexibility.&lt;/p&gt;
+&lt;p&gt;Because slab is teaching-oriented, it provides extensive online documentation with hands-on &lt;strong&gt;tutorials&lt;/strong&gt; on all core functions.
+We developed slab in close interaction with the students who tested it to make sure it is &lt;strong&gt;intuitive&lt;/strong&gt; to beginners.&lt;/p&gt;
+&lt;h2 id=&#34;example&#34;&gt;Example&lt;/h2&gt;
+&lt;p&gt;For a demonstration of slab, let&amp;rsquo;s consider the implementation of a pure tone
+&lt;strong&gt;audiogram&lt;/strong&gt;.
+The code below generates different tones and uses a staircase procedure to estimate the &lt;strong&gt;hearing threshold&lt;/strong&gt; at each frequency&lt;/p&gt;
+&lt;p&gt;The method &lt;code&gt;staircase.present_tone_trial()&lt;/code&gt; &lt;strong&gt;plays&lt;/strong&gt; the tone, waits for the listeners &lt;strong&gt;response&lt;/strong&gt; (press 1 if you heard it and 2 if you didn&amp;rsquo;t) and then decreases of increases the sound&amp;rsquo;s &lt;strong&gt;level&lt;/strong&gt; depending on whether or not it was heard. This goes on until a certain number of reversals have happened (here 5). The threshold at a given frequency is given by the mean intensity of all reversal points.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; slab
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; matplotlib &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; pyplot &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; plt
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;frequencies &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#ae81ff&#34;&gt;125&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;250&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;500&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1000&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2000&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;4000&lt;/span&gt;]
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;threshs &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; frequency &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; freqs:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    stimulus &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; slab&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Sound&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;tone(frequency&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;frequency, duration&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0.5&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    staircase &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; slab&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Staircase(start_val&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;50&lt;/span&gt;, n_reversals&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Starting staircase with &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;frequency&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; Hz:&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; level &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; staircase:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        stimulus&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;level &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; level
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        staircase&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;present_tone_trial(stimulus)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        staircase&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;print_trial_info()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    threshs&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(staircase&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;threshold())
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    print(&lt;span style=&#34;color:#e6db74&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Threshold at &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;frequency&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; Hz: &lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;{&lt;/span&gt;staircase&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;threshold()&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; dB&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;plt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;plot(freqs, threshs) &lt;span style=&#34;color:#75715e&#34;&gt;# plot the audiogram&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If we plot the estimated threshold &lt;strong&gt;levels&lt;/strong&gt; against the &lt;strong&gt;frequencies&lt;/strong&gt;, we can see how the ability to detect a tone changes with its frequency &lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;audiogram plots&#34; src=&#34;//localhost:1313/audiogram.png&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;resources&#34;&gt;Resources&lt;/h2&gt;
+&lt;p&gt;If you are interested in using slab, you can check out the projects &lt;a href=&#34;https://github.com/DrMarc/slab&#34;&gt;GitHub page&lt;/a&gt; and &lt;a href=&#34;https://slab.readthedocs.io/en/latest/&#34;&gt;online documentation&lt;/a&gt;. You may also want to read the &lt;a href=&#34;https://joss.theoj.org/papers/10.21105/joss.03284.pdf&#34;&gt;corresponding paper&lt;/a&gt; we published in the Journal of Open Source Software &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h2&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;Slab does not implement any visual components, it focuses on purely auditory experiments&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;If the setup is not calibrated with a sound meter, the threshold intensities can&amp;rsquo;t be interpreted as absolute magnitudes but only relative to each other&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;See: Schönwiesner, M., &amp;amp; Bialas, O. (2021). s(ound) lab: An easy to learn Python package for designing and running psychoacoustic experiments&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>

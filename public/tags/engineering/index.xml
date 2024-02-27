@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Engineering on ~/obi</title>
+    <link>//localhost:1313/tags/engineering/</link>
+    <description>Recent content in Engineering on ~/obi</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 05 Jan 2024 16:11:25 -0500</lastBuildDate><atom:link href="//localhost:1313/tags/engineering/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A custom-built experimental setup to study how humans localize sounds in space</title>
+      <link>//localhost:1313/projects/freefield/</link>
+      <pubDate>Fri, 05 Jan 2024 16:11:25 -0500</pubDate>
+      
+      <guid>//localhost:1313/projects/freefield/</guid>
+      <description>Motivation To study how humans localize sounds, we have to be able to present sounds from various sources across space. Ideally, there should be no echoes as if one was standing in an open field. To meet these requirements we built a three-dimensional loudspeaker array in a sound attenuated chamber and wrote custom software to present sounds across space with millisecond precision.
+Design The setup consists of 48 spherical loudspeakers that are mounted on 7 hanging arches.</description>
+      <content>&lt;h1 id=&#34;motivation&#34;&gt;Motivation&lt;/h1&gt;
+&lt;p&gt;To study how humans &lt;strong&gt;localize sounds&lt;/strong&gt;, we have to be able to present sounds from various sources across space.
+Ideally, there should be no &lt;strong&gt;echoes&lt;/strong&gt; as if one was standing in an open field. To meet these requirements we built a three-dimensional loudspeaker array in a &lt;strong&gt;sound attenuated&lt;/strong&gt; chamber and wrote custom software to present sounds across space with &lt;strong&gt;millisecond&lt;/strong&gt; precision.&lt;/p&gt;
+&lt;h1 id=&#34;design&#34;&gt;Design&lt;/h1&gt;
+&lt;p&gt;The setup consists of 48 spherical &lt;strong&gt;loudspeakers&lt;/strong&gt; that are mounted on 7 hanging &lt;strong&gt;arches&lt;/strong&gt;.
+The arches are oriented in &lt;strong&gt;parallel&lt;/strong&gt; to each other and positioned on slices of an imaginary &lt;strong&gt;sphere&lt;/strong&gt; that surrounds the listener.
+Because they sit on sphere, all loudspeakers have the same &lt;strong&gt;distance&lt;/strong&gt; to the listener.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;dome&#34; src=&#34;//localhost:1313/dome.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The individual arches are &lt;strong&gt;mobile&lt;/strong&gt; which allows us to assemble them in various configurations.
+They can be &lt;strong&gt;folded&lt;/strong&gt; so that as the distance of the listener to the speakers changes, the imaginary sphere &lt;strong&gt;shrinks or expands&lt;/strong&gt; and the vertical and horizontal angles between speakers (alpha and beta in the image above) stay &lt;strong&gt;constant&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;segment&#34; src=&#34;//localhost:1313/segment.jpg&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We wanted to make sure that there are no substantial differences between the &lt;strong&gt;transfer functions&lt;/strong&gt; of individual loudspeakers that could potentially &lt;strong&gt;bias&lt;/strong&gt; experiments.
+Thus, we contacted the manufacturer to request loudspeakers that were produced in the &lt;strong&gt;same batch&lt;/strong&gt;, to minimize variability.
+Additionally, we measured each speakers transfer function and computed filters to &lt;strong&gt;equalize&lt;/strong&gt; them. &lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;We also mounted three small &lt;strong&gt;cameras&lt;/strong&gt; on the arches in between the loudspeakers.
+The cameras take pictures of the listener to estimate their head pose so the listeners can &lt;strong&gt;localize&lt;/strong&gt; sounds by turning their heads &lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;.
+Because the pose from each camera is in a different &lt;strong&gt;camera-centered&lt;/strong&gt; reference frame, we calibrate the setup by having the participants face several predefined locations.
+The cameras are sensitive to &lt;strong&gt;infrared&lt;/strong&gt; which allows us to take pictures even when the room is darkened.&lt;/p&gt;
+&lt;h1 id=&#34;software&#34;&gt;Software&lt;/h1&gt;
+&lt;p&gt;The loudspeakers are driven by two &lt;strong&gt;digital signal processors&lt;/strong&gt; allowing us to display sounds with milliseconds accuracy.
+However, they are controlled by the manufacturer&amp;rsquo;s proprietary software that can be configured via a visual interface and is very &lt;strong&gt;opaque&lt;/strong&gt; and difficult to debug.
+Fortunately, they provide a &lt;strong&gt;Python API&lt;/strong&gt; for setting parameters, playing and recording sounds.
+We are using a predefined set of simple programs for handling &lt;strong&gt;basic operations&lt;/strong&gt; (like reading a sound into memory and playing it from a specific channel) and use a custom Python toolbox for all remaining tasks.
+This toolbox also controls the cameras and thus provides a &lt;strong&gt;single interface&lt;/strong&gt; for running experiments. &lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;h1 id=&#34;footnotes&#34;&gt;Footnotes&lt;/h1&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;For filtering, we used our custom Python toolbox &amp;lsquo;soundlab&amp;rsquo; which is described in &lt;a href=&#34;//localhost:1313/projects/slab/&#34;&gt;another post&lt;/a&gt;.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;We used a convolutional network and the OpenCV library to estimate the head pose from images as described in &lt;a href=&#34;//localhost:1313/projects/headpose/&#34;&gt;this post&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;The toolbox is called &amp;ldquo;freefield&amp;rdquo; and can be found &lt;a href=&#34;https://github.com/OleBialas/freefield&#34;&gt;on GitHub&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</content>
+    </item>
+    
+  </channel>
+</rss>

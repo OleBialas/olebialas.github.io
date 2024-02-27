@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  
+    <title>Making publication-ready figures with Matplotlib :: ~/obi</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="&amp;ldquo;An image says more than a thousand words&amp;rdquo; is a platitude, but when it comes to communicating the results of your research it is definitely true. Figures are probably the most important part of a paper and most readers will first look at them before reading the text in detail. In this blog post I&amp;rsquo;ll show how to use the Python library Matplotlib for creating publication-ready figures. For this purpose I&amp;rsquo;ll reproduce a figure from a recent paper step-by-step." />
+<meta name="keywords" content="" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="//localhost:1313/posts/matplotlib/" />
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="//localhost:1313/styles.css">
+
+
+
+
+
+
+
+  <link rel="shortcut icon" href="//localhost:1313/img/theme-colors/green.png">
+  <link rel="apple-touch-icon" href="//localhost:1313/img/theme-colors/green.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Making publication-ready figures with Matplotlib">
+<meta property="og:description" content="&amp;ldquo;An image says more than a thousand words&amp;rdquo; is a platitude, but when it comes to communicating the results of your research it is definitely true. Figures are probably the most important part of a paper and most readers will first look at them before reading the text in detail. In this blog post I&amp;rsquo;ll show how to use the Python library Matplotlib for creating publication-ready figures. For this purpose I&amp;rsquo;ll reproduce a figure from a recent paper step-by-step." />
+<meta property="og:url" content="//localhost:1313/posts/matplotlib/" />
+<meta property="og:site_name" content="~/obi" />
+
+  
+  
+  <meta property="og:image" content="//localhost:1313/posts/matplotlib/plot5.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2023-10-01 21:37:12 -0400 EDT" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="green">
+
+
+<div class="container headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    ~/obi
+  </div>
+</a>
+
+    </div>
+    
+      <ul class="menu menu--mobile">
+  <li class="menu__trigger">Menu&nbsp;▾</li>
+  <li>
+    <ul class="menu__dropdown">
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/projects">Projects</a></li>
+        
+      
+        
+          <li><a href="/publications">Publications</a></li>
+        
+      
+      
+    </ul>
+  </li>
+</ul>
+
+    
+    
+  </div>
+  
+    <nav class="navigation-menu">
+  <ul class="navigation-menu__inner menu--desktop">
+    
+      
+        
+          <li><a href="/about" >About</a></li>
+        
+      
+        
+          <li><a href="/projects" >Projects</a></li>
+        
+      
+        
+          <li><a href="/publications" >Publications</a></li>
+        
+      
+      
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="//localhost:1313/posts/matplotlib/">Making publication-ready figures with Matplotlib</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2023-10-01</time></div>
+
+  
+    <span class="post-tags">
+      
+      #<a href="//localhost:1313/tags/python/">Python</a>&nbsp;
+      
+      #<a href="//localhost:1313/tags/science/">science</a>&nbsp;
+      
+      #<a href="//localhost:1313/tags/visualization/">visualization</a>&nbsp;
+      
+    </span>
+  
+  
+  <img src="//localhost:1313/posts/matplotlib/plot5.png"
+    class="post-cover"
+    alt="Making publication-ready figures with Matplotlib"
+    title="Cover Image" />
+
+
+  
+
+  <div class="post-content"><div>
+        <p>&ldquo;An image says more than a thousand words&rdquo; is a platitude, but when it comes to <strong>communicating</strong> the results of your research it is definitely true.
+Figures are probably the most important part of a paper and most readers will <strong>first</strong> look at them before reading the text in detail. In this blog post I&rsquo;ll show how to use the Python library <strong>Matplotlib</strong> for creating publication-ready figures.
+For this purpose I&rsquo;ll reproduce a figure from a <a href="https://www.biorxiv.org/content/10.1101/2023.05.03.539222v1.abstract">recent paper</a> step-by-step.</p>
+<h1 id="prerequisites">Prerequisites<a href="#prerequisites" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>In this blog post I will use the Python library Matplotlib and reproduce the figure in the title step-by-step.
+If you want to follow along, you can download the data by <a href="/example_data.npy">clicking here</a> or use Python to fetch it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>pip install matplotlib numpy mne
+</span></span></code></pre></div><p>The package <code>mne</code> is only required to draw the scalp map (a common visualization in EEG research) in panel <strong>B</strong> of the figure.
+If you don&rsquo;t want to reproduce that subplot, you may skip installing <code>mne</code>.
+You&rsquo;ll also need the <strong>data</strong> which you can download by <a href="%5Cexample_data.npy">clicking here</a> or fetch using Python:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> requests
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> io <span style="color:#f92672">import</span> BytesIO
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>response <span style="color:#f92672">=</span> requests<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#34;https://olebialas.github.io/example_data.npy&#34;</span>)
+</span></span><span style="display:flex;"><span>d <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>load(BytesIO(response<span style="color:#f92672">.</span>content), allow_pickle<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)<span style="color:#f92672">.</span>item()
+</span></span></code></pre></div><h1 id="data">Data<a href="#data" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>The data contains the <strong>neural activity</strong>, and some derived statistics, of participants who <strong>localized sounds</strong> played from different locations.
+Because this blog post focuses on visualization, I&rsquo;ll not explain the scientific details.
+If you are interested you may have a look at the <a href="https://www.biorxiv.org/content/10.1101/2023.05.03.539222v1.abstract">paper</a>.
+Let&rsquo;s look at the <strong>content</strong> of our data by printing the dictionary&rsquo;s keys and the shape of the array stored under them:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> key, value <span style="color:#f92672">in</span> d<span style="color:#f92672">.</span>items():
+</span></span><span style="display:flex;"><span> print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>key<span style="color:#e6db74">}</span><span style="color:#e6db74">: </span><span style="color:#e6db74">{</span>value<span style="color:#f92672">.</span>shape<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>times: <span style="color:#f92672">(</span>269,<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>eeg_avg: <span style="color:#f92672">(</span>269, 64<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>eeg_con: <span style="color:#f92672">(</span>269, 4<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>con: <span style="color:#f92672">(</span>4,<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>ch_f: <span style="color:#f92672">(</span>64,<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>ch_loc: <span style="color:#f92672">(</span>64, 2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>n_sig: <span style="color:#f92672">(</span>269,<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>line_y: <span style="color:#f92672">(</span>10000, 100<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>line_x: <span style="color:#f92672">(</span>100,<span style="color:#f92672">)</span>
+</span></span></code></pre></div><ul>
+<li><code>times</code> is a vector of time points at which the EEG data are sampled</li>
+<li><code>eeg_avg</code> is a matrix with the average EEG recording of each channel</li>
+<li><code>eeg_con</code> contains the recording of a single channel for each condition.</li>
+<li><code>con</code> stores the conditions (i.e. the elevation of the different sound sources)</li>
+<li><code>ch_f</code> and <code>ch_loc</code> contain the F-values (a statistic indicating the separation of responses to the different conditions) and x,y coordinates for each EEG channel.</li>
+<li><code>n_sig</code> contains the number of subjects for which a statistical test found a significant difference between conditions at each point in time.</li>
+<li><code>line_y</code> contains samples from a linear model for the relationship between sound source elevation and neural response amplitude</li>
+<li><code>line_x</code> contains the x-coordinates (i.e. elevations) the values where sampled at</li>
+</ul>
+<h1 id="style-templates">Style templates<a href="#style-templates" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>Matplotlib is great, but the default style is not exactly pleasing to the eye.
+Fortunately there are some fantastic templates that you can use instead.
+I like to use <a href="https://github.com/garrettj403/SciencePlots">&ldquo;SciencePlots&rdquo;</a> which has an elegant and professional look and even offers the option to emulate the style of several academic journals.
+To use the style template, install it as a package with <code>pip install SciencePlots</code>, import it and set it as Matplotlib&rsquo;s style:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> matplotlib <span style="color:#f92672">import</span> pyplot <span style="color:#66d9ef">as</span> plt
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> scienceplots
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>style<span style="color:#f92672">.</span>use(<span style="color:#e6db74">&#39;science&#39;</span>)
+</span></span></code></pre></div><h1 id="subplot-spacing">Subplot spacing<a href="#subplot-spacing" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>I want to allocate most of the figure&rsquo;s space to the time series data in panel <strong>A</strong>, while the scalp map in <strong>B</strong> and the regression line in <strong>C</strong> can smaller.
+We can create subplots of different size using the <code>subplot_mosaic()</code> function.
+This function takes a nested lists of strings where each <strong>unique</strong> string represents one subplots and it&rsquo;s <strong>repetitions</strong> define the fraction of the figure that subplot occupies.
+Its a good idea to use capital letters because we can use those later to label the panels.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>fig, ax <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplot_mosaic(
+</span></span><span style="display:flex;"><span>    [
+</span></span><span style="display:flex;"><span>        [<span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;B&#34;</span>],
+</span></span><span style="display:flex;"><span>        [<span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;A&#34;</span>, <span style="color:#e6db74">&#34;C&#34;</span>],
+</span></span><span style="display:flex;"><span>    ],
+</span></span><span style="display:flex;"><span>    figsize <span style="color:#f92672">=</span> (<span style="color:#ae81ff">8</span>, <span style="color:#ae81ff">4.5</span>)
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>subplots_adjust(wspace<span style="color:#f92672">=</span><span style="color:#ae81ff">0.25</span>, hspace<span style="color:#f92672">=</span><span style="color:#ae81ff">0.15</span>)
+</span></span></code></pre></div><p>This creates a figure where panel <strong>A</strong> spans two rows and three columns while <strong>B</strong> and <strong>C</strong> only occupy a single element.
+The function <code>subplots_adjust</code> changes the spacing by adjusting the width (wspace) and height (hspace) of subplots&rsquo; padding.</p>
+<p><img alt="Layout" src="./plot0.png"></p>
+<h1 id="highlighting-whats-important">Highlighting what&rsquo;s important<a href="#highlighting-whats-important" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>Let&rsquo;s plot the time series data to panel A.
+First I plot the <strong>average</strong> EEG for each recorded channel in <strong>gray</strong> with small line width.
+Next, I iterate through the four experimental conditions and plot each one <strong>individually</strong> which makes Matplotlib use a different <strong>color</strong> for each.
+Using gray and colors as well as different line width is a good way of giving a detailed <strong>overview</strong> of the data while <strong>highlighting</strong> important aspects.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;A&#34;</span>]<span style="color:#f92672">.</span>plot(d[<span style="color:#e6db74">&#34;times&#34;</span>], d[<span style="color:#e6db74">&#34;eeg_avg&#34;</span>], color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;gray&#34;</span>, linewidth<span style="color:#f92672">=</span><span style="color:#ae81ff">0.3</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> i_con <span style="color:#f92672">in</span> range(d[<span style="color:#e6db74">&#34;eeg_con&#34;</span>]<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">1</span>]):
+</span></span><span style="display:flex;"><span>    ax[<span style="color:#e6db74">&#34;A&#34;</span>]<span style="color:#f92672">.</span>plot(
+</span></span><span style="display:flex;"><span>        d[<span style="color:#e6db74">&#34;times&#34;</span>], d[<span style="color:#e6db74">&#34;eeg_con&#34;</span>][:, i_con],
+</span></span><span style="display:flex;"><span>        linewidth<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>, label<span style="color:#f92672">=</span><span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>d[<span style="color:#e6db74">&#39;con&#39;</span>][i_con]<span style="color:#e6db74">}</span><span style="color:#e6db74"> [$^\circ$]&#34;</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;A&#34;</span>]<span style="color:#f92672">.</span>legend(loc<span style="color:#f92672">=</span>(<span style="color:#ae81ff">0.25</span>, <span style="color:#ae81ff">0.07</span>))
+</span></span><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;A&#34;</span>]<span style="color:#f92672">.</span>set(ylabel<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Amplitude [$\mu$ V]&#34;</span>, xlim<span style="color:#f92672">=</span>(d[<span style="color:#e6db74">&#34;times&#34;</span>]<span style="color:#f92672">.</span>min(), d[<span style="color:#e6db74">&#34;times&#34;</span>]<span style="color:#f92672">.</span>max()))
+</span></span></code></pre></div><p>By <strong>labeling</strong> each conditions line with the respective sources elevation, we can create an informative legend.
+The last line is labeling the y-axis and <strong>adjusting</strong> the x-axis to the recorded time interval.
+Putting <strong>dollar</strong> signs around string, tells Matplotlib to render them with LateX which allows us to use equations and <strong>special symbols</strong> like Greek letters.
+If you don&rsquo;t have a LateX installed, you&rsquo;ll have to  change those strings.</p>
+<h1 id="marking-time-points">Marking time points<a href="#marking-time-points" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>In the experiment, participants heard <strong>two</strong> subsequent sounds.
+Let&rsquo;s mark the sound onsets so we can see how the neural response <strong>relates</strong> to the stimuli.
+The <code>.axvline()</code> method takes a point on the x-axis and draws a vertical line between <code>ymin</code> and <code>ymax</code>. Here, x is in <strong>data coordinates</strong> (i.e. seconds) while the y coordinates are expressed as a fraction of the axis.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;A&#34;</span>]<span style="color:#f92672">.</span>axvline(x<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, ymin<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, ymax<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;black&#34;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--&#34;</span>)
+</span></span><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;A&#34;</span>]<span style="color:#f92672">.</span>axvline(x<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>, ymin<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>, ymax<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;gray&#34;</span>, linestyle<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;--&#34;</span>)
+</span></span></code></pre></div><p><img alt="Plot 1" src="./plot1.png"></p>
+<h1 id="adding-subplots">Adding subplots<a href="#adding-subplots" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>In the study, we ran a statistical test for <strong>differences</strong> between the responses to the different sound sources at each point in time.
+I want to visualize the <strong>number</strong> of participants for whom the test found a significant result using a heat map.
+To do this, we can use the <code>makes_axes_locatable()</code> function which returns an <code>AxesDivider</code> that allows us to split off a new subplot</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> mpl_toolkits.axes_grid1 <span style="color:#f92672">import</span> make_axes_locatable
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>divider <span style="color:#f92672">=</span> make_axes_locatable(ax[<span style="color:#e6db74">&#34;A&#34;</span>])
+</span></span><span style="display:flex;"><span>new_ax <span style="color:#f92672">=</span> divider<span style="color:#f92672">.</span>append_axes(<span style="color:#e6db74">&#34;bottom&#34;</span>, size<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;6%&#34;</span>, pad<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span></code></pre></div><p>This adds a subplot to the bottom of panel <strong>A</strong> whose size is equal to six percent of the original subplot and adds it to the <code>ax</code> dictionary. Now we can plot our <strong>heat map</strong> to the new subplot.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>extent <span style="color:#f92672">=</span> [d[<span style="color:#e6db74">&#34;times&#34;</span>]<span style="color:#f92672">.</span>min(), d[<span style="color:#e6db74">&#34;times&#34;</span>]<span style="color:#f92672">.</span>max(), <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>]
+</span></span><span style="display:flex;"><span>im <span style="color:#f92672">=</span> new_ax<span style="color:#f92672">.</span>imshow(d[<span style="color:#e6db74">&#34;n_sig&#34;</span>], aspect<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;auto&#34;</span>, extent<span style="color:#f92672">=</span>extent)
+</span></span><span style="display:flex;"><span>new_ax<span style="color:#f92672">.</span>set(xlabel<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Time [s]&#34;</span>, yticks<span style="color:#f92672">=</span>[])
+</span></span></code></pre></div><p>The images <code>extent</code> are the data coordinates that the image will fill and setting the <code>aspect=&quot;auto&quot;</code> allows non-square pixels to fit the axis.</p>
+<p>Now the heat map needs a color bar that explains what the colors <strong>represent</strong>.
+The color bar should be short and tucked to the side of the heat map.
+The most easy way to create a subplot is to <strong>directly</strong> define its location.
+The <code>add_axis()</code> method takes as inputs the x and y coordinate of the new subplot&rsquo;s left bottom corner and its width and height <strong>relative</strong> to the whole figure.</p>
+<p>After creating the subplot we can use the <code>colorbar()</code> function on the image returned by <code>imshow()</code>. Finally, we can adjust the font and tick size.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>cax <span style="color:#f92672">=</span> fig<span style="color:#f92672">.</span>add_axes([<span style="color:#ae81ff">0.7</span>, <span style="color:#ae81ff">0.11</span>, <span style="color:#ae81ff">0.01</span>, <span style="color:#ae81ff">0.048</span>])
+</span></span><span style="display:flex;"><span>fig<span style="color:#f92672">.</span>colorbar(im, cax<span style="color:#f92672">=</span>cax, orientation<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;vertical&#34;</span>, ticks<span style="color:#f92672">=</span>[<span style="color:#ae81ff">0</span>, d[<span style="color:#e6db74">&#34;n_sig&#34;</span>]<span style="color:#f92672">.</span>max()])
+</span></span><span style="display:flex;"><span>cax<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#34;$N$&#34;</span>, fontsize<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;medium&#34;</span>)
+</span></span><span style="display:flex;"><span>cax<span style="color:#f92672">.</span>tick_params(labelsize<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span>)
+</span></span></code></pre></div><p><img alt="Plot 2" src="./plot2.png"></p>
+<p>The <strong>downside</strong> of manually positioning the color bar is that you have to try around to find the right coordinates. This can be made a little easier using Matplotlib&rsquo;s <strong>interactive</strong> mode by calling <code>plt.ion()</code>.
+In interactive mode, all plotting commands are immediately executed so you can see where an object is located.</p>
+<h1 id="hiding-the-axis">Hiding the axis<a href="#hiding-the-axis" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>The scalp plot in panel B doesn&rsquo;t need the surrounding axes.
+We can turn them <strong>off</strong> before plotting.
+Then we can create the scalp map, using a function from the <a href="https://mne.tools/stable/index.html">MNE</a> toolbox and add a color bar just as we did before.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> mne.viz <span style="color:#f92672">import</span> plot_topomap
+</span></span><span style="display:flex;"><span>im, _ <span style="color:#f92672">=</span> plot_topomap(d[<span style="color:#e6db74">&#34;ch_f&#34;</span>], d[<span style="color:#e6db74">&#34;ch_loc&#34;</span>], show<span style="color:#f92672">=</span><span style="color:#66d9ef">False</span>, axes<span style="color:#f92672">=</span>ax[<span style="color:#e6db74">&#34;B&#34;</span>])
+</span></span><span style="display:flex;"><span>cax <span style="color:#f92672">=</span> fig<span style="color:#f92672">.</span>add_axes([<span style="color:#ae81ff">0.91</span>, <span style="color:#ae81ff">0.65</span>, <span style="color:#ae81ff">0.01</span>, <span style="color:#ae81ff">0.2</span>])
+</span></span><span style="display:flex;"><span>cbar <span style="color:#f92672">=</span> fig<span style="color:#f92672">.</span>colorbar(im, cax<span style="color:#f92672">=</span>cax, orientation<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;vertical&#34;</span>)
+</span></span><span style="display:flex;"><span>cbar<span style="color:#f92672">.</span>set_label(<span style="color:#e6db74">&#34;$F-score$&#34;</span>)
+</span></span></code></pre></div><p><img alt="Plot 3" src="./plot3.png"></p>
+<h1 id="displaying-uncertainty">Displaying uncertainty<a href="#displaying-uncertainty" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>Panel C contains samples from a linear model which describes the relationship between neural response amplitude and sound elevation.
+The regression model was computed 10k times using <a href="https://en.wikipedia.org/wiki/Bootstrapping_(statistics)">bootstrapping</a> and the variability across these models indicates the uncertainty surrounding the estimated relationship.</p>
+<p>We can visualize this uncertainty by <strong>shading</strong> an area around the mean of all models. Here, I use +/- two <strong>standard deviations</strong> which encompasses 99.7% of all observed values. Setting the opacity <code>alpha</code> to a low level creates a shade rather than solid color.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>mean, std <span style="color:#f92672">=</span> d[<span style="color:#e6db74">&#34;line_y&#34;</span>]<span style="color:#f92672">.</span>mean(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>), d[<span style="color:#e6db74">&#34;line_y&#34;</span>]<span style="color:#f92672">.</span>std(axis<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;C&#34;</span>]<span style="color:#f92672">.</span>plot(d[<span style="color:#e6db74">&#34;line_x&#34;</span>], mean, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;black&#34;</span>)
+</span></span><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;C&#34;</span>]<span style="color:#f92672">.</span>fill_between(d[<span style="color:#e6db74">&#34;line_x&#34;</span>], mean <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> std, mean <span style="color:#f92672">-</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> std, alpha<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;black&#34;</span>)
+</span></span><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;C&#34;</span>]<span style="color:#f92672">.</span>set(ylabel<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Mean amplitude [$\mu$V]&#34;</span>, xlabel<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Elevation [$^\circ$]&#34;</span>)
+</span></span></code></pre></div><p>Finally, we can move the y-axis ticks and label to the right so it does <strong>not overlap</strong> with other subplots</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;C&#34;</span>]<span style="color:#f92672">.</span>yaxis<span style="color:#f92672">.</span>tick_right()
+</span></span><span style="display:flex;"><span>ax[<span style="color:#e6db74">&#34;C&#34;</span>]<span style="color:#f92672">.</span>yaxis<span style="color:#f92672">.</span>set_label_position(<span style="color:#e6db74">&#34;right&#34;</span>)
+</span></span></code></pre></div><p><img alt="Plot 4" src="./plot4.png"></p>
+<h1 id="labeling-subplots">Labeling subplots<a href="#labeling-subplots" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>The only thing left to do is labeling the panels so we can refer to them in text.
+One practical option is to use the <strong>keys</strong> from the <code>ax</code> dictionary as labels and put them at the same location relative to each axis.
+Because the <code>text()</code> method treats x and y values as data coordinates per default, we have to use the <code>transAxes</code> transform.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> label <span style="color:#f92672">in</span> ax<span style="color:#f92672">.</span>keys():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> label<span style="color:#f92672">.</span>isupper():
+</span></span><span style="display:flex;"><span>        ax[label]<span style="color:#f92672">.</span>text(<span style="color:#f92672">-</span><span style="color:#ae81ff">0.06</span>, <span style="color:#ae81ff">1</span>, label, transform<span style="color:#f92672">=</span>ax[label]<span style="color:#f92672">.</span>transAxes, font<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;bold&#39;</span>)
+</span></span></code></pre></div><p><img alt="Plot 5" src="./plot5.png"></p>
+<h1 id="saving">Saving<a href="#saving" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>When saving the figure as an image, make sure to use a sufficiently <strong>high</strong> number of dots per inches (<code>dpi</code>) so it looks nice printed.
+Also, <strong>don&rsquo;t</strong> change the image&rsquo;s height or width after saving the image because it will make the font size vary across figures.
+Instead use the <code>figsize</code> attribute to create figures of the desired size.
+It is possible to remove the margins by setting <code>bbox_inches=&quot;tight&quot;</code> but be aware that this may <strong>change</strong> the defined <code>figsize</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>fig<span style="color:#f92672">.</span>savefig(<span style="color:#e6db74">&#39;awesome_figure.png&#39;</span>, dpi<span style="color:#f92672">=</span><span style="color:#ae81ff">300</span>, bbox_inches<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;tight&#39;</span>
+</span></span></code></pre></div><p>Now the figure is ready for publication!</p>
+
+      </div></div>
+
+  
+    
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        <span class="button previous">
+            <a href="//localhost:1313/posts/eeg_preprocessing/">
+                <span class="button__icon">←</span>
+                <span class="button__text">EEG preprocessing I: detrending, denoising and referencing</span>
+            </a>
+        </span>
+        
+        
+    </div>
+</div>
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2024 Powered by <a href="https://gohugo.io">Hugo</a></span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
