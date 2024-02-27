@@ -3,7 +3,7 @@ title = "EEG preprocessing II: eye-artifacts, repairing and rejecting"
 date = "2024-02-23T12:53:03-05:00"
 cover = "posts/eeg_preprocessing2/ica_components.png"
 tags = ["Python", "EEG", "signal processing"]
-description = "Part 2"
+description = "The second part of this series demonstrate additional preprocessing steps. Specifically, it addresses the problem of eye artifacts which are omnipresent in EEG recordings. It also demonstartes a procedure for repairing and rejecting noise-contaminated channels and segments. "
 +++
 
 The [previous post on preprocessing EEG](posts/eeg_preprocessing) presented a minimally invasive pipeline of procedures that are necessary in most EEG analyses. In this post I present additional steps that might be useful if the data is still not **sufficiently cleaned**. First, I will address **eye blinks** which is one of the most prevalent sources of artifacts in EEG recordings. After that, I'll demonstrate a method to repair or remove segments of the data **contaminated with noise**. The examples assume that the data was cleaned and epoched as outlined in [part I](posts/eeg_preprocessing).
