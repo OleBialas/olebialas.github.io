@@ -15,15 +15,16 @@ However, another kind of eye artifact may still occur - **blinks**. Eye blinks a
 
 # Identifying eye-blink components with ICA
 ICA is an algorithm that finds a rotation matrix to separate the sensor data into components that are **mutually independent** [^3].
-In the code below, I fit an ICA to the epoched data. At maximum, ICA can capture as many components as there are channels [^4]. However, usually the data can be captured with **fewer components**. When the `n_components` parameter is set to a decimal number, the ICA will compute as many components as are necessary to explain this share of the total variance in the data. The components will be ordered by **explained variance** and I am plotting the first five of them below.
+In the code below, I fit an ICA to the epoched data. At maximum, ICA can capture as many components as there are channels. However, usually the data can be captured with **fewer components**. When the `n_components` parameter is set to a decimal number, the ICA will compute as many components as are necessary to explain this share of the total variance in the data. Because highpass filtering improves the quality of artifact separation [^4], I use a highpass filtered copy of the data for ICA.
 
 ```python
 from mne.preprocessing import ICA
 ica = ICA(n_components=0.99)
-ica.fit(epochs)
+ica.fit(epochs.copy().filter(l_freq=2, h_freq=None))
 ica.plot_components(range(5))
 ```
 
+The components are ordered by **explained variance**, so the first few components have the largest impact on the signal.
 Each component is a **linear combination** of all channels and the weights indicate how much each channel affects that component [^5]. The first components depends almost solely on the **frontal channels** - a strong indicator that it represents eye-blink artifacts! 
 
 ![ICA components](./ica_components.png)
@@ -107,7 +108,7 @@ The repertoire of preprocessing methods outlined in this and the previous post i
 
 [^3]: An in-depth explanation of ICA is beyond the scope of this post but can be found in: *Makeig, S., Bell, A., Jung, T. P., & Sejnowski, T. J. (1995). Independent component analysis of electroencephalographic data. Advances in neural information processing systems, 8.*
 
-[^4]: However, interpolating bad channels reduces the number of possible components because interpolated channels contain no unique information.
+[^4]: A highpass between 1 and 2 Hz before ICA is optimal, see *Winkler, I., Debener, S., Müller, K. R., & Tangermann, M. (2015, August). On the influence of high-pass filtering on ICA-based artifact reduction in EEG-ERP. In 2015 37th Annual International Conference of the IEEE Engineering in Medicine and Biology Society (EMBC) (pp. 4101-4105). IEEE.*
 
 [^5]: The absolute sign of the component is meaningless and may change when ICA is performed repeatedly.
 
