@@ -10,6 +10,7 @@
 - [Predictive Coding–Wie innere Vorhersagen unser Leben bestimmen](https://scilogs.spektrum.de/thinky-brain/predictive-coding-wie-innere-vorhersagen-unser-leben-bestimmen/)
 
 # Presentations
+- [Standardizing and Sharing EEG - Intro to the Brain Imaging Data Structure and OpenNeuro](/bids2024.pdf)(Apr 8th, 2024, Online)
 - [Cognition and Natural Sensory Processing Initiative ](/cnsp2023.pdf)(Sep 19th, 2023, Online)
 
 # Posters
