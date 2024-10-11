@@ -3,10 +3,8 @@ title = "Hi, I'm Ole!"
 draft = false
 +++
 
-I'm a Scientist, living in Upstate New York. For the past 7 years, I researched how
-the brain processes sounds and developed software to run experiments and analyze data.
-Currently, I'm looking to transition from academia into a position in the industry
-where I can follow my passion for data analysis and software development.
+I'm a research software consultant working within the [iBehave](https://ibehave.nrw/) network where I am teaching and consulting neuroscience researchers to help them in leverage modern software-engineering tools.
+Before that I did a PhD at the University of Leipzig, Germany and a PostDoc at the University of Rochester, where I did research on EEG, spatial hearing and speech
 
 # On this website, you can
 - Read [blog posts](/posts) on topics around science and software
