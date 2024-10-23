@@ -1,6 +1,6 @@
 +++
 title = 'Automated Experiment Validation with Pydantic and Type Hints'
-date = 2024-10-11T11:55:08+02:00
+date = 2024-10-23
 description = 'Configuring an experiment is a key step in quantitative research. In this blog post, we will explore type hinting and data validation with Pydantic to automatically validate the experimental configuration. This allows us to catch locgical inconsitencies before they affect the actual experiment and leads to software that is more robust.'
 cover = 'cover.png'
 +++
