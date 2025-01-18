@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+    <!-- Main branch -->
+    <path d="M 100 200 L 700 200" stroke="#2B65EC" stroke-width="8" fill="none"/>
+    
+    <!-- Commit dots on main branch -->
+    <circle cx="150" cy="200" r="10" fill="#2B65EC"/>
+    <circle cx="250" cy="200" r="10" fill="#2B65EC"/>
+    <circle cx="450" cy="200" r="10" fill="#2B65EC"/>
+    <circle cx="650" cy="200" r="10" fill="#2B65EC"/>
+    
+    <!-- Feature branch -->
+    <path d="M 250 200 C 270 200 270 100 290 100 L 390 100" stroke="#FF0000" stroke-width="8" fill="none"/>
+    <path d="M 390 100 C 410 100 410 200 450 200" stroke="#FF0000" stroke-width="8" fill="none" stroke-dasharray="8"/>
+    
+    <!-- Commit dots on feature branch -->
+    <circle cx="320" cy="100" r="10" fill="#FF0000"/>
+    <circle cx="370" cy="100" r="10" fill="#FF0000"/>
+    
+    <!-- Hotfix branch -->
+    <path d="M 450 200 C 470 200 470 300 490 300 L 590 300" stroke="#228B22" stroke-width="8" fill="none"/>
+    <path d="M 590 300 C 610 300 610 200 650 200" stroke="#228B22" stroke-width="8" fill="none" stroke-dasharray="8"/>
+    
+    <!-- Commit dot on hotfix branch -->
+    <circle cx="540" cy="300" r="10" fill="#228B22"/>
+</svg>
