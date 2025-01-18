@@ -11,7 +11,9 @@
 
 # Presentations
 - [Zwischen Lab und Laptop - Techninsche Herausforderungen der Modernen Neurowissenschaft](/zwischen_lab_und_laptop.html) (Jan 18th, Deutsches Museum, Bonn)
+
 - [Standardizing and Sharing EEG - Intro to the Brain Imaging Data Structure and OpenNeuro](/bids2024.pdf)(Apr 8th, 2024, Online)
+
 - [Cognition and Natural Sensory Processing Initiative ](/cnsp2023.pdf)(Sep 19th, 2023, Online)
 
 # Posters
