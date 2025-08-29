@@ -25,6 +25,7 @@ pip install mne meegkit pyprep autoreject
 ```
 Then, we have to dowload the sample data from MNE Python and clean it using the steps described [in the previous post on EEG preprocessing](posts/eeg_preprocessing).
 The code below does exactly that --- if you want a more detailed explanation, read the original post.
+Running the cell below produces the cleaned `epochs` to which we will apply further preprocessing, starting with the removal of **eye artifacts**.
 
 ```{python}
 # | output: false
@@ -67,7 +68,6 @@ event_id = {"auditory/left": 1, "auditory/right": 2}
 epochs = Epochs(raw, events, event_id, tmin=-0.1, tmax=0.4, baseline=None, preload=True)
 ```
 
-Running the cell above produces the cleaned `epochs` to which we will apply further preprocessing, starting with the removal of eye artifacts.
 
 # What are eye artifacts?
 While it is often assumed that eye artifacts are the result of muscle activity, they are actually the result of a **ionic gradient** in the retinal pigment epithelium that makes the eye an **electric dipole** [^1]. Thus, moving the eyes and the dipole **induces** a change in voltage picked up by the sensors that is roughly proportional to the **amplitude** of the movement. Because this could overshadow the neural responses, many studies eliminate eye movements by making participants **fixate** a point during the experiment.
