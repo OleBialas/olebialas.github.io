@@ -1,0 +1,13 @@
+---
+image: featured.png
+title: Zwischen Lab und Laptop - Technische Herausforderungen der Modernen Neurowissenschaft 
+author:
+  - name: Ole Bialas
+description: |
+  A talk about the technical challenges neuroscientists face today.
+abstract: |
+  In this talk, presented at the German Museum Bonn, I describe how neuroscience has evolved from recording the responses of individual neurons to collecting massive datasets containing thousands of neurons. I outline the challenges but also the opportunities for insight that come with this development. Finally, I argue that we can tackle these challenges by taking established methods from computer science, like version control, and translating them to the scientific context.
+date: "2025-01-19"
+---
+
+- Slides: [get the slides as PDF](slides.pdf)

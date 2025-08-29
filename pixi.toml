@@ -1,0 +1,18 @@
+[workspace]
+authors = ["obi <ole.bialas@posteo.de>"]
+channels = ["conda-forge"]
+name = "new_website"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = ">=3.13.5,<3.14"
+
+[pypi-dependencies]
+jupyter = ">=1.1.1, <2"
+mne = ">=1.10.1, <2"
+meegkit = ">=0.1.9, <0.2"
+pyprep = ">=0.5.0, <0.6"
+autoreject = ">=0.4.3, <0.5"

@@ -1,0 +1,89 @@
+project:
+  type: website
+  pre-render:
+    - publications.r
+  resources:
+    - _headers
+
+website:
+  title: "OBi"
+  description: "A neuroscience and coding blog and portfolio by Ole Bialas"
+  favicon: /assets/images/logo.svg
+  image: /assets/images/profile.png
+  site-url: https://olebialas.github.io/
+  repo-url: https://github.com/OleBialas/olebialas.github.io
+  repo-actions: [edit, issue]
+  open-graph: true
+  twitter-card: true
+  page-navigation: true
+  back-to-top-navigation: true
+  page-footer:
+    border: true
+    left: |
+      Powered by [{{< iconify simple-icons:quarto title="Quarto Logo" label="Quarto Logo" >}} Quarto](https://quarto.org) based on a website from [Mickaël Canouil](https://github.com/mcanouil/mickael.canouil.fr).
+    right: |
+      License: [CC BY NC SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0).
+  navbar:
+    title: "Ole Bialas"
+    search: true
+    background: dark
+    logo: assets/images/logo.png
+    logo-alt: "OLE BIALAS logo"
+    right:
+      - text: About
+        href: index.qmd
+      - text: Blog
+        href: blog.qmd
+      - text: Talks
+        href: talks.qmd
+      - text: Publications
+        href: publications.qmd
+      - text: '{{< iconify fa6-brands:bluesky title="BlueSky" label="BlueSky" >}}'
+        href: "https://bsky.app/profile/mickael.canouil.fr"
+      - text: '{{< iconify fa6-brands:linkedin title="LinkedIn" label="LinkedIn" >}}'
+        href: 'https://www.linkedin.com/in/mickaelcanouil'
+      - text: '{{< iconify fa6-brands:mastodon title="Mastodon" label="Mastodon" >}}'
+        href: "https://fosstodon.org/@MickaelCanouil"
+        rel: me
+      - text: '{{< iconify fa6-brands:x-twitter title="X" label="X" >}}'
+        href: "https://x.com/MickaelCanouil"
+      - text: '{{< iconify octicon:mark-github-16 title="GitHub" label="GitHub" >}}'
+        href: "https://github.com/mcanouil"
+
+format:
+  html: 
+    grid:
+      body-width: 1000px
+    theme:
+      dark:
+        - cosmo
+        - assets/stylesheets/projects.scss
+        - brand
+      light:
+        - cosmo
+        - assets/stylesheets/projects.scss
+        - brand
+    lang: en-GB
+    date-format: 'dddd[, the] Do [of] MMMM, YYYY'
+    highlight-style: atom-one
+    code-copy: true
+    code-link: true
+    code-overflow: wrap
+    anchor-sections: true
+    email-obfuscation: javascript
+    link-external-newwindow: true
+    fig-align: center
+    code-tools:
+      source: false
+      toggle: false
+      caption: none
+    include-after-body:
+      - file: assets/scripts/ordinal-dates.html
+      - file: assets/scripts/current-year.html
+      - file: assets/scripts/categories-alphabetical.html
+      - file: assets/scripts/modal-clipboardjs.html
+
+lightbox: auto
+
+execute:
+  freeze: true

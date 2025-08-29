@@ -1,0 +1,51 @@
+---
+title: "Ole Bialas"
+subtitle: |
+  Neuoscientist and Programmer.
+image: /assets/images/profile.png
+format:
+  html:
+    grid:
+      body-width: 800px
+about:
+  id: edu-exp
+  template: solana
+  image-width: 9em
+  image-shape: round
+  links:
+    - text: '{{< iconify fa6-solid:envelope title="Envelope logo for email" label="Envelope logo for email" >}}'
+      href: "mailto:ole.bialas@posteo.de"
+      aria-label: "Envelope logo for email"
+    - text: '{{< iconify fa6-brands:orcid title="ORCID account link" label="ORCID account link" >}}'
+      href: "https://orcid.org/0000-0003-4472-7626"
+      aria-label: "ORCID account link"
+    - text: '{{< iconify fa6-brands:bluesky title="BlueSky account link" label="BlueSky account link" >}}'
+      href: "https://bsky.app/profile/drballistic.bsky.social"
+      aria-label: "BlueSky account link"
+    - text: '{{< iconify fa6-brands:linkedin title="LinkedIn account link" label="LinkedIn account link" >}}'
+      href: "https://www.linkedin.com/in/ole-bialas-a592a3194/"
+      aria-label: "LinkedIn account link to olebialas account"
+    - text: '{{< iconify fa6-brands:mastodon title="Mastodon link" label="Mastodon link" >}}'
+      href: "https://mastodon.social/@drballistic"
+      aria-label: "Mastodon link"
+      rel: me
+    - text: '{{< iconify fa6-brands:x-twitter title="X (Twitter) account link" label="X (Twitter) account link" >}}'
+      href: "https://x.com/NeuroObi"
+      aria-label: "X (Twitter) account link"
+    - text: '{{< iconify octicon:mark-github-16 title="GitHub account link" label="GitHub account link" >}}'
+      href: "https://github.com/OleBialas"
+      aria-label: "GitHub account link"
+---
+
+::: {#edu-exp}
+:::
+
+I am currently working as a __*research software consultant*__ in the field of neuroscience at the University of Bonn in Germany where I am helping researchers to leverage technology for generating scientific insights.
+This includes things like data science, data management and software engineering practices (e.g. version control, continuous integration).
+
+Before that, I was an __*auditory neurscientist*__🧠, researching how the brain processes spatial sound and naturalistic speech.
+During this time, I also developed __*Python*__ 🐍 packages to run psychoacoustic experiments ([slab](https://slab.readthedocs.io/en/latest/)) and model brain responses to continuous speech ([mTRFpy](https://mtrfpy.readthedocs.io/en/latest/))
+
+If you are interested in consulting --- send me an [✉ email](mailto:ole.bialas@posteo.de), if you want to receive updates about the free online workshops that me and my colleagues are offering, subscribe to our [📬 mailing list](https://listen.uni-bonn.de/wws/subscribe/ibehave.ibots-news)
+You may also want to take a look at my complete [📄 curriculum vitae](https://).
+

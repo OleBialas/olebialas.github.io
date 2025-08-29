@@ -1,0 +1,13 @@
+---
+image: featured.png
+title: Fundamentals of TRF-analyses in Python 
+author:
+  - name: Ole Bialas
+description: |
+  A demo of the mTRFpy Python toolbox for modeling neural responses to continuous stimuli.
+abstract: In this talk, presented at an online workshop of the Cognition and Natural Sensory Processing Initiative, I demonstrate the mTRFpy toolbox for estimating the Temporal Receptive Fields (TRFs) of neural responses to continuous stimuli (e.g. naturalstic speech). I first give an overview of the core functions of mTRFpy and then use simulated data to show how TRFs can recover neural responses from noisy data.
+date: "2023-09-19"
+---
+
+- Slides: [download the slides as PDF](slides.pdf)
+- mTRFpy documentation: <https://mtrfpy.readthedocs.io/en/latest/>

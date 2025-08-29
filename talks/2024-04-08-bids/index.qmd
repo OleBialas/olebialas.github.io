@@ -1,0 +1,13 @@
+---
+image: featured.png
+title: Standardizing and Sharing EEG Data
+author:
+  - name: Ole Bialas
+description: |
+  An introduction to the Brain Imaging Data Structure (BIDS) and the OpenNeuro platform.
+abstract: In this talk, I give a brief introduction to the Brain Imaging Data Structure (BIDS), which is an emerging standard for neuroimaging data. I argue that using BIDS and sharing data is valuable to the scientific community as well as the individual researcher. As an example, I show how an electroencephalography (EEG) dataset has to be formatted to conform to the BIDS standard.
+date: "2024-04-08"
+---
+
+
+- Slides: [download the slides as PDF](slides.pdf)

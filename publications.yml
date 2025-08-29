@@ -1,0 +1,126 @@
+- author:
+  - family: Bialas
+    given: Ole
+  - family: Dou
+    given: Jin
+  - family: Lalor
+    given: Edmund C
+  container-title: Journal of Open Source Software
+  id: bialas2023mtrfpy
+  issue: 89
+  issued: 2023-08
+  page: 5657
+  title: "mTRFpy: A python package for temporal response function
+    analysis"
+  title-short: mTRFpy
+  type: article-journal
+  url: "https://joss.theoj.org/papers/10.21105/joss.05657"
+  volume: 8
+  journal-title: '*Journal of Open Source Software*'
+  date: 2023-08
+- author:
+  - family: Bialas
+    given: Ole
+  - family: Maess
+    given: Burkhard
+  - family: Schönwiesner
+    given: Marc
+  container-title: bioRxiv
+  id: bialas2023evoked
+  issued: 2023-05
+  publisher: Cold Spring Harbor Laboratory
+  title: Evoked responses to localized sounds suggest linear
+    representation of elevation in human auditory cortex
+  type: article-journal
+  url: "https://www.biorxiv.org/content/10.1101/2023.05.03.539222v1.abstract"
+  journal-title: '*bioRxiv*'
+  date: 2023-05
+- author:
+  - family: Bialas
+    given: Ole
+  - family: Lalor
+    given: Edmund C
+  container-title: PLoS One
+  id: bialas2025appropriate
+  issue: 5
+  issued: 2025-05
+  page: e0323276
+  publisher: Public Library of Science San Francisco, CA USA
+  title: "Appropriate data segmentation improves speech encoding models:
+    Analysis and simulation of electrophysiological recordings"
+  title-short: Appropriate data segmentation improves speech encoding
+    models
+  type: article-journal
+  url: "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0323276"
+  volume: 20
+  journal-title: '*PLoS One*'
+  date: 2025-05
+- author:
+  - family: Bialas
+    given: Ole
+  - family: Biswas
+    given: Sophea Urbi
+  - family: Lalor
+    given: Edmund C
+  container-title: Conference on Cognitive Computational Neuroscience
+  id: bialascorrelates
+  issued: 2024-08
+  title: Correlates of syntax in EEG responses to naturalistic speech
+  type: article-journal
+  url: "https://2024.ccneuro.org/pdf/584_Paper_authored_ccn_style.pdf"
+  journal-title: '*Conference on Cognitive Computational Neuroscience*'
+  date: 2024-08
+- author:
+  - family: Schönwiesner
+    given: Marc
+  - family: Bialas
+    given: Ole
+  container-title: Journal of Open Source Software
+  id: schonwiesner2021s
+  issue: 62
+  issued: 2021-06
+  page: 3284
+  title: "S (ound) lab: An easy to learn python package for designing
+    and running psychoacoustic experiments."
+  title-short: S (ound) lab
+  type: article-journal
+  url: "https://joss.theoj.org/papers/10.21105/joss.03284"
+  volume: 6
+  journal-title: '*Journal of Open Source Software*'
+  date: 2021-06
+- author:
+  - family: Przysinda
+    given: Emily
+  - family: Nidiffer
+    given: Aaron
+  - family: Bialas
+    given: Ole
+  - family: Dou
+    given: Jin
+  - family: O'Malley
+    given: Jillian
+  - family: Kuo
+    given: Jacky
+  - family: Shovestul
+    given: Bridget
+  - family: Saxena
+    given: Abhishek
+  - family: Dong
+    given: Xiaoyu
+  - family: Reda
+    given: Stephanie
+  - literal: others
+  container-title: Biological Psychiatry
+  id: przysinda2025520
+  issue: 9
+  issued: 2025-05
+  page: S312
+  publisher: Elsevier
+  title: Electrophysiological indices of acoustic and predictive
+    language processing are reduced in schizophrenia spectrum disorder
+    during socially relevant naturalistic video
+  type: article-journal
+  url: "https://www.biologicalpsychiatryjournal.com/article/S0006-3223(25)00857-1/fulltext"
+  volume: 97
+  journal-title: '*Biological Psychiatry*'
+  date: 2025-05

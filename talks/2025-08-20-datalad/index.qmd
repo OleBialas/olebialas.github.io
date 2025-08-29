@@ -1,0 +1,20 @@
+---
+image: featured.png
+title: Managing Scientific Data and Workflows with DataLad
+author:
+  - name: Ole Bialas
+    affiliations: 
+      - University of Bonn
+  - name: Michał Szczepanik
+    affiliations: 
+      - Research Center Jülich
+description: |
+  An introdury tutorial to the DataLad software for scientific data management.
+abstract: In this tutorial, presented at EuroScipy 2025, Michał Szczepanik and I (Ole Bialas) introduce DataLad, which is a piece of software for managing data in research projects. We show how to clone and modify existing dataset, run commands, build analysis pipelines and manage multiple siblings of the same dataset distributed across different locations.
+date: "2025-08-20"
+---
+
+{{< video https://www.youtube.com/watch?v=vvYwPl9paug&t=2384s >}}
+
+- Slides and exercise notebooks: <https://olebialas.github.io/DataLad-EuroScipy25/>
+- Code: <https://github.com/OleBialas/DataLad-EuroScipy25>

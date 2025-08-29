@@ -1,0 +1,19 @@
+---
+title: 'Publications (6)'
+title-block-banner: true
+image: /assets/images/social-profile.png
+date-format: 'MMMM,<br>YYYY'
+listing:
+  contents:
+    - publications.yml
+  page-size: 10
+  sort: 'issued desc'
+  type: table
+  categories: false
+  sort-ui: [date, title, journal-title]
+  filter-ui: [date, title, journal-title]
+  fields: [date, title, journal-title]
+  field-display-names:
+    date: Issued
+    journal-title: Journal
+---

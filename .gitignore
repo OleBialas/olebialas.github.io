@@ -1,0 +1,11 @@
+
+# pixi environments
+.pixi
+*.egg-info
+
+/.quarto/
+**/*.quarto_ipynb
+
+/.luarc.json
+*Identifier
+_site/
