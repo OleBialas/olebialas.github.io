@@ -45,6 +45,11 @@ jobs:
           R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
           _R_CHECK_FORCE_SUGGESTS_: false
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium gsfonts libcairo2-dev libcurl4-openssl-dev libfontconfig1-dev libfreetype6-dev libmagick++-dev libpng-dev pandoc
+
       - name: Install dependencies with pixi
         run: pixi install --verbose
 
