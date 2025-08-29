@@ -37,6 +37,8 @@ jobs:
           use-public-rspm: true
         env:
           R_COMPILE_AND_INSTALL_PACKAGES: never
+          R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+          _R_CHECK_FORCE_SUGGESTS_: false
 
       - name: Set up pixi
         uses: prefix-dev/setup-pixi@v0.8.1
