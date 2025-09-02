@@ -19,13 +19,12 @@ back-to-top-navigation: true
 comments:
   giscus: 
     repo: olebialas/olebialas.github.io
-    # repo-id: MDEwOlJlcG9zaXRvcnkzNDcwODgwMDM=
+    repo-id: R_kgDOPmnqiw
     theme:
         light: light # giscus theme used for light website theme
         dark: dark_dimmed # giscus theme used for dark website theme
-    #category: "Blog posts"
-    #category-id: DIC_kwDOFLAkg84CSh-t
-
+    category: "General"
+    category-id="DIC_kwDOPmnqi84Cu4qd"
 execute: 
   warning: false
   message: false
