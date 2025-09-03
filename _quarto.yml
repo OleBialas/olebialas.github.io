@@ -8,6 +8,9 @@ project:
 website:
   title: "OBi"
   description: "A neuroscience and coding blog and portfolio by Ole Bialas"
+  google-analytics: 
+    tracking-id: "G-ZG4WYHJ56T"
+    storage: none
   favicon: /assets/images/logo.svg
   image: /assets/images/profile.png
   site-url: https://olebialas.github.io/
@@ -86,4 +89,4 @@ format:
 lightbox: auto
 
 execute:
-  freeze: true
+  freeze: auto
