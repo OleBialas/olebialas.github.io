@@ -24,7 +24,7 @@ comments:
         light: light # giscus theme used for light website theme
         dark: dark_dimmed # giscus theme used for dark website theme
     category: "General"
-    category-id="DIC_kwDOPmnqi84Cu4qd"
+    category-id: "DIC_kwDOPmnqi84Cu4qd"
 execute: 
   warning: false
   message: false
