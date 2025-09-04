@@ -9,6 +9,8 @@ version = "0.1.0"
 
 [dependencies]
 python = ">=3.13.5,<3.14"
+seaborn = ">=0.13.2,<0.14"
+pyarrow = ">=21.0.0,<22"
 
 [pypi-dependencies]
 jupyter = ">=1.1.1, <2"
