@@ -1,10 +1,10 @@
 ---
 title: "Surveying Neural Spiking in Visual Cortex with Pandas and Seaborn"
-description: ""
+description: "In this post, I'll demonstrate how to use the Python libraries Pandas and Seaborn to ananlyze and plot spiking data from hundreds of neurons located in different areas of the visual cortex."
 date: "2025-09-03"
 image: featured.png
 image-alt: |
-    ""
+    "`matplotlib` figure of peri-stimulus time histogram across brain areas"
 aliases:
   - /post/surveying-spiking/index.html
   - /post/surveying-spiking.html
@@ -217,4 +217,4 @@ If you are interested in working with the full dataset you can check out my [Git
 [^1]: Siegle, J. H., Jia, X., Durand, S., Gale, S., Bennett, C., Graddis, N., ... & Koch, C. (2021). Survey of spiking in the mouse visual system reveals functional hierarchy. Nature, 592(7852), 86-92.
 [^2]: All stimuli are full-field flashes so there isn't any relevant information besides the stimuli's timing
 [^3]: We could skip creating the `"analysis_window_start"` column and merge the data using the stimulus onsets. However, then we would lose the spikes that occur right before the onset which we need to compute the baseline.
-[^4]: The exact value of $\epsilon$ is not that relevant here , so feel free to try out different values. However, be aware that larger values of $\epsilon$ will lead to smaller values of the relative change in spike count for all units, so you'll have to adapt the threshold as well.
+[^4]: The exact value of $\epsilon$ is not that relevant here, so feel free to try out different values. However, be aware that larger values of $\epsilon$ will lead to smaller values of the relative change in spike count for all units, so you'll have to adapt the threshold as well.
