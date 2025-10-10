@@ -9,3 +9,10 @@
 /.luarc.json
 *Identifier
 _site/
+
+*.html
+*.ipynb
+*index_files
+
+posts/2024-10-02-unitmatch/out
+posts/2024-10-02-unitmatch/UMInputData
