@@ -2,15 +2,14 @@
 title: "Tracking Units in Chronic Electrophysiological Recordings with UnitMatch"
 description: "A demonstration of UnitMatch, a Bayesian algorithm that matches units based on average waveforms across recordings. I simulate multi-session electrophysiological data with SpikeInterface and track units across recordings."
 date: "10-10-2025"
-image: ""
-image-alt: ""
+image: "featured.png"
+image-alt: "Similarity matrix computed by unitmatch"
 aliases:
   - /post/unitmatch/index.html
   - /post/unitmatch.html
 engine: Jupyter
 format:
   html: default
-  ipynb: default
 freeze: auto
 ---
 
@@ -63,7 +62,7 @@ To simulate recordings, we generate a probe and unit locations along it.
 The probe and unit locations will be the same for all recording segments.
 ```{python}
 # | label: fig-probe
-# | fig-cap: Shank of the probe with recording channels (yellow) and locations of the simulated units (blue).
+# | fig-cap: "Shank of the probe with recording channels (yellow) and locations of the simulated units (blue)."
 probe = generate_multi_columns_probe(
     num_columns=n_columns, num_contact_per_column=n_contacts
 )
@@ -118,7 +117,7 @@ Let's plot the same unit across multiple recordings.
 Despite slight variability, the waveforms are similar enough to enable clear matching.
 ```{python}
 # | label: fig-waveforms
-# | fig-cap: Template waveforms for one unit across all recordings. Each line shows the signal measured at one electrode channel.
+# | fig-cap: "Template waveforms for one unit across all recordings. Each line shows the signal measured at one electrode channel."
 fig, ax = plt.subplots(1, 3, figsize=(9, 3), sharex=True, sharey=True)
 for i in range(3):
     ax[i].plot(templates[i][0, :, :])
@@ -171,11 +170,11 @@ analyzers
 ```
 
 Let's look at two of the extracted templates.
-In @fig-units, we can clearly see one unit that has a large amplitude and is visible across all channels, and another one with a weak and noisy signal.
+In the figure below, we can clearly see one unit that has a large amplitude and is visible across all channels, and another one with a weak and noisy signal.
 
 ```{python}
 # | label: fig-units
-# | fig-cap: The average waveforms of two units extracted from recording 1
+# | fig-cap: "The average waveforms of two units extracted from recording 1."
 templates = analyzers[0].get_extension("templates").get_data()
 fig, ax = plt.subplots(1, 2, figsize=(6, 3), sharex=True, sharey=False)
 for i, uid in enumerate([0, 3]):
@@ -191,7 +190,7 @@ However, for real data that is probably insufficient --- I recommend [this noteb
 
 ```{python}
 # | label: fig-hist
-# | fig-cap: Histogram of the signal-to-noise ratio across all units. Units with a SNR below the red dashed line are removed.
+# | fig-cap: "Histogram of the signal-to-noise ratio across all units. Units with a SNR below the red dashed line are removed."
 min_snr = 10
 for i, analyzer in enumerate(analyzers):
     analyzer.compute("noise_levels")  # required to compute SNR
@@ -347,7 +346,7 @@ Finally, we use `load_good_waveforms` to load the waveforms of all units that ar
 The `session_id` array tells us which unit belongs to which session, `session_switch` tells us at which points the array switches from one session to another, and `within_session` is a 2D matrix that encodes which units were recorded in the same session.
 ```{python}
 # | label: fig-within
-# | fig-cap: Indicator matrix that shows whether units belong to the same (purple) or different (yellow) sessions
+# | fig-cap: "Indicator matrix that shows whether units belong to the same (purple) or different (yellow) sessions."
 waveform, session_id, session_switch, within_session, good_units, param = (
     um.utils.load_good_waveforms(wave_paths, unit_label_paths, param)
 )
@@ -358,6 +357,9 @@ ax.set(xlabel="Unit ID", ylabel="Unit ID")
 
 With data loaded in UnitMatch's format, we can extract waveform parameters.
 The `extract_parameter` function takes as arguments the waveforms and channel positions, as well as a new dictionary `clus_info`, and returns a dictionary of `extracted_wave_properties`.
+::: {.callout-warning}
+`extract_parameters` calculates the spatial decay by fitting an exponential function. In some cases (probably due to noisy data) the algorithm does not converge after the default number of iterations and throws an error. Unfortunately, there is no way to change the number of iteration other than editing the source code. There is an [active GitHub issue](https://github.com/EnnyvanBeest/UnitMatch/issues/125) on this - let's hope it gets addressed soon.
+:::
 ```{python}
 clus_info = {
     "good_units": good_units,
@@ -377,7 +379,7 @@ Some clusters clearly contain more units, but that is to be expected since we on
 
 ```{python}
 # | label: fig-properties
-# | fig-cap: Spatial decay coefficient and site of maximum amplitude for each template waveform. Blue and orange dots show the waveforms from the first and second half of each recording respectively
+# | fig-cap: "Spatial decay coefficient and site of maximum amplitude for each template waveform. Blue and orange dots show the waveforms from the first and second half of each recording respectively."
 fig, ax = plt.subplots()
 for i in range(2):
     ax.scatter(
@@ -394,7 +396,7 @@ The `extract_metric_scores` returns a matrix of `total_score` values and an arra
 This threshold is determined automatically based on the similarity of the waveforms within each recording.
 ```{python}
 # | label: fig-T
-# | fig-cap: Total similarity score for all pairs of units. Pairs where the score exceeds the threshold are marked red.
+# | fig-cap: "Total similarity score for all pairs of units. Pairs where the score exceeds the threshold are marked red."
 total_score, candidate_pairs, scores_to_include, predictors = (
     um.overlord.extract_metric_scores(
         extracted_wave_properties, session_switch, within_session, param, niter=2
@@ -419,7 +421,7 @@ Then we calculate the likelihood distributions of all features for matches and n
 The `get_parameter_kernels` function returns a 3D array of shape (s, k, 2) where s is the score and k is the feature.
 ```{python}
 # | label: fig-distributions
-# | fig-cap: Likelihood distributions of the spatial decay score for matching and non-matching units.
+# | fig-cap: "Likelihood distributions of the spatial decay score for matching and non-matching units."
 labels = candidate_pairs.astype(int)
 cond = np.unique(labels)
 score_vector = param["score_vector"]
@@ -440,7 +442,7 @@ We can select a probability threshold for units to be considered a match --- her
 Ideally, there should be three matches for every unit because it should match within each recording and across the other two recordings.
 ```{python}
 # | label: fig-matches
-# | fig-cap: Unit matches identified by thresholding the posterior probability that a pair of units is a match given its feature distribution.
+# | fig-cap: "Unit matches identified by thresholding the posterior probability that a pair of units is a match given its feature distribution."
 probability = um.bayes_functions.apply_naive_bayes(
     parameter_kernels, priors, predictors, param, cond
 )
