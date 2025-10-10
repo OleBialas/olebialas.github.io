@@ -32,7 +32,7 @@
 <p>While searching for solutions to this problem, I came across UnitMatch - an algorithm that uses a naive Bayes classifier to match units based on their average spike waveforms (more on that later). The algorithm was published in <a href="https://www.nature.com/articles/s41592-024-02440-1">Nature Methods</a> and there is a <a href="https://github.com/EnnyvanBeest/UnitMatch?tab=readme-ov-file">Matlab and a Python toolbox</a> available. Unfortunately, I found that the project lacks documentation and existing tutorial notebooks contained errors or were incomplete (due to missing data).</p>
 <p>To test and verify the functionalities of UnitMatch, I created this notebook where I simulate multiple electrophysiological recordings with SpikeInterface and identify matching units across recordings. I hope prospective UnitMatch users will find it useful. Feel free to play around with the parameters of the simulation and UnitMatch to see how it affects the results. To follow along with the examples, you’ll have to install the following packages (I recommend using a new virtual environment).</p>
 <pre><code>pip install numpy matplotlib spikeinterface UnitMatchPy</code></pre>
-<div id="5101a69c" class="cell" data-execution_count="1">
+<div id="5da3c72b" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> pathlib <span class="im" style="color: #00769E;
@@ -104,7 +104,7 @@ font-style: inherit;">as</span> default_params</span></code></pre></div></div>
 <section id="simulating-data-with-spikeinterface" class="level1">
 <h1>Simulating Data with SpikeInterface</h1>
 <p>This section simulates multiple electrophysiological recordings and their corresponding spike sorting results. The basic idea is that we generate a template waveform for each unit and then simulate the recordings from these template waveforms. The waveform parameters will be slightly varied across recordings to simulate the variability expected in chronic recordings (e.g.&nbsp;due to movement of the electrodes). First, we need to define the parameters for the simulated data.</p>
-<div id="683ec373" class="cell" data-execution_count="2">
+<div id="ecf17fd4" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">seed <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -199,7 +199,7 @@ Figure&nbsp;1: Shank of the probe with recording channels (yellow) and locations
 </div>
 </div>
 <p>Next, we generate a dictionary that contains the parameters for the template waveform of every unit. SpikeInterface provides the dictionary <code>default_unit_params_range</code> that contains the default range of parameter values for simulating units (e.g.&nbsp;amplitude or spatial decay). For each unit, we’ll sample a value from that range. The result is the dictionary <code>unit_params</code> that stores arrays where each element is the parameter for one unit.</p>
-<div id="30a0cb97" class="cell" data-execution_count="4">
+<div id="82d3379d" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">rng <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.random.default_rng(seed)</span>
@@ -252,7 +252,7 @@ font-style: inherit;">=</span>n_units)</span>
 </div>
 </div>
 <p>For each recording, we’ll add a bit of random noise to these parameters to simulate the variability that is expected across recordings (feel free to play around with the <code>variability</code> parameter to see how it affects the matching results). The <code>varied_params</code> are passed to the <code>generate_templates</code> function and the generated waveforms are stored in a list of <code>templates</code>.</p>
-<div id="49e52ae2" class="cell" data-execution_count="5">
+<div id="e994a65c" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">variability <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
@@ -421,7 +421,7 @@ Figure&nbsp;2: Template waveforms for one unit across all recordings. Each line 
 </div>
 </div>
 <p>Finally, we use the <code>generate_ground_truth_recording</code> function to generate a list of <code>recordings</code> and <code>sortings</code> from the previously created <code>templates</code>.</p>
-<div id="c547307c" class="cell" data-execution_count="7">
+<div id="b8e170bc" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">recordings, sortings <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [], []</span>
@@ -465,7 +465,7 @@ font-style: inherit;">=</span>seed</span>
 <section id="preprocessing-and-curation" class="level2">
 <h2 class="anchored" data-anchor-id="preprocessing-and-curation">Preprocessing and Curation</h2>
 <p>Since UnitMatch uses average unit waveforms, we must ensure they’re clearly visible across multiple recording sites. To achieve this, we’ll preprocess the recordings and select units based on quality criteria. For the simulated data, I am only applying a bandpass filter, but real data may require additional steps such as correcting the small sampling delay across channels that some systems (e.g.&nbsp;Neuropixels) introduce or applying motion correction (note that this only corrects motion within, not across, recordings).</p>
-<div id="12523893" class="cell" data-execution_count="8">
+<div id="5ffd56bc" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -506,7 +506,7 @@ font-style: inherit;">=</span> recording</span>
 </div>
 </div>
 <p>Next, we calculate waveform templates from the recordings. To do this, we create an analyzer object by pairing each recording and sorting and compute <a href="https://spikeinterface.readthedocs.io/en/stable/modules/postprocessing.html#computing-extensions">“extensions”</a> that are added to the analyzer. These extensions partly depend on each other — for example, computing the <code>"templates"</code> extension requires the <code>"random_spikes"</code> extension to be computed. Important: UnitMatch expects the waveform to be symmetric around the spike, so when you use different values for <code>ms_before</code> and <code>ms_after</code>, you’ll have to set the respective parameter in UnitMatch.</p>
-<div id="1b83dcfb" class="cell" data-execution_count="9">
+<div id="043d30e4" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">analyzers <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> []</span>
@@ -552,17 +552,17 @@ font-style: inherit;">2</span>)</span>
 <span id="cb13-7">analyzers</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"fe6581edb00a405ab27c604c916c84ed","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"c1f7b8186a434637bbd92393d94c31fa","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"a79ebaa34e354b859ac78323a10befed","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"2f30cffd7f9e4184922853db7bd9f54d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"ceeec67572604a758727599324404d3d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"597d6abe4f4d4911ad4c5f1d312c76ac","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="9">
@@ -779,7 +779,7 @@ font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Keeping 8 out of 10 units</code></pre>
+<pre><code>Keeping 9 out of 10 units</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Keeping 8 out of 10 units</code></pre>
@@ -794,7 +794,7 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"148baa2af5c14e5db83abce39fe6b3b0","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"e2d0c6725c1d43448d41be673e6e8d05","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-hist-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -806,7 +806,7 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"4b6c4c8939eb42d0804c287962cea5ce","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"07726a55b6d14844ac91d287cc1fcb47","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-hist-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -818,7 +818,7 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"5a61e5a456f94239ae4ccc3ac7257a8f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"b9bdeada64204d8b9278b28f1ef9892d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-hist-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -861,7 +861,7 @@ Figure&nbsp;4
 <section id="preparing-the-data-for-unitmatch" class="level2">
 <h2 class="anchored" data-anchor-id="preparing-the-data-for-unitmatch">Preparing the Data for UnitMatch</h2>
 <p>Next, we convert SpikeInterface data to UnitMatch’s expected format. First, we create a directory <code>"UMInputData"</code> with a subdirectory for each session and a <code>"RawWaveforms"</code> subdirectory in each session’s directory.</p>
-<div id="712f7482" class="cell" data-execution_count="12">
+<div id="393e5a97" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">UM_input_dir <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> Path(<span class="st" style="color: #20794D;
@@ -917,25 +917,85 @@ font-style: inherit;">!</span>tree UMInputData</span></code></pre></div></div>
 
 ├── <span class="ansi-blue-fg ansi-bold">Session1</span>
 
-│&nbsp;&nbsp; └── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
+│&nbsp;&nbsp; ├── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit0_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit1_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit2_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit3_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit4_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit5_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit6_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; └── Unit7_RawSpikes.npy
+
+│&nbsp;&nbsp; ├── channel_positions.npy
+
+│&nbsp;&nbsp; └── cluster_group.tsv
 
 ├── <span class="ansi-blue-fg ansi-bold">Session2</span>
 
-│&nbsp;&nbsp; └── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
+│&nbsp;&nbsp; ├── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit0_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit1_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit2_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit3_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit4_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit5_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit6_RawSpikes.npy
+
+│&nbsp;&nbsp; │&nbsp;&nbsp; └── Unit7_RawSpikes.npy
+
+│&nbsp;&nbsp; ├── channel_positions.npy
+
+│&nbsp;&nbsp; └── cluster_group.tsv
 
 └── <span class="ansi-blue-fg ansi-bold">Session3</span>
 
-    └── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
+    ├── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
+
+    │&nbsp;&nbsp; ├── Unit0_RawSpikes.npy
+
+    │&nbsp;&nbsp; ├── Unit1_RawSpikes.npy
+
+    │&nbsp;&nbsp; ├── Unit2_RawSpikes.npy
+
+    │&nbsp;&nbsp; ├── Unit3_RawSpikes.npy
+
+    │&nbsp;&nbsp; ├── Unit4_RawSpikes.npy
+
+    │&nbsp;&nbsp; ├── Unit5_RawSpikes.npy
+
+    │&nbsp;&nbsp; ├── Unit6_RawSpikes.npy
+
+    │&nbsp;&nbsp; └── Unit7_RawSpikes.npy
+
+    ├── channel_positions.npy
+
+    └── cluster_group.tsv
 
 
 
-7 directories, 0 files
+7 directories, 30 files
 </pre>
 </div>
 </div>
 </div>
 <p>Next, we need to extract the channel locations from every recording and store them in the session directory as <code>"channel_positions.npy"</code>.</p>
-<div id="a99320f8" class="cell" data-execution_count="13">
+<div id="90acf68a" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -971,7 +1031,7 @@ background-color: null;
 font-style: inherit;">"channel_positions.npy"</span>, channel_locations)</span></code></pre></div></div>
 </div>
 <p>Next, we create a table for each recording storing the original cluster ID of each unit (as assigned by the spike sorter) and the “group” to which it belongs. For the simulated data, all units are labeled <code>"good"</code> but for actual recordings you may want to label some as <code>"mua"</code> (multi-unit activity). The table is stored in the session directory as <code>"cluster_group.tsv"</code>.</p>
-<div id="53b78c83" class="cell" data-execution_count="14">
+<div id="4da3feb0" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1063,7 +1123,7 @@ font-style: inherit;">"</span></span>
 </div>
 </div>
 <p>Now comes the critical part: each recording and sorting has to be divided into two parts. UnitMatch calibrates the matching threshold by comparing units between the first and second half of each recording. We’ll split every recording and sorting into two and append the pieces to lists. From this, we obtain the lists of lists <code>split_recordings</code> and <code>split_sortings</code> where each element is a list with the first and second half of a given sorting/recording.</p>
-<div id="ce927b66" class="cell" data-execution_count="15">
+<div id="944d1fbe" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1">split_recordings, split_sortings <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [], []</span>
@@ -1141,8 +1201,8 @@ font-style: inherit;"># 2nd half</span></span>
 <span id="cb25-15">    )</span>
 <span id="cb25-16">split_sortings</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
-<pre><code>[[GroundTruthSorting (FrameSliceSorting): 8 units - 1 segments - 25.0kHz,
-  GroundTruthSorting (FrameSliceSorting): 8 units - 1 segments - 25.0kHz],
+<pre><code>[[GroundTruthSorting (FrameSliceSorting): 9 units - 1 segments - 25.0kHz,
+  GroundTruthSorting (FrameSliceSorting): 9 units - 1 segments - 25.0kHz],
  [GroundTruthSorting (FrameSliceSorting): 8 units - 1 segments - 25.0kHz,
   GroundTruthSorting (FrameSliceSorting): 8 units - 1 segments - 25.0kHz],
  [GroundTruthSorting (FrameSliceSorting): 8 units - 1 segments - 25.0kHz,
@@ -1150,7 +1210,7 @@ font-style: inherit;"># 2nd half</span></span>
 </div>
 </div>
 <p>For the half recordings and sortings, we’ll have to create new analyzers. The analyzers are stored in another list of lists called <code>split_analyzers</code>.</p>
-<div id="4f02d25a" class="cell" data-execution_count="16">
+<div id="d6c407ce" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1">split_analyzers <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> []</span>
@@ -1187,9 +1247,9 @@ font-style: inherit;">False</span>),</span>
 <span id="cb27-8">    )</span>
 <span id="cb27-9">split_analyzers</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="16">
-<pre><code>[[SortingAnalyzer: 12 channels - 8 units - 1 segments - memory - has recording
+<pre><code>[[SortingAnalyzer: 12 channels - 9 units - 1 segments - memory - has recording
   Loaded 0 extensions,
-  SortingAnalyzer: 12 channels - 8 units - 1 segments - memory - has recording
+  SortingAnalyzer: 12 channels - 9 units - 1 segments - memory - has recording
   Loaded 0 extensions],
  [SortingAnalyzer: 12 channels - 8 units - 1 segments - memory - has recording
   Loaded 0 extensions,
@@ -1202,7 +1262,7 @@ font-style: inherit;">False</span>),</span>
 </div>
 </div>
 <p>We extract template waveforms from each half recording using the <code>split_analyzers</code>. We’ll compute the <code>"templates"</code> extension on every analyzer, stack the waveforms of the first and second half into a single array and append it to a list called <code>all_waveforms</code>. Each element in <code>all_waveforms</code> is a 4-dimensional numpy array where the dimensions represent units, samples, channels, and halves.</p>
-<div id="7d152944" class="cell" data-execution_count="17">
+<div id="20edcd8c" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1">all_waveforms <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> []</span>
@@ -1308,40 +1368,40 @@ background-color: null;
 font-style: inherit;">0</span>].shape</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"c70e7325c387471ab48b1ef2d3e67c7c","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"d3a08c7e053f4fd1b19d813a952d84ee","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"b66f6582dab84bbebe9e7a86b67c0f23","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"c32b8a6610e24ea1bc4c81acfeecba1f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"0c3479a131c94e1bad841c63962d4216","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"b7c9780411784443b91d6bad9dedd073","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"d6599753af3a443f93b72a631e89c0c6","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"79bc7f6beb004c2fa3064640db8274fb","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"34710001580c486dbd1450e102663516","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"81aa48a39e2540169133c5252cfcff4f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"90795dbcaad64fb8a4cc19066ea199b0","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"aff58f32ea144069b37bf117cfd58d05","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>(8, 100, 12, 2)</code></pre>
+<pre><code>(9, 100, 12, 2)</code></pre>
 </div>
 </div>
 <p>Finally, we can save the waveforms to the session folders. For this, we’ll use the <code>save_avg_waveforms</code> function from UnitMatchPy. This function takes as arguments the average waveforms for a given session, the path to the session directory, as well as the previously created <code>cluster_group</code> table (so we’ll have to load that again). The <code>save_avg_waveforms</code> function will store one numpy array for every unit in the <code>RawWaveforms</code> subdirectory within the session directory.</p>
-<div id="f682ef07" class="cell" data-execution_count="18">
+<div id="65ecadd7" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1405,7 +1465,7 @@ background-color: null;
 font-style: inherit;">/</span>Session1</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <div class="ansi-escaped-output">
-<pre>Saved 9 units to RawWaveforms directory, saving all units
+<pre>Saved 10 units to RawWaveforms directory, saving all units
 
 Saved 9 units to RawWaveforms directory, saving all units
 
@@ -1429,7 +1489,9 @@ Saved 9 units to RawWaveforms directory, saving all units
 
 │&nbsp;&nbsp; ├── Unit6_RawSpikes.npy
 
-│&nbsp;&nbsp; └── Unit7_RawSpikes.npy
+│&nbsp;&nbsp; ├── Unit7_RawSpikes.npy
+
+│&nbsp;&nbsp; └── Unit8_RawSpikes.npy
 
 ├── channel_positions.npy
 
@@ -1437,7 +1499,7 @@ Saved 9 units to RawWaveforms directory, saving all units
 
 
 
-2 directories, 10 files
+2 directories, 11 files
 </pre>
 </div>
 </div>
@@ -1447,7 +1509,7 @@ Saved 9 units to RawWaveforms directory, saving all units
 <section id="extracting-waveform-properties-and-matching-units" class="level1">
 <h1>Extracting Waveform Properties and Matching Units</h1>
 <p>With the data stored, we’re ready to run UnitMatch. The first step is to load the default parameters. The <code>param</code> dictionary contains the parameters for the UnitMatch algorithm and will be read and modified by multiple functions in the pipeline.</p>
-<div id="28fb014e" class="cell" data-execution_count="19">
+<div id="b3ce69a5" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1">param <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> default_params.get_default_param()</span>
@@ -1457,7 +1519,7 @@ font-style: inherit;">=</span> default_params.get_default_param()</span>
 </div>
 </div>
 <p>Next, we create a list with the paths to our session folders and use the <code>paths_from_KS</code> function to get the paths to the waveforms, unit labels, and channel positions we previously stored (KS here stands for KiloSort — the spike sorter whose format the data is expected to conform to). Then, we’ll call <code>get_probe_geometry</code> which loads the probe information from the channel positions file and adds it to <code>param</code>.</p>
-<div id="2eb794e1" class="cell" data-execution_count="20">
+<div id="e519bdaa" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1">KS_dirs <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [<span class="bu" style="color: null;
@@ -1536,8 +1598,8 @@ Figure&nbsp;5: Indicator matrix that shows whether units belong to the same (pur
 </div>
 </div>
 </div>
-<p>With data loaded in UnitMatch’s format, we can extract waveform parameters. The <code>extract_parameter</code> function takes as arguments the waveforms and channel positions, as well as a new dictionary <code>clus_info</code>, and returns a dictionary of <code>extracted_wave_properties</code>.</p>
-<div id="7bfca3a9" class="cell" data-execution_count="22">
+<p>With data loaded in UnitMatch’s format, we can extract waveform parameters. The <code>extract_parameter</code> function takes as arguments the waveforms and channel positions, as well as a new dictionary <code>clus_info</code>, and returns a dictionary of <code>extracted_wave_properties</code>. ::: {.callout-warning} <code>extract_parameters</code> calculates the spatial decay by fitting an exponential function. In some cases (probably due to noisy data) the algorithm does not converge after the default number of iterations and throws an error. Unfortunately, there is no way to change the number of iteration other than editing the source code. There is an <a href="https://github.com/EnnyvanBeest/UnitMatch/issues/125">active GitHub issue</a> on this - let’s hope it gets addressed soon. :::</p>
+<div id="fe68ee26" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1">clus_info <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> {</span>
@@ -1681,7 +1743,7 @@ Figure&nbsp;7: Total similarity score for all pairs of units. Pairs where the sc
 </div>
 </div>
 <p>We now compute the prior probability that a random pair of units is a match, based on the number of putative matches that exceed the similarity score threshold.</p>
-<div id="c253681c" class="cell" data-execution_count="25">
+<div id="f447eb4b" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1">p_nomatch <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -1737,8 +1799,8 @@ background-color: null;
 font-style: inherit;">"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Prior probabilities: 
-P(no match): 0.8715277777777778 
-P(match): 0.1284722222222222</code></pre>
+P(no match): 0.8784 
+P(match): 0.12160000000000004</code></pre>
 </div>
 </div>
 <p>Then we calculate the likelihood distributions of all features for matches and non-matches, i.e.&nbsp;P(feature | match) and P(feature | non-match). The <code>get_parameter_kernels</code> function returns a 3D array of shape (s, k, 2) where s is the score and k is the feature.</p>
@@ -1868,7 +1930,7 @@ Figure&nbsp;9: Unit matches identified by thresholding the posterior probability
 <h2 class="anchored" data-anchor-id="combining-matches-across-recordings">Combining Matches Across Recordings</h2>
 <p>While the probability matrix shows pairwise matching probabilities, our goal is tracking units across recordings. This is what the <code>assign_unique_id</code> function does — it groups units identified as matches across recordings while applying three different strategies: - Liberal: Groups units if they match with ANY unit in the proposed group. - Default: Groups units if they match with EVERY unit in adjacent sessions. - Conservative: Groups units only if they match with EVERY other unit in the proposed group.</p>
 <p>In our case, the default and conservative strategies are almost identical since there are only 3 sessions, but for a larger number of sessions there should be a notable difference. We’ll proceed with the liberal strategy, although the original paper recommends using the conservative strategy.</p>
-<div id="c8b0980e" class="cell" data-execution_count="28">
+<div id="df8197b0" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1">matches <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.argwhere(output_threshold <span class="op" style="color: #5E5E5E;
@@ -1893,12 +1955,12 @@ Number of Intermediate Matches: 21
 Number of Conservative Matches: 21</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="28">
-<pre><code>array([ 0,  1,  2,  3,  4,  5,  5,  7,  0,  1,  2,  3, 12,  5,  5,  7,  0,
-        1,  2,  3, 20,  5,  5,  7])</code></pre>
+<pre><code>array([ 0,  1,  2,  3,  4,  5,  6,  6,  8,  0,  2,  3,  4, 13,  6,  6,  8,
+        0,  2,  3,  4, 21,  6,  6,  8])</code></pre>
 </div>
 </div>
 <p>Now, we combine all sortings using the <code>aggregate_units</code> function. Then, we identify matching units by identifying the locations of duplicates in the <code>unique_id</code> array. Finally, we use <code>MergeUnitsSorting</code> to merge and rename the units that have been matched. That’s it — now we have a sorting object that combines units across all sessions. The combined recording has 10 units despite only 8 surviving initial quality control. This shows that we were not able to find all existing matches (you can also see this from the missing squares in Figure&nbsp;9).</p>
-<div id="b1394d4e" class="cell" data-execution_count="29">
+<div id="3deacada" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1">sorting <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> aggregate_units(sortings)</span>
@@ -1970,12 +2032,12 @@ font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>After merging there are 9 units: 
-['4' '12' '20' '0' '1' '2' '3' '5' '7']</code></pre>
+<pre><code>After merging there are 10 units: 
+['1' '5' '13' '21' '0' '2' '3' '4' '6' '8']</code></pre>
 </div>
 </div>
 <p>UnitMatch also provides a <code>save_to_output</code> function that stores all of the estimated properties, distributions and probabilities. The cell below unpacks the <code>extracted_wave_properties</code> dictionary and saves the results to a folder called <code>"out"</code>.</p>
-<div id="69fcb433" class="cell" data-execution_count="30">
+<div id="0883b8de" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1">save_dir <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
