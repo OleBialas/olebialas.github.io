@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ole Bialas">
+<meta name="description" content="Preprocessing is an important and controversial topic in EEG research. Here, I discuss it’s necessity and present a minimal preprocessing pipeline that deals with the most common sources of noise while avoiding to distort the data. I demonstrate each step using publicly available data.">
+
+<title>EEG preprocessing I: detrending, denoising and referencing – OBi</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../..//assets/images/logo.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-a14e345711173c227b21482e2eb4cc70.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-6d7e0e055978adcb0dc3bbe98a6d8351.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-4f021eebc12680de50c38538fdef8dd2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-63099649f4cf177fd2d928d0d74c349f.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../site_libs/quarto-contrib/iconify-3.0.0/iconify-icon.min.js"></script>
+<script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-ZG4WYHJ56T"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+ 
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied'
+  });
+gtag('config', 'G-ZG4WYHJ56T', { 'anonymize_ip': true});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<meta property="og:title" content="EEG preprocessing I: detrending, denoising and referencing – OBi">
+<meta property="og:description" content="Preprocessing is an important and controversial topic in EEG research. Here, I discuss it’s necessity and present a minimal preprocessing pipeline that deals with the most common sources of noise while avoiding to distort the data. I demonstrate each step using publicly available data.">
+<meta property="og:image" content="https://olebialas.github.io/posts/2024-01-16-eeg_preprocessing_1/featured.png">
+<meta property="og:site_name" content="OBi">
+<meta property="og:image:height" content="598">
+<meta property="og:image:width" content="1251">
+<meta property="og:image:alt" content="`matplotlib` plot of an event-related potential
+">
+<meta name="twitter:title" content="EEG preprocessing I: detrending, denoising and referencing – OBi">
+<meta name="twitter:description" content="Preprocessing is an important and controversial topic in EEG research. Here, I discuss it’s necessity and present a minimal preprocessing pipeline that deals with the most common sources of noise while avoiding to distort the data. I demonstrate each step using publicly available data.">
+<meta name="twitter:image" content="https://olebialas.github.io/posts/2024-01-16-eeg_preprocessing_1/featured.png">
+<meta name="twitter:image-height" content="598">
+<meta name="twitter:image-width" content="1251">
+<meta name="twitter:image:alt" content="`matplotlib` plot of an event-related potential
+">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-dark"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = true;
+    const darkModeDefault = authorPrefersDark;
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../assets/images/logo.png" alt="OLE BIALAS logo" class="navbar-logo light-content">
+    <img src="../../assets/images/logo.png" alt="OLE BIALAS logo" class="navbar-logo dark-content">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Ole Bialas</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../talks.html"> 
+<span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publications.html"> 
+<span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://bsky.app/profile/mickael.canouil.fr"> 
+<span class="menu-text"><iconify-icon role="img" inline="" icon="fa6-brands:bluesky" aria-label="BlueSky" title="BlueSky"></iconify-icon></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://www.linkedin.com/in/mickaelcanouil"> 
+<span class="menu-text"><iconify-icon role="img" inline="" icon="fa6-brands:linkedin" aria-label="LinkedIn" title="LinkedIn"></iconify-icon></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://fosstodon.org/@MickaelCanouil" rel="me"> 
+<span class="menu-text"><iconify-icon role="img" inline="" icon="fa6-brands:mastodon" aria-label="Mastodon" title="Mastodon"></iconify-icon></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://x.com/MickaelCanouil"> 
+<span class="menu-text"><iconify-icon role="img" inline="" icon="fa6-brands:x-twitter" aria-label="X" title="X"></iconify-icon></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="https://github.com/mcanouil"> 
+<span class="menu-text"><iconify-icon role="img" inline="" icon="octicon:mark-github-16" aria-label="GitHub" title="GitHub"></iconify-icon></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">EEG preprocessing I: detrending, denoising and referencing</h1>
+                  <div>
+        <div class="description">
+          Preprocessing is an important and controversial topic in EEG research. Here, I discuss it’s necessity and present a minimal preprocessing pipeline that deals with the most common sources of noise while avoiding to distort the data. I demonstrate each step using publicly available data.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Ole Bialas </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">Tuesday, the 16th of January, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#to-preprocess-or-not-to-preprocess" id="toc-to-preprocess-or-not-to-preprocess" class="nav-link active" data-scroll-target="#to-preprocess-or-not-to-preprocess">To preprocess or not to preprocess?</a></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#channel-drifts-and-offsets" id="toc-channel-drifts-and-offsets" class="nav-link" data-scroll-target="#channel-drifts-and-offsets">Channel drifts and offsets</a></li>
+  <li><a href="#removing-power-line-noise" id="toc-removing-power-line-noise" class="nav-link" data-scroll-target="#removing-power-line-noise">Removing power line noise</a></li>
+  <li><a href="#re-referencing-to-a-robust-average" id="toc-re-referencing-to-a-robust-average" class="nav-link" data-scroll-target="#re-referencing-to-a-robust-average">Re-referencing to a robust average</a></li>
+  <li><a href="#epoching-the-data" id="toc-epoching-the-data" class="nav-link" data-scroll-target="#epoching-the-data">Epoching the data</a></li>
+  <li><a href="#what-next" id="toc-what-next" class="nav-link" data-scroll-target="#what-next">What next?</a></li>
+  <li><a href="#footnotes" id="toc-footnotes" class="nav-link" data-scroll-target="#footnotes">Footnotes</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/OleBialas/olebialas.github.io/edit/main/posts/2024-01-16-eeg_preprocessing_1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OleBialas/olebialas.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="index.ipynb" download="index.ipynb"><i class="bi bi-journal-code"></i>Jupyter</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+
+<p><strong>E</strong>lectro<strong>e</strong>ncephalo<strong>g</strong>raphy (EEG) measures brain activity via electrodes on the scalp. Unfortunately, those electrodes also picks up other things like <strong>muscle activity</strong> and electromagnetic <strong>interference</strong> that are <strong>orders of magnitude</strong> larger than neural responses. There is a vast literature and <strong>no consensus</strong> on how to deal with this problem.</p>
+<section id="to-preprocess-or-not-to-preprocess" class="level1">
+<h1>To preprocess or not to preprocess?</h1>
+<p>A recent paper which got some attention argued that sophisticated preprocessing pipelines are <strong>altering data for the worse</strong> and that <em>“EEG is better left alone”</em> <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. While I generally agree that preprocessing should be kept <strong>as minimal as possible</strong>, I think there are some issues with this generalized statement.</p>
+<p>The paper considers a preprocessing method to be effective if it increases the number of <strong>channels significantly differing</strong> between conditions. However, without a known <strong>ground truth</strong>, we can’t distinguish true effects from spurious findings that may result from <strong>distorting</strong> the data. Thus, increased significance does not necessarily prove a method’s superiority!</p>
+<p>Also, the paper does not consider data of <strong>varying quality</strong>. Even if certain methods won’t improve recordings of high quality, they may still be beneficial if the data is more noisy, for example if it was recorded in a hospital <strong>without sufficient electric shielding</strong>.</p>
+<p>For these reasons, I decided to split this guide into two parts. Part I describes a <strong>minimal set</strong> of preprocessing steps that are necessary for most EEG analyses. The procedures I suggest are <strong>robust</strong> to noise and minimize the <strong>risk of distorting</strong> the data. Part II will introduce additional procedures that may help with more <strong>noisy data</strong>.</p>
+</section>
+<section id="prerequisites" class="level1">
+<h1>Prerequisites</h1>
+<p>To follow along with the examles, you’ll have to install several packages. I recommend creating a new environment and using pip to install:</p>
+<pre><code>pip install mne meegkit pyprep</code></pre>
+<p>We’ll use <strong>sample data</strong> provided by MNE-Python which will be downloaded automatically when you call the <code>data_path</code> function for the first time. Then, we load the raw data, find <strong>events</strong> in the data (we’ll need those later) and remove everything but the EEG channels <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Finally, we <strong>downsample</strong> the data so processing will be quicker.</p>
+<div id="6b628f92" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.io <span class="im">import</span> read_raw_fif</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.datasets.sample <span class="im">import</span> data_path</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne <span class="im">import</span> find_events</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> read_raw_fif(data_path() <span class="op">/</span> <span class="st">"MEG/sample/sample_audvis_raw.fif"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>events <span class="op">=</span> find_events(raw)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>raw.pick(picks<span class="op">=</span><span class="st">"eeg"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>raw, events <span class="op">=</span> raw.resample(<span class="dv">150</span>, events<span class="op">=</span>events)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Opening raw data file /home/olebi/mne_data/MNE-sample-data/MEG/sample/sample_audvis_raw.fif...
+    Read a total of 3 projection items:
+        PCA-v1 (1 x 102)  idle
+        PCA-v2 (1 x 102)  idle
+        PCA-v3 (1 x 102)  idle
+    Range : 25800 ... 192599 =     42.956 ...   320.670 secs
+Ready.
+Finding events on: STI 014
+320 events found on stim channel STI 014
+Event IDs: [ 1  2  3  4  5 32]</code></pre>
+</div>
+</div>
+</section>
+<section id="channel-drifts-and-offsets" class="level1">
+<h1>Channel drifts and offsets</h1>
+<p>Channels differ in their <strong>conductivity</strong> with the scalp and this conductivity may also change across time, for example if the subject is sweating. This results in different and <strong>drifting baselines</strong> that can overshadow neural activity. Let’s look at two exemplar channels:</p>
+<div id="3c470511" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.plot(raw.times, raw.get_data()[[<span class="dv">3</span>, <span class="dv">50</span>], :].T <span class="op">*</span> <span class="fl">1e6</span>, linewidth<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time [s]"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Voltage [muV]"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-3-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Two EEG channels before detrending. Note how the time series are similar but differ in their offset."><img src="index_files/figure-html/cell-3-output-1.png" width="604" height="429" alt="Two EEG channels before detrending. Note how the time series are similar but differ in their offset." class="figure-img"></a></p>
+<figcaption>Two EEG channels before detrending. Note how the time series are similar but differ in their offset.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>A common way to deal with fluctuating baselines is to apply a <strong>high pass filter</strong>, suppressing all fluctuations at frequencies below some threshold (often 0.5 or 1 Hz). While this effectively removes channel offsets and drifts, it may also <strong>smear</strong> the signal or even introduce <strong>spurious</strong> features <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>.</p>
+<p>An alternative is to detrend the data by fitting a polynomial and subtracting the fit. Here, I use an algorithm for <strong>robust detrending</strong> that ignores outliers <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. I apply detrending twice - first using a line and then a <strong>higher-order</strong> polynomial to remove faster baseline fluctuations.</p>
+<div id="36111440" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> meegkit.detrend <span class="im">import</span> detrend</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> raw.get_data().T  <span class="co"># transpose so the data is organized time-by-channels</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>X, _, _ <span class="op">=</span> detrend(X, order<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>X, _, _ <span class="op">=</span> detrend(X, order<span class="op">=</span><span class="dv">6</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>raw._data <span class="op">=</span> X.T  <span class="co"># overwrite raw data</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.plot(raw.times, X[:, [<span class="dv">3</span>, <span class="dv">50</span>]], linewidth<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time [s]"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Voltage [muV]"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier."><img src="index_files/figure-html/cell-4-output-1.png" width="625" height="429" alt="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier." class="figure-img"></a></p>
+<figcaption>The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="removing-power-line-noise" class="level1">
+<h1>Removing power line noise</h1>
+<p>Another ubiquitous problem is the presence of power line noise. This takes the form of an oscillation at the frequency of the <strong>alternating current</strong> signal which is <strong>60 Hz</strong> in the US and <strong>50 Hz</strong> in the rest of the world. To see this, we can plot the power spectral density (PSD), which shows the signals <strong>power content</strong> across frequencies.</p>
+<div id="e03a3201" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>psd <span class="op">=</span> raw.compute_psd()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>psd.plot(axes<span class="op">=</span>ax, average<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Effective window size : 13.653 (s)
+Plotting power spectral density (dB=True).</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-5-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Power spectral density (PSD) of the EEG recording before filtering. Note the peak at 60 Hz marked by the dashed line."><img src="index_files/figure-html/cell-5-output-2.png" width="600" height="449" alt="Power spectral density (PSD) of the EEG recording before filtering. Note the peak at 60 Hz marked by the dashed line." class="figure-img"></a></p>
+<figcaption>Power spectral density (PSD) of the EEG recording before filtering. Note the peak at 60 Hz marked by the dashed line.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Even though this recording is very clean, you can make out a little spike in the PSD at 60 Hz. The most common solution to power line noise is to apply a <strong>low pass or notch filter</strong> that removes all activity within the contaminated frequency band. However, to sharply separate noise and signal frequencies, the filter must have a steep transfer function which results in a long impulse response that introduces <strong>ringing artifacts</strong> into the signal.</p>
+<p>Alternatively, one may use a <strong>spatial filter</strong> but this only works if noise and neural signal are <strong>linearly separable</strong>. Here, I use an algorithm that <strong>combines</strong> the advantages of both approaches to remove power line noise while minimizing distortions and loss of data <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
+<div id="a5dae1d2" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> meegkit.dss <span class="im">import</span> dss_line</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X, noise <span class="op">=</span> dss_line(X, fline<span class="op">=</span><span class="dv">60</span>, sfreq<span class="op">=</span>raw.info[<span class="st">'sfreq'</span>], nremove<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>raw._data <span class="op">=</span> X.T</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Power of components removed by DSS: 0.00</code></pre>
+</div>
+</div>
+<p>To verify that the algorithm worked as expected we visualize the power content of the removed noise. The PSD should be <strong>mostly flat</strong>, except for a spike at the power line frequency.</p>
+<div id="8a7c07f9" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.io <span class="im">import</span> RawArray</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> RawArray(noise.T, raw.info)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>psd_noise <span class="op">=</span> noise.compute_psd()</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>psd_noise.plot(axes<span class="op">=</span>ax, average<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Creating RawArray with float64 data, n_channels=60, n_times=41657
+    Range : 0 ... 41656 =      0.000 ...   277.707 secs
+Ready.
+Effective window size : 13.653 (s)
+Plotting power spectral density (dB=True).</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-7-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Power spectral density (PSD) of the noise separated by the spatial filter. Note the peak at 60 Hz is more prominent compared to the PSD of the full signal."><img src="index_files/figure-html/cell-7-output-2.png" width="600" height="449" alt="Power spectral density (PSD) of the noise separated by the spatial filter. Note the peak at 60 Hz is more prominent compared to the PSD of the full signal." class="figure-img"></a></p>
+<figcaption>Power spectral density (PSD) of the noise separated by the spatial filter. Note the peak at 60 Hz is more prominent compared to the PSD of the full signal.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="re-referencing-to-a-robust-average" class="level1">
+<h1>Re-referencing to a robust average</h1>
+<p>Voltage is the difference in electric potential between two points. Thus, the voltage measured at each EEG channel is relative to some <strong>common reference</strong> point. Because manufacturers use different recording references it is usually a good idea to re-reference the signals.</p>
+<p>This is done by simply <strong>subtracting</strong> a channel or combination of channels. While this changes the absolute magnitudes, it does not alter the <strong>relations</strong> between channels. Imagine the peaks and valleys in voltage as a landscape and re-referencing as <strong>changing your standpoint</strong>. Depending on where you stand, any <strong>single point</strong> may be above or below you, but the landscape stays the same!</p>
+<p>A common reference choice is to use the <strong>average</strong> of all channels. However, single “bad” channels, containing large artifacts may skew the average and <strong>leak</strong> those artifacts into all other channels. To prevent this from happening, we can <strong>identify and interpolate</strong> those bad channels before computing the average.</p>
+<p>I use the random sample consensus (RANSAC) method <a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> to identify bad channels. RANSAC <strong>predicts EEG</strong> channels from their neighbors and marks them as bad if their correlation with that prediction fails to meet some <strong>threshold</strong>.</p>
+<div id="76093b15" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyprep.ransac <span class="im">import</span> find_bad_by_ransac</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>bads, _ <span class="op">=</span> find_bad_by_ransac(</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>     data <span class="op">=</span> raw.get_data(),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>     sample_rate <span class="op">=</span> raw.info[<span class="st">'sfreq'</span>],</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>     complete_chn_labs <span class="op">=</span> np.asarray(raw.info[<span class="st">'ch_names'</span>]),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>     chn_pos <span class="op">=</span> np.stack([ch[<span class="st">'loc'</span>][<span class="dv">0</span>:<span class="dv">3</span>] <span class="cf">for</span> ch <span class="kw">in</span> raw.info[<span class="st">'chs'</span>]]),</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>     exclude <span class="op">=</span> [],</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>     corr_thresh <span class="op">=</span> <span class="fl">0.9</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>     )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Executing RANSAC
+This may take a while, so be patient...</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"f946be2a914a45bd980337c1a921ac21","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+RANSAC done!</code></pre>
+</div>
+</div>
+<p>Because we don’t actually want to remove anything yet (data rejection will be addressed in the next post), we <strong>copy the data</strong> before interpolating the bad channels. Then, we compute the average reference on this cleaned copy and apply it to the original data as a <strong>projection</strong>.</p>
+<div id="63f6ba82" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>raw_clean <span class="op">=</span> raw.copy()</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>raw_clean.info[<span class="st">'bads'</span>] <span class="op">=</span> bads</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>raw_clean.interpolate_bads()</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>raw_clean.set_eeg_reference(<span class="st">'average'</span>, projection<span class="op">=</span><span class="va">True</span>)  <span class="co">#compute the reference</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>raw.add_proj(raw_clean.info[<span class="st">'projs'</span>][<span class="dv">0</span>])</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">del</span> raw_clean  <span class="co"># delete the copy</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>raw.apply_proj()  <span class="co"># apply the reference</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Setting channel interpolation method to {'eeg': 'spline'}.
+Interpolating bad channels.
+    Automatic origin fit: head of radius 91.2 mm
+Computing interpolation matrix from 51 sensor positions
+Interpolating 9 sensors
+EEG channel type selected for re-referencing
+Adding average EEG reference projection.
+1 projection items deactivated
+Average reference projection was added, but has not been applied yet. Use the apply_proj method to apply it.
+1 projection items deactivated
+Created an SSP operator (subspace dimension = 1)
+1 projection items activated
+SSP projectors applied...</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<script type="text/javascript">
+    // must be `var` (not `const`) because this can get embedded multiple times on a page
+var toggleVisibility = (className) => {
+
+    const elements = document.querySelectorAll(`.${className}`);
+
+    elements.forEach(element => {
+        if (element.classList.contains("mne-repr-section-header")) {
+            return  // Don't collapse the section header row
+        }
+        element.classList.toggle("mne-repr-collapsed");
+    });
+
+    // trigger caret to rotate
+    var sel = `.mne-repr-section-header.${className} > th.mne-repr-section-toggle > button`;
+    const button = document.querySelector(sel);
+    button.classList.toggle("collapsed");
+
+    // adjust tooltip
+    sel = `tr.mne-repr-section-header.${className}`;
+    const secHeadRow = document.querySelector(sel);
+    secHeadRow.classList.toggle("collapsed");
+    secHeadRow.title = secHeadRow.title === "Hide section" ? "Show section" : "Hide section";
+}
+</script>
+
+<style type="text/css">
+    /*
+Styles in this section apply both to the sphinx-built website docs and to notebooks
+rendered in an IDE or in Jupyter. In our web docs, styles here are complemented by
+doc/_static/styles.css and other CSS files (e.g. from the sphinx theme, sphinx-gallery,
+or bootstrap). In IDEs/Jupyter, those style files are unavailable, so only the rules in
+this file apply (plus whatever default styling the IDE applies).
+*/
+.mne-repr-table {
+    display: inline;  /* prevent using full container width */
+}
+.mne-repr-table tr.mne-repr-section-header > th {
+    padding-top: 1rem;
+    text-align: left;
+    vertical-align: middle;
+}
+.mne-repr-section-toggle > button {
+    all: unset;
+    display: block;
+    height: 1rem;
+    width: 1rem;
+}
+.mne-repr-section-toggle > button > svg {
+    height: 60%;
+}
+
+/* transition (rotation) effects on the collapser button */
+.mne-repr-section-toggle > button.collapsed > svg {
+    transition: 0.1s ease-out;
+    transform: rotate(-90deg);
+}
+.mne-repr-section-toggle > button:not(.collapsed) > svg {
+    transition: 0.1s ease-out;
+    transform: rotate(0deg);
+}
+
+/* hide collapsed table rows */
+.mne-repr-collapsed {
+    display: none;
+}
+
+
+@layer {
+    /*
+    Selectors in a `@layer` will always be lower-precedence than selectors outside the
+    layer. So even though e.g. `div.output_html` is present in the sphinx-rendered
+    website docs, the styles here won't take effect there as long as some other rule
+    somewhere in the page's CSS targets the same element.
+
+    In IDEs or Jupyter notebooks, though, the CSS files from the sphinx theme,
+    sphinx-gallery, and bootstrap are unavailable, so these styles will apply.
+
+    Notes:
+
+    - the selector `.accordion-body` is for MNE Reports
+    - the selector `.output_html` is for VSCode's notebook interface
+    - the selector `.jp-RenderedHTML` is for Jupyter notebook
+    - variables starting with `--theme-` are VSCode-specific.
+    - variables starting with `--jp-` are Jupyter styles, *some of which* are also
+      available in VSCode. Here we try the `--theme-` variable first, then fall back to
+      the `--jp-` ones.
+    */
+    .mne-repr-table {
+        --mne-toggle-color: var(--theme-foreground, var(--jp-ui-font-color1));
+        --mne-button-bg-color: var(--theme-button-background, var(--jp-info-color0, var(--jp-content-link-color)));
+        --mne-button-fg-color: var(--theme-button-foreground, var(--jp-ui-inverse-font-color0, var(--jp-editor-background)));
+        --mne-button-hover-bg-color: var(--theme-button-hover-background, var(--jp-info-color1));
+        --mne-button-radius: var(--jp-border-radius, 0.25rem);
+    }
+    /* chevron position/alignment; in VSCode it looks ok without adjusting */
+    .accordion-body .mne-repr-section-toggle > button,
+    .jp-RenderedHTML .mne-repr-section-toggle > button {
+        padding: 0 0 45% 25% !important;
+    }
+    /* chevron color; MNE Report doesn't have light/dark mode */
+    div.output_html .mne-repr-section-toggle > button > svg > path,
+    .jp-RenderedHTML .mne-repr-section-toggle > button > svg > path {
+        fill: var(--mne-toggle-color);
+    }
+    .accordion-body .mne-ch-names-btn,
+    div.output_html .mne-ch-names-btn,
+    .jp-RenderedHTML .mne-ch-names-btn {
+        -webkit-border-radius: var(--mne-button-radius);
+        -moz-border-radius: var(--mne-button-radius);
+        border-radius: var(--mne-button-radius);
+        border: none;
+        background-image: none;
+        background-color: var(--mne-button-bg-color);
+        color: var(--mne-button-fg-color);
+        font-size: inherit;
+        min-width: 1.5rem;
+        padding: 0.25rem;
+        text-align: center;
+        text-decoration: none;
+    }
+    .accordion-body .mne-ch-names-btn:hover,
+    div.output_html .mne.ch-names-btn:hover,
+    .jp-RenderedHTML .mne-ch-names-btn:hover {
+        background-color: var(--mne-button-hover-bg-color);
+        text-decoration: underline;
+    }
+    .accordion-body .mne-ch-names-btn:focus-visible,
+    div.output_html .mne-ch-names-btn:focus-visible,
+    .jp-RenderedHTML .mne-ch-names-btn:focus-visible {
+        outline: 0.1875rem solid var(--mne-button-bg-color) !important;
+        outline-offset: 0.1875rem !important;
+    }
+}
+</style>
+
+
+
+
+<table class="table mne-repr-table caption-top table-sm table-striped small">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<tbody>
+<tr class="mne-repr-section-header general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd" title="Hide section" onclick="toggleVisibility('general-c82ac63b-1d68-4561-8f35-ad716f25c083')">
+<th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
+<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
+<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
+</svg>
+</button></th>
+<th colspan="2" data-quarto-table-cell-role="th"><strong>General</strong></th>
+</tr>
+<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<td class="mne-repr-section-toggle"></td>
+<td>Filename(s)</td>
+<td>sample_audvis_raw.fif</td>
+</tr>
+<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd">
+<td class="mne-repr-section-toggle"></td>
+<td>MNE object type</td>
+<td>Raw</td>
+</tr>
+<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<td class="mne-repr-section-toggle"></td>
+<td>Measurement date</td>
+<td>2002-12-03 at 19:01:10 UTC</td>
+</tr>
+<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd">
+<td class="mne-repr-section-toggle"></td>
+<td>Participant</td>
+<td>Unknown</td>
+</tr>
+<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<td class="mne-repr-section-toggle"></td>
+<td>Experimenter</td>
+<td>MEG</td>
+</tr>
+<tr class="mne-repr-section-header acquisition-15116e97-e841-45c8-b98d-0452de39d627 odd" title="Hide section" onclick="toggleVisibility('acquisition-15116e97-e841-45c8-b98d-0452de39d627')">
+<th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
+<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
+<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
+</svg>
+</button></th>
+<th colspan="2" data-quarto-table-cell-role="th"><strong>Acquisition</strong></th>
+</tr>
+<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 even">
+<td class="mne-repr-section-toggle"></td>
+<td>Duration</td>
+<td>00:04:38 (HH:MM:SS)</td>
+</tr>
+<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 odd">
+<td class="mne-repr-section-toggle"></td>
+<td>Sampling frequency</td>
+<td>150.00 Hz</td>
+</tr>
+<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 even">
+<td class="mne-repr-section-toggle"></td>
+<td>Time points</td>
+<td>41,657</td>
+</tr>
+<tr class="mne-repr-section-header channels-9eee3439-0775-4fe8-9f91-d02f08fd238f odd" title="Hide section" onclick="toggleVisibility('channels-9eee3439-0775-4fe8-9f91-d02f08fd238f')">
+<th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
+<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
+<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
+</svg>
+</button></th>
+<th colspan="2" data-quarto-table-cell-role="th"><strong>Channels</strong></th>
+</tr>
+<tr class="repr-element channels-9eee3439-0775-4fe8-9f91-d02f08fd238f even">
+<td class="mne-repr-section-toggle"></td>
+<td>EEG</td>
+<td><button class="mne-ch-names-btn sd-sphinx-override sd-btn sd-btn-info sd-text-wrap sd-shadow-sm" onclick="alert('Good EEG:\n\nEEG&nbsp;001, EEG&nbsp;002, EEG&nbsp;003, EEG&nbsp;004, EEG&nbsp;005, EEG&nbsp;006, EEG&nbsp;007, EEG&nbsp;008, EEG&nbsp;009, EEG&nbsp;010, EEG&nbsp;011, EEG&nbsp;012, EEG&nbsp;013, EEG&nbsp;014, EEG&nbsp;015, EEG&nbsp;016, EEG&nbsp;017, EEG&nbsp;018, EEG&nbsp;019, EEG&nbsp;020, EEG&nbsp;021, EEG&nbsp;022, EEG&nbsp;023, EEG&nbsp;024, EEG&nbsp;025, EEG&nbsp;026, EEG&nbsp;027, EEG&nbsp;028, EEG&nbsp;029, EEG&nbsp;030, EEG&nbsp;031, EEG&nbsp;032, EEG&nbsp;033, EEG&nbsp;034, EEG&nbsp;035, EEG&nbsp;036, EEG&nbsp;037, EEG&nbsp;038, EEG&nbsp;039, EEG&nbsp;040, EEG&nbsp;041, EEG&nbsp;042, EEG&nbsp;043, EEG&nbsp;044, EEG&nbsp;045, EEG&nbsp;046, EEG&nbsp;047, EEG&nbsp;048, EEG&nbsp;049, EEG&nbsp;050, EEG&nbsp;051, EEG&nbsp;052, EEG&nbsp;054, EEG&nbsp;055, EEG&nbsp;056, EEG&nbsp;057, EEG&nbsp;058, EEG&nbsp;059, EEG&nbsp;060')" title="(Click to open in popup)
+
+EEG&nbsp;001, EEG&nbsp;002, EEG&nbsp;003, EEG&nbsp;004, EEG&nbsp;005, EEG&nbsp;006, EEG&nbsp;007, EEG&nbsp;008, EEG&nbsp;009, EEG&nbsp;010, EEG&nbsp;011, EEG&nbsp;012, EEG&nbsp;013, EEG&nbsp;014, EEG&nbsp;015, EEG&nbsp;016, EEG&nbsp;017, EEG&nbsp;018, EEG&nbsp;019, EEG&nbsp;020, EEG&nbsp;021, EEG&nbsp;022, EEG&nbsp;023, EEG&nbsp;024, EEG&nbsp;025, EEG&nbsp;026, EEG&nbsp;027, EEG&nbsp;028, EEG&nbsp;029, EEG&nbsp;030, EEG&nbsp;031, EEG&nbsp;032, EEG&nbsp;033, EEG&nbsp;034, EEG&nbsp;035, EEG&nbsp;036, EEG&nbsp;037, EEG&nbsp;038, EEG&nbsp;039, EEG&nbsp;040, EEG&nbsp;041, EEG&nbsp;042, EEG&nbsp;043, EEG&nbsp;044, EEG&nbsp;045, EEG&nbsp;046, EEG&nbsp;047, EEG&nbsp;048, EEG&nbsp;049, EEG&nbsp;050, EEG&nbsp;051, EEG&nbsp;052, EEG&nbsp;054, EEG&nbsp;055, EEG&nbsp;056, EEG&nbsp;057, EEG&nbsp;058, EEG&nbsp;059, EEG&nbsp;060">
+59
+</button>
+and
+<button class="mne-ch-names-btn sd-sphinx-override sd-btn sd-btn-info sd-text-wrap sd-shadow-sm" onclick="alert('Bad EEG:\n\nEEG&nbsp;053')" title="(Click to open in popup)
+
+EEG&nbsp;053">
+1 bad
+</button></td>
+</tr>
+<tr class="repr-element channels-9eee3439-0775-4fe8-9f91-d02f08fd238f odd">
+<td class="mne-repr-section-toggle"></td>
+<td>Head &amp; sensor digitization</td>
+<td>146 points</td>
+</tr>
+<tr class="mne-repr-section-header filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 even" title="Hide section" onclick="toggleVisibility('filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50')">
+<th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
+<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
+<!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
+</svg>
+</button></th>
+<th colspan="2" data-quarto-table-cell-role="th"><strong>Filters</strong></th>
+</tr>
+<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 odd">
+<td class="mne-repr-section-toggle"></td>
+<td>Highpass</td>
+<td>0.10 Hz</td>
+</tr>
+<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 even">
+<td class="mne-repr-section-toggle"></td>
+<td>Lowpass</td>
+<td>75.00 Hz</td>
+</tr>
+<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 odd">
+<td class="mne-repr-section-toggle"></td>
+<td>Projections</td>
+<td>Average EEG reference (on)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="epoching-the-data" class="level1">
+<h1>Epoching the data</h1>
+<p>Now we can epoch the data which means rearranging it into <strong>short segments</strong> centered around the presented stimuli. The segment duration is defined by the parameters <code>tmin</code> and <code>tmax</code> that are passed to MNE’s <code>Epochs</code> class. Per default, the signal before 0, the stimulus onset, is used as a <strong>baseline</strong> which means that it’s average is subtracted from the rest of the epoch.</p>
+<p>I think this is <strong>not a good default</strong> choice because activity in the baseline period (e.g.&nbsp;due to anticipation of the stimulus) can be projected into the rest of the epoch and <strong>create spurious features</strong> that look like actual brain responses. In most cases, baselining is <strong>not necessary</strong> if the data were detrended or high pass filtered.</p>
+<p>After epoching,we can average all segments to obtain the <strong>event related potential</strong> (ERP), which is the part of the brain response, evoked by the stimuli (since spontaneous activity will average out). We can visualize the ERP to make sure that our preprocessing was effective and we have <strong>clean data</strong>.</p>
+<div id="961ce55a" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.epochs <span class="im">import</span> Epochs</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>event_id <span class="op">=</span> {<span class="st">"auditory/left"</span>: <span class="dv">1</span>, <span class="st">"auditory/right"</span>: <span class="dv">2</span>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> Epochs(raw, events, event_id, tmin<span class="op">=-</span><span class="fl">0.1</span>, tmax<span class="op">=</span><span class="fl">0.4</span>, baseline<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>epochs.average().plot()<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Not setting metadata
+145 matching events found
+No baseline correction applied
+Created an SSP operator (subspace dimension = 1)
+1 projection items activated</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="index_files/figure-html/cell-10-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Event related potential (ERP) obtained by averaging the responses to all auditory stimuli. Each line represents one EEG channel."><img src="index_files/figure-html/cell-10-output-2.png" width="626" height="299" alt="Event related potential (ERP) obtained by averaging the responses to all auditory stimuli. Each line represents one EEG channel." class="figure-img"></a></p>
+<figcaption>Event related potential (ERP) obtained by averaging the responses to all auditory stimuli. Each line represents one EEG channel.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="what-next" class="level1">
+<h1>What next?</h1>
+<p>We removed offsets, drifts and power-line noise, re-referenced the data to a robust average and epoched them. Now the epochs may be <strong>ready for statistical analysis</strong> or it they may require more cleaning. In the next post on preprocessing I will explain how to <strong>remove eye blink artifacts</strong> and identify and <strong>remove data segments</strong> that are beyond saving.</p>
+</section>
+<section id="footnotes" class="level1">
+<h1>Footnotes</h1>
+
+
+</section>
+
+
+<a onclick="window.scrollTo(0, 0); return false;" role="button" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a><div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Delorme, A. (2023). EEG is better left alone. Scientific reports, 13(1), 2372.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>The preprocessing steps described here apply to MEG as well - I just omitted it for the sake of simplicity.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>For a detailed investigation of this issue see de Cheveigné, A., &amp; Nelken, I. (2019). Filters: when, why, and how (not) to use them. Neuron, 102(2), 280-293.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>The detrending algorithm is described in: de Cheveigné, A., &amp; Arzounian, D. (2018). Robust detrending, rereferencing, outlier detection, and inpainting for multichannel data. NeuroImage, 172, 903-912.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>The denoising algorithm is described in: de Cheveigné, A. (2020). ZapLine: A simple and effective method to remove power line artifacts. NeuroImage, 207, 116356.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>RANSAC is part of another EEG preprocessing pipeline described in: Bigdely-Shamlo, N., Mullen, T., Kothe, C., Su, K. M., &amp; Robbins, K. A. (2015). The PREP pipeline: standardized preprocessing for large-scale EEG analysis. Frontiers in neuroinformatics, 9, 16.<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{"state":{"2129c8b6e0a0437ba7ce8f403467fd4c":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"3cf54bf3bfd34cb8b691bf5982f7542a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_2129c8b6e0a0437ba7ce8f403467fd4c","placeholder":"​","style":"IPY_MODEL_a75952e7a6c74b4c81cde8c601bee45a","tabbable":null,"tooltip":null,"value":"100%"}},"4fb0b544a9f544ecbe5c857426ce83e4":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"853f0d1d7b9e4384aa278c30dc23c9fb":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_4fb0b544a9f544ecbe5c857426ce83e4","placeholder":"​","style":"IPY_MODEL_87fff34028814a66bf236f17e63a5e93","tabbable":null,"tooltip":null,"value":"  : 55/55 [00:03&lt;00:00,   18.02it/s]"}},"87fff34028814a66bf236f17e63a5e93":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"8cd70c731c9143549e3937883f82fe63":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"ProgressView","bar_style":"success","description":"","description_allow_html":false,"layout":"IPY_MODEL_cb309ef8cc2c40a49c0fe8b1ed71ade3","max":55,"min":0,"orientation":"horizontal","style":"IPY_MODEL_af2d149899b544c49108b0de3b58a12b","tabbable":null,"tooltip":null,"value":55}},"a75952e7a6c74b4c81cde8c601bee45a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"af2d149899b544c49108b0de3b58a12b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"c8fadc893d7947de9fb364045c2c6d8b":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"cb309ef8cc2c40a49c0fe8b1ed71ade3":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"f946be2a914a45bd980337c1a921ac21":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_3cf54bf3bfd34cb8b691bf5982f7542a","IPY_MODEL_8cd70c731c9143549e3937883f82fe63","IPY_MODEL_853f0d1d7b9e4384aa278c30dc23c9fb"],"layout":"IPY_MODEL_c8fadc893d7947de9fb364045c2c6d8b","tabbable":null,"tooltip":null}}},"version_major":2,"version_minor":0}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/olebialas\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="dark_dimmed">
+<input type="hidden" id="giscus-alt-theme" value="light">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      if (authorPrefersDark) {
+          [baseTheme, altTheme] = [altTheme, baseTheme];
+      }
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "olebialas/olebialas.github.io";
+    script.dataset.repoId = "R_kgDOPmnqiw";
+    script.dataset.category = "General";
+    script.dataset.categoryId = "DIC_kwDOPmnqi84Cu4qd";
+    script.dataset.mapping = "title";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "top";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Powered by <a href="https://quarto.org"><iconify-icon role="img" inline="" icon="simple-icons:quarto" aria-label="Quarto Logo" title="Quarto Logo"></iconify-icon> Quarto</a> based on a website from <a href="https://github.com/mcanouil/mickael.canouil.fr">Mickaël Canouil</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/OleBialas/olebialas.github.io/edit/main/posts/2024-01-16-eeg_preprocessing_1/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/OleBialas/olebialas.github.io/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div>
+    <div class="nav-footer-right">
+<p>License: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0">CC BY NC SA 4.0</a>.</p>
+</div>
+  </div>
+</footer>
+<script type="text/javascript">
+const dateElements = document.querySelectorAll("p.date, p.date-modified, div.listing-date, div.listing-file-modified");
+dateElements.forEach((el) => {
+  el.innerHTML = el.innerHTML.replace(
+    /(\d+)(st|nd|rd|th)/g,
+    "$1<sup style='font-size:0.5em;font-style:italic;'>$2</sup>"
+  );
+});
+</script>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", function() {
+  const currentYear = new Date().getFullYear();
+  document.getElementById('current-year').textContent = currentYear;
+});
+</script>
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    const categories = document.querySelectorAll(".quarto-listing-category .category");
+    const container = document.querySelector(".quarto-listing-category");
+
+    const categoryMap = {};
+
+    categories.forEach(category => {
+      const dataCategory = category.getAttribute("data-category");
+      const decodedCategory = atob(dataCategory);
+      const firstLetter = decodedCategory.charAt(0).toUpperCase();
+      if (!categoryMap[firstLetter]) {
+        categoryMap[firstLetter] = [];
+      }
+      categoryMap[firstLetter].push(category);
+    });
+
+    Object.keys(categoryMap).sort().forEach(letter => {
+      const groupDiv = document.createElement("div");
+      groupDiv.classList.add("category-group");
+      const button = document.createElement("div");
+      button.classList.add("category", "collapsed");
+      button.setAttribute("data-bs-toggle", "collapse");
+      button.setAttribute("data-bs-target", `#collapse-category-${letter}`);
+      button.setAttribute("aria-expanded", "false");
+      button.setAttribute("aria-label", `Toggle ${letter} categories`);
+      button.setAttribute("aria-controls", `collapse-category-${letter}`);
+      button.setAttribute("role", "button");
+      button.innerHTML = `<div style="font-style: italic;">${letter}</div>`;
+      const collapseDiv = document.createElement("div");
+      collapseDiv.classList.add("collapse");
+      collapseDiv.id = `collapse-category-${letter}`;
+
+      if (letter.length === 0) {
+        categoryMap[letter].forEach(category => {
+          container.appendChild(category);
+        });
+      } else {
+        categoryMap[letter].forEach(category => {
+          collapseDiv.appendChild(category);
+        });
+        groupDiv.appendChild(button);
+        groupDiv.appendChild(collapseDiv);
+        container.appendChild(groupDiv);
+      }
+    });
+  });
+</script>
+<!-- Custom JavaScript for clipboard.js to properly access code inside modals -->
+<script id="quarto-extensions-listing-clipboardjs" type="text/javascript">
+// General clipboard.js setup for modals
+window.document.addEventListener('DOMContentLoaded', (event) => {
+  /**
+  * Initialise clipboard functionality for any modal
+  */
+  const initialiseModalClipboard = () => {
+    // Find all modals in the document
+    const modals = document.querySelectorAll('.modal');
+    
+    modals.forEach((modal) => {
+      const modalId = modal.getAttribute('id');
+      if (!modalId) return;
+      
+      // Find code copy buttons within this modal
+      const copyButtons = modal.querySelectorAll('.code-copy-button');
+      if (copyButtons.length === 0) return;
+      
+      // Add data-in-quarto-modal attribute to buttons in this modal
+      copyButtons.forEach((button) => {
+        button.setAttribute('data-in-quarto-modal', modalId);
+      });
+      
+      console.log(`Initialising clipboard for modal: ${modalId}`);
+      
+      // Create clipboard instance for this modal
+      const clipboardModal = new window.ClipboardJS(
+        `.code-copy-button[data-in-quarto-modal="${modalId}"]`, 
+        {
+          text: (trigger) => {
+            // Get text from the code element, excluding annotations
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            const annotations = codeEl.querySelectorAll('[class*="code-annotation-"]');
+            annotations.forEach((annotation) => annotation.remove());
+            return codeEl.innerText;
+          },
+          container: modal // Set the modal as container for clipboard operations
+        }
+      );
+      
+      // Success handler with visual feedback
+      clipboardModal.on('success', (e) => {
+        const button = e.trigger;
+        button.blur();
+        
+        // Visual feedback
+        button.classList.add('code-copy-button-checked');
+        const currentTitle = button.getAttribute('title');
+        button.setAttribute('title', 'Copied!');
+        
+        // Bootstrap tooltip feedback
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute('data-bs-toggle', 'tooltip');
+          button.setAttribute('data-bs-placement', 'left');
+          button.setAttribute('data-bs-title', 'Copied!');
+          tooltip = new bootstrap.Tooltip(button, { 
+            trigger: 'manual', 
+            customClass: 'code-copy-button-tooltip',
+            offset: [0, -8]
+          });
+          tooltip.show();    
+        }
+        
+        // Reset after 1 second
+        setTimeout(() => {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute('data-bs-title');
+            button.removeAttribute('data-bs-toggle');
+            button.removeAttribute('data-bs-placement');
+          }
+          button.setAttribute('title', currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        
+        e.clearSelection();
+        console.log(`Copied from modal ${modalId}:`, e.text);
+      });
+      
+      // Error handler
+      clipboardModal.on('error', (e) => {
+        console.error(`Clipboard error in modal ${modalId}:`, e);
+        const button = e.trigger;
+        button.setAttribute('title', 'Press Ctrl+C to copy');
+        
+        // Visual feedback for error
+        button.style.backgroundColor = '#f8d7da';
+        setTimeout(() => {
+          button.style.backgroundColor = '';
+          button.setAttribute('title', 'Copy to Clipboard');
+        }, 2000);
+      });
+    });
+  };
+  
+  // Initialise clipboard for modals
+  initialiseModalClipboard();
+  
+  // Also initialise when modals are shown (in case of dynamic content)
+  document.addEventListener('shown.bs.modal', () => {
+    initialiseModalClipboard();
+  });
+});
+</script>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

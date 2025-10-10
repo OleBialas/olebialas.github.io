@@ -1,0 +1,24 @@
+[
+  {
+    "listing": "/talks.html",
+    "items": [
+      "/talks/2025-08-20-datalad/index.html",
+      "/talks/2025-01-18-deutsches-museum/index.html",
+      "/talks/2024-04-08-bids/index.html",
+      "/talks/2023-09-19-cnsp/index.html"
+    ]
+  },
+  {
+    "listing": "/blog.html",
+    "items": [
+      "/posts/2024-10-02-unitmatch/index.html",
+      "/posts/2025-09-03-psth_with_pandas/index.html",
+      "/posts/2024-02-23-eeg_preprocessing_2/index.html",
+      "/posts/2024-01-16-eeg_preprocessing_1/index.html"
+    ]
+  },
+  {
+    "listing": "/publications.html",
+    "items": []
+  }
+]
