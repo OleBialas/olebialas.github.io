@@ -470,7 +470,7 @@ window.Quarto = {
 <p>First we have to install the required modules using <code>pip</code>:</p>
 <pre><code>pip install numpy matplotlib seaborn pandas pyarrow</code></pre>
 <p>Then, we can import the installed modules and download the data. We need two data frames — one containing the timing of the presented stimuli and another one containing the recorded spikes. Conveniently, all <code>read_</code> functions in Pandas accept URLs and can gracefully handle the downloading for us.</p>
-<div id="33e5054f" class="cell" data-execution_count="1">
+<div id="5f2f29c3" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -630,32 +630,32 @@ Table&nbsp;3: Spike times relative to stimulus onset
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">365421</th>
-<td>0.000291</td>
-<td>PM</td>
-<td>951021314</td>
+<th data-quarto-table-cell-role="th">270426</th>
+<td>0.693947</td>
+<td>RL</td>
+<td>951039413</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">208777</th>
-<td>0.372630</td>
-<td>PM</td>
-<td>951021469</td>
+<th data-quarto-table-cell-role="th">347013</th>
+<td>-0.472633</td>
+<td>LM</td>
+<td>951030804</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">108261</th>
-<td>0.081441</td>
-<td>AM</td>
-<td>951017432</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">402572</th>
-<td>-0.250033</td>
+<th data-quarto-table-cell-role="th">109297</th>
+<td>0.920462</td>
 <td>AL</td>
-<td>951035799</td>
+<td>951035499</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">201771</th>
+<td>-0.488358</td>
+<td>LM</td>
+<td>951031458</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">156489</th>
-<td>0.783751</td>
+<th data-quarto-table-cell-role="th">135671</th>
+<td>0.369972</td>
 <td>AL</td>
 <td>951035530</td>
 </tr>
@@ -704,39 +704,39 @@ Table&nbsp;4: Peri-stimulus time histogram
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">32133</th>
-<td>951027638</td>
-<td>V1</td>
-<td>0.415</td>
-<td>0</td>
+<th data-quarto-table-cell-role="th">5087</th>
+<td>951016626</td>
+<td>AM</td>
+<td>-0.095</td>
+<td>4</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">44260</th>
-<td>951035018</td>
+<th data-quarto-table-cell-role="th">48136</th>
+<td>951035393</td>
 <td>AL</td>
-<td>-0.455</td>
-<td>0</td>
+<td>-0.425</td>
+<td>3</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">17535</th>
-<td>951021725</td>
-<td>PM</td>
-<td>0.785</td>
-<td>2</td>
+<th data-quarto-table-cell-role="th">51176</th>
+<td>951035619</td>
+<td>AL</td>
+<td>-0.425</td>
+<td>3</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">1466</th>
-<td>951015854</td>
+<th data-quarto-table-cell-role="th">3032</th>
+<td>951016257</td>
 <td>AM</td>
-<td>0.265</td>
-<td>1</td>
+<td>-0.485</td>
+<td>0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">4910</th>
-<td>951016603</td>
-<td>AM</td>
-<td>0.455</td>
-<td>0</td>
+<th data-quarto-table-cell-role="th">49921</th>
+<td>951035523</td>
+<td>AL</td>
+<td>0.655</td>
+<td>11</td>
 </tr>
 </tbody>
 </table>
@@ -817,49 +817,49 @@ Table&nbsp;5: Baseline-corrected spike counts
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">11666</th>
-<td>951020899</td>
-<td>PM</td>
-<td>-0.285</td>
-<td>9</td>
-<td>8.62</td>
-<td>0.38</td>
+<th data-quarto-table-cell-role="th">43092</th>
+<td>951032519</td>
+<td>LM</td>
+<td>0.255</td>
+<td>1</td>
+<td>0.66</td>
+<td>0.34</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">11462</th>
-<td>951018301</td>
+<th data-quarto-table-cell-role="th">9386</th>
+<td>951017481</td>
 <td>AM</td>
-<td>0.885</td>
+<td>0.985</td>
 <td>0</td>
-<td>0.00</td>
-<td>0.00</td>
+<td>0.14</td>
+<td>-0.14</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">44134</th>
-<td>951035003</td>
-<td>AL</td>
-<td>-0.345</td>
-<td>14</td>
-<td>13.62</td>
-<td>0.38</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">644</th>
-<td>951015731</td>
-<td>AM</td>
-<td>-0.075</td>
-<td>0</td>
-<td>0.00</td>
-<td>0.00</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">27814</th>
-<td>951026880</td>
+<th data-quarto-table-cell-role="th">22466</th>
+<td>951026176</td>
 <td>V1</td>
-<td>-0.415</td>
-<td>11</td>
-<td>13.88</td>
-<td>-2.88</td>
+<td>0.785</td>
+<td>1</td>
+<td>1.62</td>
+<td>-0.62</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">38479</th>
+<td>951031253</td>
+<td>LM</td>
+<td>0.025</td>
+<td>12</td>
+<td>8.76</td>
+<td>3.24</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">23925</th>
+<td>951026481</td>
+<td>V1</td>
+<td>0.135</td>
+<td>0</td>
+<td>0.92</td>
+<td>-0.92</td>
 </tr>
 </tbody>
 </table>

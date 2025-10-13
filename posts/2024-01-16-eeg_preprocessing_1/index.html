@@ -449,7 +449,7 @@ gtag('config', 'G-ZG4WYHJ56T', { 'anonymize_ip': true});
 <p>To follow along with the examles, you’ll have to install several packages. I recommend creating a new environment and using pip to install:</p>
 <pre><code>pip install mne meegkit pyprep</code></pre>
 <p>We’ll use <strong>sample data</strong> provided by MNE-Python which will be downloaded automatically when you call the <code>data_path</code> function for the first time. Then, we load the raw data, find <strong>events</strong> in the data (we’ll need those later) and remove everything but the EEG channels <a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Finally, we <strong>downsample</strong> the data so processing will be quicker.</p>
-<div id="6b628f92" class="cell" data-execution_count="1">
+<div id="01332969" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.io <span class="im">import</span> read_raw_fif</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.datasets.sample <span class="im">import</span> data_path</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne <span class="im">import</span> find_events</span>
@@ -475,7 +475,7 @@ Event IDs: [ 1  2  3  4  5 32]</code></pre>
 <section id="channel-drifts-and-offsets" class="level1">
 <h1>Channel drifts and offsets</h1>
 <p>Channels differ in their <strong>conductivity</strong> with the scalp and this conductivity may also change across time, for example if the subject is sweating. This results in different and <strong>drifting baselines</strong> that can overshadow neural activity. Let’s look at two exemplar channels:</p>
-<div id="3c470511" class="cell" data-execution_count="2">
+<div id="d53ea3b2" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>plt.plot(raw.times, raw.get_data()[[<span class="dv">3</span>, <span class="dv">50</span>], :].T <span class="op">*</span> <span class="fl">1e6</span>, linewidth<span class="op">=</span><span class="fl">0.4</span>)</span>
@@ -492,7 +492,7 @@ Event IDs: [ 1  2  3  4  5 32]</code></pre>
 </div>
 <p>A common way to deal with fluctuating baselines is to apply a <strong>high pass filter</strong>, suppressing all fluctuations at frequencies below some threshold (often 0.5 or 1 Hz). While this effectively removes channel offsets and drifts, it may also <strong>smear</strong> the signal or even introduce <strong>spurious</strong> features <a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>.</p>
 <p>An alternative is to detrend the data by fitting a polynomial and subtracting the fit. Here, I use an algorithm for <strong>robust detrending</strong> that ignores outliers <a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a>. I apply detrending twice - first using a line and then a <strong>higher-order</strong> polynomial to remove faster baseline fluctuations.</p>
-<div id="36111440" class="cell" data-execution_count="3">
+<div id="f3462870" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> meegkit.detrend <span class="im">import</span> detrend</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> raw.get_data().T  <span class="co"># transpose so the data is organized time-by-channels</span></span>
@@ -505,7 +505,7 @@ Event IDs: [ 1  2  3  4  5 32]</code></pre>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier."><img src="index_files/figure-html/cell-4-output-1.png" width="625" height="429" alt="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier." class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier."><img src="index_files/figure-html/cell-4-output-1.png" width="626" height="429" alt="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier." class="figure-img"></a></p>
 <figcaption>The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier.</figcaption>
 </figure>
 </div>
@@ -515,7 +515,7 @@ Event IDs: [ 1  2  3  4  5 32]</code></pre>
 <section id="removing-power-line-noise" class="level1">
 <h1>Removing power line noise</h1>
 <p>Another ubiquitous problem is the presence of power line noise. This takes the form of an oscillation at the frequency of the <strong>alternating current</strong> signal which is <strong>60 Hz</strong> in the US and <strong>50 Hz</strong> in the rest of the world. To see this, we can plot the power spectral density (PSD), which shows the signals <strong>power content</strong> across frequencies.</p>
-<div id="e03a3201" class="cell" data-execution_count="4">
+<div id="7bb1c5fd" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>psd <span class="op">=</span> raw.compute_psd()</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>psd.plot(axes<span class="op">=</span>ax, average<span class="op">=</span><span class="va">True</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -534,7 +534,7 @@ Plotting power spectral density (dB=True).</code></pre>
 </div>
 <p>Even though this recording is very clean, you can make out a little spike in the PSD at 60 Hz. The most common solution to power line noise is to apply a <strong>low pass or notch filter</strong> that removes all activity within the contaminated frequency band. However, to sharply separate noise and signal frequencies, the filter must have a steep transfer function which results in a long impulse response that introduces <strong>ringing artifacts</strong> into the signal.</p>
 <p>Alternatively, one may use a <strong>spatial filter</strong> but this only works if noise and neural signal are <strong>linearly separable</strong>. Here, I use an algorithm that <strong>combines</strong> the advantages of both approaches to remove power line noise while minimizing distortions and loss of data <a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a>.</p>
-<div id="a5dae1d2" class="cell" data-execution_count="5">
+<div id="e4b17dd4" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> meegkit.dss <span class="im">import</span> dss_line</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X, noise <span class="op">=</span> dss_line(X, fline<span class="op">=</span><span class="dv">60</span>, sfreq<span class="op">=</span>raw.info[<span class="st">'sfreq'</span>], nremove<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>raw._data <span class="op">=</span> X.T</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -543,7 +543,7 @@ Plotting power spectral density (dB=True).</code></pre>
 </div>
 </div>
 <p>To verify that the algorithm worked as expected we visualize the power content of the removed noise. The PSD should be <strong>mostly flat</strong>, except for a spike at the power line frequency.</p>
-<div id="8a7c07f9" class="cell" data-execution_count="6">
+<div id="9b23eba9" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.io <span class="im">import</span> RawArray</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> RawArray(noise.T, raw.info)</span>
@@ -573,7 +573,7 @@ Plotting power spectral density (dB=True).</code></pre>
 <p>This is done by simply <strong>subtracting</strong> a channel or combination of channels. While this changes the absolute magnitudes, it does not alter the <strong>relations</strong> between channels. Imagine the peaks and valleys in voltage as a landscape and re-referencing as <strong>changing your standpoint</strong>. Depending on where you stand, any <strong>single point</strong> may be above or below you, but the landscape stays the same!</p>
 <p>A common reference choice is to use the <strong>average</strong> of all channels. However, single “bad” channels, containing large artifacts may skew the average and <strong>leak</strong> those artifacts into all other channels. To prevent this from happening, we can <strong>identify and interpolate</strong> those bad channels before computing the average.</p>
 <p>I use the random sample consensus (RANSAC) method <a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a> to identify bad channels. RANSAC <strong>predicts EEG</strong> channels from their neighbors and marks them as bad if their correlation with that prediction fails to meet some <strong>threshold</strong>.</p>
-<div id="76093b15" class="cell" data-execution_count="7">
+<div id="7abff3d8" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyprep.ransac <span class="im">import</span> find_bad_by_ransac</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -591,7 +591,7 @@ This may take a while, so be patient...</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"f946be2a914a45bd980337c1a921ac21","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"44ffed75879c4c359f479016200671c0","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -600,7 +600,7 @@ RANSAC done!</code></pre>
 </div>
 </div>
 <p>Because we don’t actually want to remove anything yet (data rejection will be addressed in the next post), we <strong>copy the data</strong> before interpolating the bad channels. Then, we compute the average reference on this cleaned copy and apply it to the original data as a <strong>projection</strong>.</p>
-<div id="63f6ba82" class="cell" data-execution_count="8">
+<div id="ac9feb4c" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>raw_clean <span class="op">=</span> raw.copy()</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>raw_clean.info[<span class="st">'bads'</span>] <span class="op">=</span> bads</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>raw_clean.interpolate_bads()</span>
@@ -612,8 +612,8 @@ RANSAC done!</code></pre>
 <pre><code>Setting channel interpolation method to {'eeg': 'spline'}.
 Interpolating bad channels.
     Automatic origin fit: head of radius 91.2 mm
-Computing interpolation matrix from 51 sensor positions
-Interpolating 9 sensors
+Computing interpolation matrix from 47 sensor positions
+Interpolating 13 sensors
 EEG channel type selected for re-referencing
 Adding average EEG reference projection.
 1 projection items deactivated
@@ -770,7 +770,7 @@ this file apply (plus whatever default styling the IDE applies).
 <col style="width: 33%">
 </colgroup>
 <tbody>
-<tr class="mne-repr-section-header general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd" title="Hide section" onclick="toggleVisibility('general-c82ac63b-1d68-4561-8f35-ad716f25c083')">
+<tr class="mne-repr-section-header general-04cd53d8-e8ad-4c17-bf93-120e5962575d odd" title="Hide section" onclick="toggleVisibility('general-04cd53d8-e8ad-4c17-bf93-120e5962575d')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -778,32 +778,32 @@ this file apply (plus whatever default styling the IDE applies).
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>General</strong></th>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d even">
 <td class="mne-repr-section-toggle"></td>
 <td>Filename(s)</td>
 <td>sample_audvis_raw.fif</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d odd">
 <td class="mne-repr-section-toggle"></td>
 <td>MNE object type</td>
 <td>Raw</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d even">
 <td class="mne-repr-section-toggle"></td>
 <td>Measurement date</td>
 <td>2002-12-03 at 19:01:10 UTC</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Participant</td>
 <td>Unknown</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d even">
 <td class="mne-repr-section-toggle"></td>
 <td>Experimenter</td>
 <td>MEG</td>
 </tr>
-<tr class="mne-repr-section-header acquisition-15116e97-e841-45c8-b98d-0452de39d627 odd" title="Hide section" onclick="toggleVisibility('acquisition-15116e97-e841-45c8-b98d-0452de39d627')">
+<tr class="mne-repr-section-header acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 odd" title="Hide section" onclick="toggleVisibility('acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -811,22 +811,22 @@ this file apply (plus whatever default styling the IDE applies).
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>Acquisition</strong></th>
 </tr>
-<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 even">
+<tr class="repr-element acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 even">
 <td class="mne-repr-section-toggle"></td>
 <td>Duration</td>
 <td>00:04:38 (HH:MM:SS)</td>
 </tr>
-<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 odd">
+<tr class="repr-element acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Sampling frequency</td>
 <td>150.00 Hz</td>
 </tr>
-<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 even">
+<tr class="repr-element acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 even">
 <td class="mne-repr-section-toggle"></td>
 <td>Time points</td>
 <td>41,657</td>
 </tr>
-<tr class="mne-repr-section-header channels-9eee3439-0775-4fe8-9f91-d02f08fd238f odd" title="Hide section" onclick="toggleVisibility('channels-9eee3439-0775-4fe8-9f91-d02f08fd238f')">
+<tr class="mne-repr-section-header channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844 odd" title="Hide section" onclick="toggleVisibility('channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -834,7 +834,7 @@ this file apply (plus whatever default styling the IDE applies).
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>Channels</strong></th>
 </tr>
-<tr class="repr-element channels-9eee3439-0775-4fe8-9f91-d02f08fd238f even">
+<tr class="repr-element channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844 even">
 <td class="mne-repr-section-toggle"></td>
 <td>EEG</td>
 <td><button class="mne-ch-names-btn sd-sphinx-override sd-btn sd-btn-info sd-text-wrap sd-shadow-sm" onclick="alert('Good EEG:\n\nEEG&nbsp;001, EEG&nbsp;002, EEG&nbsp;003, EEG&nbsp;004, EEG&nbsp;005, EEG&nbsp;006, EEG&nbsp;007, EEG&nbsp;008, EEG&nbsp;009, EEG&nbsp;010, EEG&nbsp;011, EEG&nbsp;012, EEG&nbsp;013, EEG&nbsp;014, EEG&nbsp;015, EEG&nbsp;016, EEG&nbsp;017, EEG&nbsp;018, EEG&nbsp;019, EEG&nbsp;020, EEG&nbsp;021, EEG&nbsp;022, EEG&nbsp;023, EEG&nbsp;024, EEG&nbsp;025, EEG&nbsp;026, EEG&nbsp;027, EEG&nbsp;028, EEG&nbsp;029, EEG&nbsp;030, EEG&nbsp;031, EEG&nbsp;032, EEG&nbsp;033, EEG&nbsp;034, EEG&nbsp;035, EEG&nbsp;036, EEG&nbsp;037, EEG&nbsp;038, EEG&nbsp;039, EEG&nbsp;040, EEG&nbsp;041, EEG&nbsp;042, EEG&nbsp;043, EEG&nbsp;044, EEG&nbsp;045, EEG&nbsp;046, EEG&nbsp;047, EEG&nbsp;048, EEG&nbsp;049, EEG&nbsp;050, EEG&nbsp;051, EEG&nbsp;052, EEG&nbsp;054, EEG&nbsp;055, EEG&nbsp;056, EEG&nbsp;057, EEG&nbsp;058, EEG&nbsp;059, EEG&nbsp;060')" title="(Click to open in popup)
@@ -849,12 +849,12 @@ EEG&nbsp;053">
 1 bad
 </button></td>
 </tr>
-<tr class="repr-element channels-9eee3439-0775-4fe8-9f91-d02f08fd238f odd">
+<tr class="repr-element channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844 odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Head &amp; sensor digitization</td>
 <td>146 points</td>
 </tr>
-<tr class="mne-repr-section-header filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 even" title="Hide section" onclick="toggleVisibility('filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50')">
+<tr class="mne-repr-section-header filters-01b4dddc-e975-4d03-98ac-a2708936234a even" title="Hide section" onclick="toggleVisibility('filters-01b4dddc-e975-4d03-98ac-a2708936234a')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -862,17 +862,17 @@ EEG&nbsp;053">
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>Filters</strong></th>
 </tr>
-<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 odd">
+<tr class="repr-element filters-01b4dddc-e975-4d03-98ac-a2708936234a odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Highpass</td>
 <td>0.10 Hz</td>
 </tr>
-<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 even">
+<tr class="repr-element filters-01b4dddc-e975-4d03-98ac-a2708936234a even">
 <td class="mne-repr-section-toggle"></td>
 <td>Lowpass</td>
 <td>75.00 Hz</td>
 </tr>
-<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 odd">
+<tr class="repr-element filters-01b4dddc-e975-4d03-98ac-a2708936234a odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Projections</td>
 <td>Average EEG reference (on)</td>
@@ -887,7 +887,7 @@ EEG&nbsp;053">
 <p>Now we can epoch the data which means rearranging it into <strong>short segments</strong> centered around the presented stimuli. The segment duration is defined by the parameters <code>tmin</code> and <code>tmax</code> that are passed to MNE’s <code>Epochs</code> class. Per default, the signal before 0, the stimulus onset, is used as a <strong>baseline</strong> which means that it’s average is subtracted from the rest of the epoch.</p>
 <p>I think this is <strong>not a good default</strong> choice because activity in the baseline period (e.g.&nbsp;due to anticipation of the stimulus) can be projected into the rest of the epoch and <strong>create spurious features</strong> that look like actual brain responses. In most cases, baselining is <strong>not necessary</strong> if the data were detrended or high pass filtered.</p>
 <p>After epoching,we can average all segments to obtain the <strong>event related potential</strong> (ERP), which is the part of the brain response, evoked by the stimuli (since spontaneous activity will average out). We can visualize the ERP to make sure that our preprocessing was effective and we have <strong>clean data</strong>.</p>
-<div id="961ce55a" class="cell" data-execution_count="9">
+<div id="1b5f78ff" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mne.epochs <span class="im">import</span> Epochs</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>event_id <span class="op">=</span> {<span class="st">"auditory/left"</span>: <span class="dv">1</span>, <span class="st">"auditory/right"</span>: <span class="dv">2</span>}</span>
@@ -933,7 +933,7 @@ Created an SSP operator (subspace dimension = 1)
 </ol>
 </section></div></main> <!-- /main -->
 <script type="application/vnd.jupyter.widget-state+json">
-{"state":{"2129c8b6e0a0437ba7ce8f403467fd4c":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"3cf54bf3bfd34cb8b691bf5982f7542a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_2129c8b6e0a0437ba7ce8f403467fd4c","placeholder":"​","style":"IPY_MODEL_a75952e7a6c74b4c81cde8c601bee45a","tabbable":null,"tooltip":null,"value":"100%"}},"4fb0b544a9f544ecbe5c857426ce83e4":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"853f0d1d7b9e4384aa278c30dc23c9fb":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_4fb0b544a9f544ecbe5c857426ce83e4","placeholder":"​","style":"IPY_MODEL_87fff34028814a66bf236f17e63a5e93","tabbable":null,"tooltip":null,"value":"  : 55/55 [00:03&lt;00:00,   18.02it/s]"}},"87fff34028814a66bf236f17e63a5e93":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"8cd70c731c9143549e3937883f82fe63":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"ProgressView","bar_style":"success","description":"","description_allow_html":false,"layout":"IPY_MODEL_cb309ef8cc2c40a49c0fe8b1ed71ade3","max":55,"min":0,"orientation":"horizontal","style":"IPY_MODEL_af2d149899b544c49108b0de3b58a12b","tabbable":null,"tooltip":null,"value":55}},"a75952e7a6c74b4c81cde8c601bee45a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"af2d149899b544c49108b0de3b58a12b":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"c8fadc893d7947de9fb364045c2c6d8b":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"cb309ef8cc2c40a49c0fe8b1ed71ade3":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"f946be2a914a45bd980337c1a921ac21":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_3cf54bf3bfd34cb8b691bf5982f7542a","IPY_MODEL_8cd70c731c9143549e3937883f82fe63","IPY_MODEL_853f0d1d7b9e4384aa278c30dc23c9fb"],"layout":"IPY_MODEL_c8fadc893d7947de9fb364045c2c6d8b","tabbable":null,"tooltip":null}}},"version_major":2,"version_minor":0}
+{"state":{"1c3ddc9ef558455485b82a80d80527a3":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"1cc14ac5251e488db871977000b8ec80":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"312ce6c33c8543688f1661cce8cd5cec":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"ProgressStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"ProgressStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","bar_color":null,"description_width":""}},"44ffed75879c4c359f479016200671c0":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HBoxModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HBoxModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HBoxView","box_style":"","children":["IPY_MODEL_7e050a4b9ac74ea28dfb6c72c59f0cbc","IPY_MODEL_4e47c3fd8a9d46be8931c6744ac5f93a","IPY_MODEL_cb1f0508e7064e6e9c4ed502cd26ee3e"],"layout":"IPY_MODEL_ba0611e3f17942ccb077c52d3b6194f8","tabbable":null,"tooltip":null}},"4e47c3fd8a9d46be8931c6744ac5f93a":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"FloatProgressModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"FloatProgressModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"ProgressView","bar_style":"success","description":"","description_allow_html":false,"layout":"IPY_MODEL_68bcbe6ce080488596e3696338dabbb7","max":55,"min":0,"orientation":"horizontal","style":"IPY_MODEL_312ce6c33c8543688f1661cce8cd5cec","tabbable":null,"tooltip":null,"value":55}},"4e68c4ac3cc147a58348e7d0e23ca366":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"68bcbe6ce080488596e3696338dabbb7":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"7e050a4b9ac74ea28dfb6c72c59f0cbc":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_1cc14ac5251e488db871977000b8ec80","placeholder":"​","style":"IPY_MODEL_bd984698e57248bb8ce2c1aa648e77ca","tabbable":null,"tooltip":null,"value":"100%"}},"ba0611e3f17942ccb077c52d3b6194f8":{"model_module":"@jupyter-widgets/base","model_module_version":"2.0.0","model_name":"LayoutModel","state":{"_model_module":"@jupyter-widgets/base","_model_module_version":"2.0.0","_model_name":"LayoutModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"LayoutView","align_content":null,"align_items":null,"align_self":null,"border_bottom":null,"border_left":null,"border_right":null,"border_top":null,"bottom":null,"display":null,"flex":null,"flex_flow":null,"grid_area":null,"grid_auto_columns":null,"grid_auto_flow":null,"grid_auto_rows":null,"grid_column":null,"grid_gap":null,"grid_row":null,"grid_template_areas":null,"grid_template_columns":null,"grid_template_rows":null,"height":null,"justify_content":null,"justify_items":null,"left":null,"margin":null,"max_height":null,"max_width":null,"min_height":null,"min_width":null,"object_fit":null,"object_position":null,"order":null,"overflow":null,"padding":null,"right":null,"top":null,"visibility":null,"width":null}},"bd984698e57248bb8ce2c1aa648e77ca":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLStyleModel","state":{"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLStyleModel","_view_count":null,"_view_module":"@jupyter-widgets/base","_view_module_version":"2.0.0","_view_name":"StyleView","background":null,"description_width":"","font_size":null,"text_color":null}},"cb1f0508e7064e6e9c4ed502cd26ee3e":{"model_module":"@jupyter-widgets/controls","model_module_version":"2.0.0","model_name":"HTMLModel","state":{"_dom_classes":[],"_model_module":"@jupyter-widgets/controls","_model_module_version":"2.0.0","_model_name":"HTMLModel","_view_count":null,"_view_module":"@jupyter-widgets/controls","_view_module_version":"2.0.0","_view_name":"HTMLView","description":"","description_allow_html":false,"layout":"IPY_MODEL_1c3ddc9ef558455485b82a80d80527a3","placeholder":"​","style":"IPY_MODEL_4e68c4ac3cc147a58348e7d0e23ca366","tabbable":null,"tooltip":null,"value":"  : 55/55 [00:04&lt;00:00,   12.22it/s]"}}},"version_major":2,"version_minor":0}
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {

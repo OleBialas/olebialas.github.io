@@ -20,7 +20,7 @@
 <item>
   <title>Tracking Units in Chronic Electrophysiological Recordings with UnitMatch</title>
   <dc:creator>Ole Bialas</dc:creator>
-  <link>https://olebialas.github.io/posts/2024-10-02-unitmatch/</link>
+  <link>https://olebialas.github.io/posts/2025-10-02-unitmatch/</link>
   <description><![CDATA[ 
 
 
@@ -32,7 +32,7 @@
 <p>While searching for solutions to this problem, I came across UnitMatch - an algorithm that uses a naive Bayes classifier to match units based on their average spike waveforms (more on that later). The algorithm was published in <a href="https://www.nature.com/articles/s41592-024-02440-1">Nature Methods</a> and there is a <a href="https://github.com/EnnyvanBeest/UnitMatch?tab=readme-ov-file">Matlab and a Python toolbox</a> available. Unfortunately, I found that the project lacks documentation and existing tutorial notebooks contained errors or were incomplete (due to missing data).</p>
 <p>To test and verify the functionalities of UnitMatch, I created this notebook where I simulate multiple electrophysiological recordings with SpikeInterface and identify matching units across recordings. I hope prospective UnitMatch users will find it useful. Feel free to play around with the parameters of the simulation and UnitMatch to see how it affects the results. To follow along with the examples, you’ll have to install the following packages (I recommend using a new virtual environment).</p>
 <pre><code>pip install numpy matplotlib spikeinterface UnitMatchPy</code></pre>
-<div id="5da3c72b" class="cell" data-execution_count="1">
+<div id="e0e50c30" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> pathlib <span class="im" style="color: #00769E;
@@ -104,7 +104,7 @@ font-style: inherit;">as</span> default_params</span></code></pre></div></div>
 <section id="simulating-data-with-spikeinterface" class="level1">
 <h1>Simulating Data with SpikeInterface</h1>
 <p>This section simulates multiple electrophysiological recordings and their corresponding spike sorting results. The basic idea is that we generate a template waveform for each unit and then simulate the recordings from these template waveforms. The waveform parameters will be slightly varied across recordings to simulate the variability expected in chronic recordings (e.g.&nbsp;due to movement of the electrodes). First, we need to define the parameters for the simulated data.</p>
-<div id="ecf17fd4" class="cell" data-execution_count="2">
+<div id="b9e2b976" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">seed <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -189,7 +189,7 @@ font-style: inherit;">"Units"</span>)</span>
 <div id="fig-probe" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-probe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-probe-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Shank of the probe with recording channels (yellow) and locations of the simulated units (blue)."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-probe-output-1.png" width="268" height="458" class="figure-img"></a>
+<a href="index_files/figure-html/fig-probe-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Shank of the probe with recording channels (yellow) and locations of the simulated units (blue)."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-probe-output-1.png" width="268" height="458" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-probe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Shank of the probe with recording channels (yellow) and locations of the simulated units (blue).
@@ -199,7 +199,7 @@ Figure&nbsp;1: Shank of the probe with recording channels (yellow) and locations
 </div>
 </div>
 <p>Next, we generate a dictionary that contains the parameters for the template waveform of every unit. SpikeInterface provides the dictionary <code>default_unit_params_range</code> that contains the default range of parameter values for simulating units (e.g.&nbsp;amplitude or spatial decay). For each unit, we’ll sample a value from that range. The result is the dictionary <code>unit_params</code> that stores arrays where each element is the parameter for one unit.</p>
-<div id="82d3379d" class="cell" data-execution_count="4">
+<div id="31e1184f" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">rng <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.random.default_rng(seed)</span>
@@ -252,7 +252,7 @@ font-style: inherit;">=</span>n_units)</span>
 </div>
 </div>
 <p>For each recording, we’ll add a bit of random noise to these parameters to simulate the variability that is expected across recordings (feel free to play around with the <code>variability</code> parameter to see how it affects the matching results). The <code>varied_params</code> are passed to the <code>generate_templates</code> function and the generated waveforms are stored in a list of <code>templates</code>.</p>
-<div id="e994a65c" class="cell" data-execution_count="5">
+<div id="34fae2c5" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">variability <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
@@ -411,7 +411,7 @@ font-style: inherit;">"Time [samples]"</span>)</span></code></pre></div></div>
 <div id="fig-waveforms" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-waveforms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-waveforms-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Template waveforms for one unit across all recordings. Each line shows the signal measured at one electrode channel."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-waveforms-output-1.png" width="761" height="302" class="figure-img"></a>
+<a href="index_files/figure-html/fig-waveforms-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Template waveforms for one unit across all recordings. Each line shows the signal measured at one electrode channel."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-waveforms-output-1.png" width="761" height="302" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-waveforms-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Template waveforms for one unit across all recordings. Each line shows the signal measured at one electrode channel.
@@ -421,7 +421,7 @@ Figure&nbsp;2: Template waveforms for one unit across all recordings. Each line 
 </div>
 </div>
 <p>Finally, we use the <code>generate_ground_truth_recording</code> function to generate a list of <code>recordings</code> and <code>sortings</code> from the previously created <code>templates</code>.</p>
-<div id="b8e170bc" class="cell" data-execution_count="7">
+<div id="b5ab4b8f" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">recordings, sortings <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [], []</span>
@@ -465,7 +465,7 @@ font-style: inherit;">=</span>seed</span>
 <section id="preprocessing-and-curation" class="level2">
 <h2 class="anchored" data-anchor-id="preprocessing-and-curation">Preprocessing and Curation</h2>
 <p>Since UnitMatch uses average unit waveforms, we must ensure they’re clearly visible across multiple recording sites. To achieve this, we’ll preprocess the recordings and select units based on quality criteria. For the simulated data, I am only applying a bandpass filter, but real data may require additional steps such as correcting the small sampling delay across channels that some systems (e.g.&nbsp;Neuropixels) introduce or applying motion correction (note that this only corrects motion within, not across, recordings).</p>
-<div id="5ffd56bc" class="cell" data-execution_count="8">
+<div id="50a3ea7e" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -506,7 +506,7 @@ font-style: inherit;">=</span> recording</span>
 </div>
 </div>
 <p>Next, we calculate waveform templates from the recordings. To do this, we create an analyzer object by pairing each recording and sorting and compute <a href="https://spikeinterface.readthedocs.io/en/stable/modules/postprocessing.html#computing-extensions">“extensions”</a> that are added to the analyzer. These extensions partly depend on each other — for example, computing the <code>"templates"</code> extension requires the <code>"random_spikes"</code> extension to be computed. Important: UnitMatch expects the waveform to be symmetric around the spike, so when you use different values for <code>ms_before</code> and <code>ms_after</code>, you’ll have to set the respective parameter in UnitMatch.</p>
-<div id="043d30e4" class="cell" data-execution_count="9">
+<div id="83e345f6" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">analyzers <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> []</span>
@@ -552,17 +552,17 @@ font-style: inherit;">2</span>)</span>
 <span id="cb13-7">analyzers</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"c1f7b8186a434637bbd92393d94c31fa","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"9eff217c06c84e34bd45c9c85a1f7e10","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"2f30cffd7f9e4184922853db7bd9f54d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"62ff953aeece4e38ba7a41a6ecc40994","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"597d6abe4f4d4911ad4c5f1d312c76ac","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"07e51a15573a41f0a1950e8b14470ca9","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="9">
@@ -665,7 +665,7 @@ font-style: inherit;">"Time [samples]"</span>)</span></code></pre></div></div>
 <div id="fig-units" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-units-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-units-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: The average waveforms of two units extracted from recording 1."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-units-output-1.png" width="537" height="302" class="figure-img"></a>
+<a href="index_files/figure-html/fig-units-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: The average waveforms of two units extracted from recording 1."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-units-output-1.png" width="537" height="302" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-units-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;3: The average waveforms of two units extracted from recording 1.
@@ -794,7 +794,7 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"e2d0c6725c1d43448d41be673e6e8d05","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"dda2d4284fab4de3b43f780387b18e7d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-hist-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -806,7 +806,7 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"07726a55b6d14844ac91d287cc1fcb47","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"6bd3b8d1fab14ec98d2c08f40207127b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-hist-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -818,7 +818,7 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"b9bdeada64204d8b9278b28f1ef9892d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"da89320049ae41b4acfd1a5250b61a4f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-hist-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -839,10 +839,10 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 </figure>
 </div>
 <div class="cell-output cell-output-display">
-<div id="fig-hist-5" class="quarto-float quarto-figure quarto-figure-center anchored" width="597" height="449">
+<div id="fig-hist-5" class="quarto-float quarto-figure quarto-figure-center anchored" height="449" width="597">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-hist-output-8.png" class="lightbox" data-gallery="fig-hist" title="Figure&nbsp;4&nbsp;(e): "><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-hist-output-8.png" id="fig-hist-5" data-ref-parent="fig-hist" width="597" height="449" class="figure-img"></a>
+<a href="index_files/figure-html/fig-hist-output-8.png" class="lightbox" data-gallery="fig-hist" title="Figure&nbsp;4&nbsp;(e): "><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-hist-output-8.png" id="fig-hist-5" data-ref-parent="fig-hist" width="597" height="449" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-hist-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (e)
@@ -861,7 +861,7 @@ Figure&nbsp;4
 <section id="preparing-the-data-for-unitmatch" class="level2">
 <h2 class="anchored" data-anchor-id="preparing-the-data-for-unitmatch">Preparing the Data for UnitMatch</h2>
 <p>Next, we convert SpikeInterface data to UnitMatch’s expected format. First, we create a directory <code>"UMInputData"</code> with a subdirectory for each session and a <code>"RawWaveforms"</code> subdirectory in each session’s directory.</p>
-<div id="393e5a97" class="cell" data-execution_count="12">
+<div id="3e10bac0" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1">UM_input_dir <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> Path(<span class="st" style="color: #20794D;
@@ -917,85 +917,25 @@ font-style: inherit;">!</span>tree UMInputData</span></code></pre></div></div>
 
 ├── <span class="ansi-blue-fg ansi-bold">Session1</span>
 
-│&nbsp;&nbsp; ├── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit0_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit1_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit2_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit3_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit4_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit5_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit6_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; └── Unit7_RawSpikes.npy
-
-│&nbsp;&nbsp; ├── channel_positions.npy
-
-│&nbsp;&nbsp; └── cluster_group.tsv
+│&nbsp;&nbsp; └── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
 
 ├── <span class="ansi-blue-fg ansi-bold">Session2</span>
 
-│&nbsp;&nbsp; ├── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit0_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit1_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit2_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit3_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit4_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit5_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; ├── Unit6_RawSpikes.npy
-
-│&nbsp;&nbsp; │&nbsp;&nbsp; └── Unit7_RawSpikes.npy
-
-│&nbsp;&nbsp; ├── channel_positions.npy
-
-│&nbsp;&nbsp; └── cluster_group.tsv
+│&nbsp;&nbsp; └── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
 
 └── <span class="ansi-blue-fg ansi-bold">Session3</span>
 
-    ├── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
-
-    │&nbsp;&nbsp; ├── Unit0_RawSpikes.npy
-
-    │&nbsp;&nbsp; ├── Unit1_RawSpikes.npy
-
-    │&nbsp;&nbsp; ├── Unit2_RawSpikes.npy
-
-    │&nbsp;&nbsp; ├── Unit3_RawSpikes.npy
-
-    │&nbsp;&nbsp; ├── Unit4_RawSpikes.npy
-
-    │&nbsp;&nbsp; ├── Unit5_RawSpikes.npy
-
-    │&nbsp;&nbsp; ├── Unit6_RawSpikes.npy
-
-    │&nbsp;&nbsp; └── Unit7_RawSpikes.npy
-
-    ├── channel_positions.npy
-
-    └── cluster_group.tsv
+    └── <span class="ansi-blue-fg ansi-bold">RawWaveforms</span>
 
 
 
-7 directories, 30 files
+7 directories, 0 files
 </pre>
 </div>
 </div>
 </div>
 <p>Next, we need to extract the channel locations from every recording and store them in the session directory as <code>"channel_positions.npy"</code>.</p>
-<div id="90acf68a" class="cell" data-execution_count="13">
+<div id="e2d3c4f2" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1031,7 +971,7 @@ background-color: null;
 font-style: inherit;">"channel_positions.npy"</span>, channel_locations)</span></code></pre></div></div>
 </div>
 <p>Next, we create a table for each recording storing the original cluster ID of each unit (as assigned by the spike sorter) and the “group” to which it belongs. For the simulated data, all units are labeled <code>"good"</code> but for actual recordings you may want to label some as <code>"mua"</code> (multi-unit activity). The table is stored in the session directory as <code>"cluster_group.tsv"</code>.</p>
-<div id="4da3feb0" class="cell" data-execution_count="14">
+<div id="29979ef0" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1123,7 +1063,7 @@ font-style: inherit;">"</span></span>
 </div>
 </div>
 <p>Now comes the critical part: each recording and sorting has to be divided into two parts. UnitMatch calibrates the matching threshold by comparing units between the first and second half of each recording. We’ll split every recording and sorting into two and append the pieces to lists. From this, we obtain the lists of lists <code>split_recordings</code> and <code>split_sortings</code> where each element is a list with the first and second half of a given sorting/recording.</p>
-<div id="944d1fbe" class="cell" data-execution_count="15">
+<div id="5508f909" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1">split_recordings, split_sortings <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [], []</span>
@@ -1210,7 +1150,7 @@ font-style: inherit;"># 2nd half</span></span>
 </div>
 </div>
 <p>For the half recordings and sortings, we’ll have to create new analyzers. The analyzers are stored in another list of lists called <code>split_analyzers</code>.</p>
-<div id="d6c407ce" class="cell" data-execution_count="16">
+<div id="97b8551f" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1">split_analyzers <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> []</span>
@@ -1262,7 +1202,7 @@ font-style: inherit;">False</span>),</span>
 </div>
 </div>
 <p>We extract template waveforms from each half recording using the <code>split_analyzers</code>. We’ll compute the <code>"templates"</code> extension on every analyzer, stack the waveforms of the first and second half into a single array and append it to a list called <code>all_waveforms</code>. Each element in <code>all_waveforms</code> is a 4-dimensional numpy array where the dimensions represent units, samples, channels, and halves.</p>
-<div id="20edcd8c" class="cell" data-execution_count="17">
+<div id="972cb7a5" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1">all_waveforms <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> []</span>
@@ -1368,32 +1308,32 @@ background-color: null;
 font-style: inherit;">0</span>].shape</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"d3a08c7e053f4fd1b19d813a952d84ee","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"582520e694904c40a89a5af0e7ef124d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"c32b8a6610e24ea1bc4c81acfeecba1f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"56584439dfe04f478162a47e8c858f3b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"b7c9780411784443b91d6bad9dedd073","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"cd9eaab805504c718d58e1cfd3f57f78","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"79bc7f6beb004c2fa3064640db8274fb","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"3281e457c5134cc9a18b9ccac3b91534","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"81aa48a39e2540169133c5252cfcff4f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"39788f485b8c4154b377742475c3fd82","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"aff58f32ea144069b37bf117cfd58d05","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"f6e1b22ab46841e0a075be1f906d0dc3","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="17">
@@ -1401,7 +1341,7 @@ font-style: inherit;">0</span>].shape</span></code></pre></div></div>
 </div>
 </div>
 <p>Finally, we can save the waveforms to the session folders. For this, we’ll use the <code>save_avg_waveforms</code> function from UnitMatchPy. This function takes as arguments the average waveforms for a given session, the path to the session directory, as well as the previously created <code>cluster_group</code> table (so we’ll have to load that again). The <code>save_avg_waveforms</code> function will store one numpy array for every unit in the <code>RawWaveforms</code> subdirectory within the session directory.</p>
-<div id="65ecadd7" class="cell" data-execution_count="18">
+<div id="05088112" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -1509,7 +1449,7 @@ Saved 9 units to RawWaveforms directory, saving all units
 <section id="extracting-waveform-properties-and-matching-units" class="level1">
 <h1>Extracting Waveform Properties and Matching Units</h1>
 <p>With the data stored, we’re ready to run UnitMatch. The first step is to load the default parameters. The <code>param</code> dictionary contains the parameters for the UnitMatch algorithm and will be read and modified by multiple functions in the pipeline.</p>
-<div id="b3ce69a5" class="cell" data-execution_count="19">
+<div id="6ef022b4" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1">param <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> default_params.get_default_param()</span>
@@ -1519,7 +1459,7 @@ font-style: inherit;">=</span> default_params.get_default_param()</span>
 </div>
 </div>
 <p>Next, we create a list with the paths to our session folders and use the <code>paths_from_KS</code> function to get the paths to the waveforms, unit labels, and channel positions we previously stored (KS here stands for KiloSort — the spike sorter whose format the data is expected to conform to). Then, we’ll call <code>get_probe_geometry</code> which loads the probe information from the channel positions file and adds it to <code>param</code>.</p>
-<div id="e519bdaa" class="cell" data-execution_count="20">
+<div id="096bfd44" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1">KS_dirs <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [<span class="bu" style="color: null;
@@ -1589,7 +1529,7 @@ font-style: inherit;">"Unit ID"</span>)</span></code></pre></div></div>
 <div id="fig-within" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-within-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-within-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: Indicator matrix that shows whether units belong to the same (purple) or different (yellow) sessions."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-within-output-1.png" width="433" height="429" class="figure-img"></a>
+<a href="index_files/figure-html/fig-within-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;5: Indicator matrix that shows whether units belong to the same (purple) or different (yellow) sessions."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-within-output-1.png" width="433" height="429" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-within-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5: Indicator matrix that shows whether units belong to the same (purple) or different (yellow) sessions.
@@ -1599,7 +1539,7 @@ Figure&nbsp;5: Indicator matrix that shows whether units belong to the same (pur
 </div>
 </div>
 <p>With data loaded in UnitMatch’s format, we can extract waveform parameters. The <code>extract_parameter</code> function takes as arguments the waveforms and channel positions, as well as a new dictionary <code>clus_info</code>, and returns a dictionary of <code>extracted_wave_properties</code>. ::: {.callout-warning} <code>extract_parameters</code> calculates the spatial decay by fitting an exponential function. In some cases (probably due to noisy data) the algorithm does not converge after the default number of iterations and throws an error. Unfortunately, there is no way to change the number of iteration other than editing the source code. There is an <a href="https://github.com/EnnyvanBeest/UnitMatch/issues/125">active GitHub issue</a> on this - let’s hope it gets addressed soon. :::</p>
-<div id="fe68ee26" class="cell" data-execution_count="22">
+<div id="9546eb82" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1">clus_info <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> {</span>
@@ -1671,7 +1611,7 @@ font-style: inherit;">"Maximum Site"</span>)</span></code></pre></div></div>
 <div id="fig-properties" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-properties-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-properties-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;6: Spatial decay coefficient and site of maximum amplitude for each template waveform. Blue and orange dots show the waveforms from the first and second half of each recording respectively."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-properties-output-1.png" width="585" height="429" class="figure-img"></a>
+<a href="index_files/figure-html/fig-properties-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Figure&nbsp;6: Spatial decay coefficient and site of maximum amplitude for each template waveform. Blue and orange dots show the waveforms from the first and second half of each recording respectively."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-properties-output-1.png" width="585" height="429" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-properties-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;6: Spatial decay coefficient and site of maximum amplitude for each template waveform. Blue and orange dots show the waveforms from the first and second half of each recording respectively.
@@ -1733,7 +1673,7 @@ font-style: inherit;">"T"</span>)</span></code></pre></div></div>
 <div id="fig-t" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-t-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-t-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;7: Total similarity score for all pairs of units. Pairs where the score exceeds the threshold are marked red."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-t-output-1.png" width="527" height="434" class="figure-img"></a>
+<a href="index_files/figure-html/fig-t-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Figure&nbsp;7: Total similarity score for all pairs of units. Pairs where the score exceeds the threshold are marked red."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-t-output-1.png" width="527" height="434" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-t-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;7: Total similarity score for all pairs of units. Pairs where the score exceeds the threshold are marked red.
@@ -1743,7 +1683,7 @@ Figure&nbsp;7: Total similarity score for all pairs of units. Pairs where the sc
 </div>
 </div>
 <p>We now compute the prior probability that a random pair of units is a match, based on the number of putative matches that exceed the similarity score threshold.</p>
-<div id="f447eb4b" class="cell" data-execution_count="25">
+<div id="508b9ec3" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1">p_nomatch <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -1864,7 +1804,7 @@ font-style: inherit;">"Density"</span>)</span></code></pre></div></div>
 <div id="fig-distributions" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-distributions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-distributions-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;8: Likelihood distributions of the spatial decay score for matching and non-matching units."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-distributions-output-2.png" width="597" height="429" class="figure-img"></a>
+<a href="index_files/figure-html/fig-distributions-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Figure&nbsp;8: Likelihood distributions of the spatial decay score for matching and non-matching units."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-distributions-output-2.png" width="597" height="429" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-distributions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;8: Likelihood distributions of the spatial decay score for matching and non-matching units.
@@ -1916,7 +1856,7 @@ font-style: inherit;">"Greys"</span>)</span></code></pre></div></div>
 <div id="fig-matches" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-matches-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-matches-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;9: Unit matches identified by thresholding the posterior probability that a pair of units is a match given its feature distribution."><img src="https://olebialas.github.io/posts/2024-10-02-unitmatch/index_files/figure-html/fig-matches-output-2.png" width="415" height="411" class="figure-img"></a>
+<a href="index_files/figure-html/fig-matches-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Figure&nbsp;9: Unit matches identified by thresholding the posterior probability that a pair of units is a match given its feature distribution."><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-matches-output-2.png" width="415" height="411" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-matches-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;9: Unit matches identified by thresholding the posterior probability that a pair of units is a match given its feature distribution.
@@ -1930,7 +1870,7 @@ Figure&nbsp;9: Unit matches identified by thresholding the posterior probability
 <h2 class="anchored" data-anchor-id="combining-matches-across-recordings">Combining Matches Across Recordings</h2>
 <p>While the probability matrix shows pairwise matching probabilities, our goal is tracking units across recordings. This is what the <code>assign_unique_id</code> function does — it groups units identified as matches across recordings while applying three different strategies: - Liberal: Groups units if they match with ANY unit in the proposed group. - Default: Groups units if they match with EVERY unit in adjacent sessions. - Conservative: Groups units only if they match with EVERY other unit in the proposed group.</p>
 <p>In our case, the default and conservative strategies are almost identical since there are only 3 sessions, but for a larger number of sessions there should be a notable difference. We’ll proceed with the liberal strategy, although the original paper recommends using the conservative strategy.</p>
-<div id="df8197b0" class="cell" data-execution_count="28">
+<div id="4392bbec" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1">matches <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.argwhere(output_threshold <span class="op" style="color: #5E5E5E;
@@ -1960,7 +1900,7 @@ Number of Conservative Matches: 21</code></pre>
 </div>
 </div>
 <p>Now, we combine all sortings using the <code>aggregate_units</code> function. Then, we identify matching units by identifying the locations of duplicates in the <code>unique_id</code> array. Finally, we use <code>MergeUnitsSorting</code> to merge and rename the units that have been matched. That’s it — now we have a sorting object that combines units across all sessions. The combined recording has 10 units despite only 8 surviving initial quality control. This shows that we were not able to find all existing matches (you can also see this from the missing squares in Figure&nbsp;9).</p>
-<div id="3deacada" class="cell" data-execution_count="29">
+<div id="158188fe" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1">sorting <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> aggregate_units(sortings)</span>
@@ -2037,7 +1977,7 @@ font-style: inherit;">"</span>)</span></code></pre></div></div>
 </div>
 </div>
 <p>UnitMatch also provides a <code>save_to_output</code> function that stores all of the estimated properties, distributions and probabilities. The cell below unpacks the <code>extracted_wave_properties</code> dictionary and saves the results to a folder called <code>"out"</code>.</p>
-<div id="0883b8de" class="cell" data-execution_count="30">
+<div id="6af22c68" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1">save_dir <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
@@ -2112,9 +2052,9 @@ font-style: inherit;">True</span>,</span>
 </section>
 
 <a onclick="window.scrollTo(0, 0); return false;" id="quarto-back-to-top"><i class="bi bi-arrow-up"></i> Back to top</a> ]]></description>
-  <guid>https://olebialas.github.io/posts/2024-10-02-unitmatch/</guid>
+  <guid>https://olebialas.github.io/posts/2025-10-02-unitmatch/</guid>
   <pubDate>Thu, 09 Oct 2025 22:00:00 GMT</pubDate>
-  <media:content url="https://olebialas.github.io/posts/2024-10-02-unitmatch/featured.png" medium="image" type="image/png" height="119" width="144"/>
+  <media:content url="https://olebialas.github.io/posts/2025-10-02-unitmatch/featured.png" medium="image" type="image/png" height="119" width="144"/>
 </item>
 <item>
   <title>Surveying Neural Spiking in Visual Cortex with Pandas and Seaborn</title>
@@ -2135,7 +2075,7 @@ font-style: inherit;">True</span>,</span>
 <p>First we have to install the required modules using <code>pip</code>:</p>
 <pre><code>pip install numpy matplotlib seaborn pandas pyarrow</code></pre>
 <p>Then, we can import the installed modules and download the data. We need two data frames — one containing the timing of the presented stimuli and another one containing the recorded spikes. Conveniently, all <code>read_</code> functions in Pandas accept URLs and can gracefully handle the downloading for us.</p>
-<div id="33e5054f" class="cell" data-execution_count="1">
+<div id="5f2f29c3" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
@@ -2361,32 +2301,32 @@ Table&nbsp;3: Spike times relative to stimulus onset
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">365421</th>
-<td>0.000291</td>
-<td>PM</td>
-<td>951021314</td>
+<th data-quarto-table-cell-role="th">270426</th>
+<td>0.693947</td>
+<td>RL</td>
+<td>951039413</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">208777</th>
-<td>0.372630</td>
-<td>PM</td>
-<td>951021469</td>
+<th data-quarto-table-cell-role="th">347013</th>
+<td>-0.472633</td>
+<td>LM</td>
+<td>951030804</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">108261</th>
-<td>0.081441</td>
-<td>AM</td>
-<td>951017432</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">402572</th>
-<td>-0.250033</td>
+<th data-quarto-table-cell-role="th">109297</th>
+<td>0.920462</td>
 <td>AL</td>
-<td>951035799</td>
+<td>951035499</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">201771</th>
+<td>-0.488358</td>
+<td>LM</td>
+<td>951031458</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">156489</th>
-<td>0.783751</td>
+<th data-quarto-table-cell-role="th">135671</th>
+<td>0.369972</td>
 <td>AL</td>
 <td>951035530</td>
 </tr>
@@ -2467,39 +2407,39 @@ Table&nbsp;4: Peri-stimulus time histogram
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">32133</th>
-<td>951027638</td>
-<td>V1</td>
-<td>0.415</td>
-<td>0</td>
+<th data-quarto-table-cell-role="th">5087</th>
+<td>951016626</td>
+<td>AM</td>
+<td>-0.095</td>
+<td>4</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">44260</th>
-<td>951035018</td>
+<th data-quarto-table-cell-role="th">48136</th>
+<td>951035393</td>
 <td>AL</td>
-<td>-0.455</td>
-<td>0</td>
+<td>-0.425</td>
+<td>3</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">17535</th>
-<td>951021725</td>
-<td>PM</td>
-<td>0.785</td>
-<td>2</td>
+<th data-quarto-table-cell-role="th">51176</th>
+<td>951035619</td>
+<td>AL</td>
+<td>-0.425</td>
+<td>3</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">1466</th>
-<td>951015854</td>
+<th data-quarto-table-cell-role="th">3032</th>
+<td>951016257</td>
 <td>AM</td>
-<td>0.265</td>
-<td>1</td>
+<td>-0.485</td>
+<td>0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">4910</th>
-<td>951016603</td>
-<td>AM</td>
-<td>0.455</td>
-<td>0</td>
+<th data-quarto-table-cell-role="th">49921</th>
+<td>951035523</td>
+<td>AL</td>
+<td>0.655</td>
+<td>11</td>
 </tr>
 </tbody>
 </table>
@@ -2688,49 +2628,49 @@ Table&nbsp;5: Baseline-corrected spike counts
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">11666</th>
-<td>951020899</td>
-<td>PM</td>
-<td>-0.285</td>
-<td>9</td>
-<td>8.62</td>
-<td>0.38</td>
+<th data-quarto-table-cell-role="th">43092</th>
+<td>951032519</td>
+<td>LM</td>
+<td>0.255</td>
+<td>1</td>
+<td>0.66</td>
+<td>0.34</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">11462</th>
-<td>951018301</td>
+<th data-quarto-table-cell-role="th">9386</th>
+<td>951017481</td>
 <td>AM</td>
-<td>0.885</td>
+<td>0.985</td>
 <td>0</td>
-<td>0.00</td>
-<td>0.00</td>
+<td>0.14</td>
+<td>-0.14</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">44134</th>
-<td>951035003</td>
-<td>AL</td>
-<td>-0.345</td>
-<td>14</td>
-<td>13.62</td>
-<td>0.38</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">644</th>
-<td>951015731</td>
-<td>AM</td>
-<td>-0.075</td>
-<td>0</td>
-<td>0.00</td>
-<td>0.00</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">27814</th>
-<td>951026880</td>
+<th data-quarto-table-cell-role="th">22466</th>
+<td>951026176</td>
 <td>V1</td>
-<td>-0.415</td>
-<td>11</td>
-<td>13.88</td>
-<td>-2.88</td>
+<td>0.785</td>
+<td>1</td>
+<td>1.62</td>
+<td>-0.62</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">38479</th>
+<td>951031253</td>
+<td>LM</td>
+<td>0.025</td>
+<td>12</td>
+<td>8.76</td>
+<td>3.24</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">23925</th>
+<td>951026481</td>
+<td>V1</td>
+<td>0.135</td>
+<td>0</td>
+<td>0.92</td>
+<td>-0.92</td>
 </tr>
 </tbody>
 </table>
@@ -3005,7 +2945,7 @@ Figure&nbsp;5: Baseline-corrected changes in spike count in units with an above-
 <p>First, we need to install some packages that provide us with the equired preprocessing functions:</p>
 <pre><code>pip install mne meegkit pyprep autoreject</code></pre>
 <p>Then, we have to dowload the sample data from MNE Python and clean it using the steps described <a href="posts/eeg_preprocessing">in the previous post on EEG preprocessing</a>. The code below does exactly that — if you want a more detailed explanation, read the original post. Running the cell below produces the cleaned <code>epochs</code> to which we will apply further preprocessing, starting with the removal of <strong>eye artifacts</strong>.</p>
-<div id="3abfabe1" class="cell" data-execution_count="1">
+<div id="f95ddbcc" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
@@ -3228,7 +3168,7 @@ font-style: inherit;">True</span>)</span></code></pre></div></div>
 <section id="identifying-eye-blink-components-with-ica" class="level1">
 <h1>Identifying eye-blink components with ICA</h1>
 <p>ICA is an algorithm that finds a rotation matrix to separate the sensor data into components that are <strong>mutually independent</strong> <sup>3</sup>. In the code below, I fit an ICA to the epoched data. At maximum, ICA can capture as many components as there are channels. However, usually the data can be captured with <strong>fewer components</strong>. When the <code>n_components</code> parameter is set to a decimal number, the ICA will compute as many components as are necessary to explain this share of the total variance in the data. Because highpass filtering improves the quality of artifact separation <sup>4</sup>, I use a highpass filtered copy of the data for ICA.</p>
-<div id="1ed3a83c" class="cell" data-execution_count="2">
+<div id="e8d8372f" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> matplotlib <span class="im" style="color: #00769E;
@@ -3294,7 +3234,7 @@ Designing a one-pass, zero-phase, non-causal highpass filter:
     Applying projection operator with 1 vector (pre-whitener application)
 Selecting by explained variance: 32 components
     Applying projection operator with 1 vector (pre-whitener application)
-Fitting ICA took 0.4s.</code></pre>
+Fitting ICA took 1.1s.</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -3307,7 +3247,7 @@ Fitting ICA took 0.4s.</code></pre>
 </div>
 <p>The components are ordered by <strong>explained variance</strong>, so the first few components have the largest impact on the signal. Each component is a <strong>linear combination</strong> of all channels and the weights indicate how much each channel affects that component <sup>5</sup>. The first components depends almost solely on the <strong>frontal channels</strong> - a strong indicator that it represents eye-blink artifacts!</p>
 <p>Another way to characterize the components is to obtain their <strong>time course</strong> by filtering the EEG signal using the component weights. The resulting time series is called the <strong>component loading</strong> and indicates the presence of that component in the data across time. In the code below, I compute the loading for all ICA components, select the first one and plot it after concatenating all epochs.</p>
-<div id="16c5339f" class="cell" data-execution_count="3">
+<div id="7fb660d6" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
@@ -3361,7 +3301,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-4-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Loading of the components which indicates how active this component is throughout the recording"><img src="https://olebialas.github.io/posts/2024-02-23-eeg_preprocessing_2/index_files/figure-html/cell-4-output-2.png" width="585" height="433" alt="Loading of the components which indicates how active this component is throughout the recording" class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-4-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Loading of the components which indicates how active this component is throughout the recording"><img src="https://olebialas.github.io/posts/2024-02-23-eeg_preprocessing_2/index_files/figure-html/cell-4-output-2.png" width="596" height="429" alt="Loading of the components which indicates how active this component is throughout the recording" class="figure-img"></a></p>
 <figcaption>Loading of the components which indicates how active this component is throughout the recording</figcaption>
 </figure>
 </div>
@@ -3372,7 +3312,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 <section id="automated-component-rejection" class="level1">
 <h1>Automated component rejection</h1>
 <p>One could simply select and remove the eye blink component from the data. However, manual selection of components goes against the idea of an automated preprocessing pipeline. Instead, we can use the selected component as a <strong>template</strong> and classify new components as blinks by using the <code>corrmap</code> algorithm which selects components who’s <strong>correlation</strong> with the template exceeds some <strong>threshold</strong> <sup>6</sup>. To do this we can can store the blink component’s index in the <code>ICA.labels_</code> attribute and save the ICA as template.</p>
-<div id="2c543828" class="cell" data-execution_count="4">
+<div id="263d5665" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> tempfile</span>
@@ -3395,7 +3335,7 @@ font-style: inherit;">+</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'/template_ica.fif'</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Writing ICA solution to /tmp/tmp08xo0rwc/template_ica.fif...</code></pre>
+<pre><code>Writing ICA solution to /tmp/tmp7mdmztvf/template_ica.fif...</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <table class="table mne-repr-table caption-top table-sm table-striped small">
@@ -3418,7 +3358,7 @@ max_iter=1000<br>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">Fit</th>
-<td>56 iterations on epochs (11020 samples)</td>
+<td>72 iterations on epochs (11020 samples)</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">ICA components</th>
@@ -3441,7 +3381,7 @@ max_iter=1000<br>
 </div>
 </div>
 <p>Now we can iterate through all entries in the <code>.labels_</code> attribute and use <code>corrmap</code> to find components that are <strong>similar</strong> to the respective template. The first input for <code>corrmap</code> is the list of ICAs being processed. The second input is a tuple with the index of the ICA instance in the list and the component of that ICA being used as <strong>template</strong>. Similar components that are detected are stored in the <code>.labels_</code> attribute of the respective ICA instance.</p>
-<div id="bcd08686" class="cell" data-execution_count="5">
+<div id="1615a244" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> mne.preprocessing <span class="im" style="color: #00769E;
@@ -3478,7 +3418,7 @@ font-style: inherit;">=</span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">False</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Reading /tmp/tmp08xo0rwc/template_ica.fif ...
+<pre><code>Reading /tmp/tmp7mdmztvf/template_ica.fif ...
     Read a total of 1 projection items:
         Average EEG reference (1 x 60) active
 Now restoring ICA solution ...
@@ -3488,7 +3428,7 @@ At least 1 IC detected for each subject.</code></pre>
 </div>
 </div>
 <p>Of course, this example is completely circular because we applied <code>corrmap</code> to the same data we used for selecting the template in the first place. However, once selected, the same template can be applied to <strong>multiple recorings</strong> and even <strong>across experiments</strong>, given that the electrode layout is the same. After all artifact components have been identified, we can exclude them when <strong>applying</strong> the ICA to the sensor data.</p>
-<div id="0b2a7496" class="cell" data-execution_count="6">
+<div id="47394ad3" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">bad_components <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [value[<span class="dv" style="color: #AD0000;
@@ -3526,7 +3466,7 @@ font-style: inherit;">=</span>bad_components)</span></code></pre></div></div>
 <section id="introducing-autoreject" class="level1">
 <h1>Introducing autoreject</h1>
 <p>All of these problems are addressed by the <code>autoreject</code> algorithm <sup>7</sup>, which is a procedure to identify and either <strong>repair or reject</strong> bad data segments. For each channel p, it estimates a peak-to-peak <strong>threshold</strong> τ. Each channel marks epochs as bad that exceeds their respective threshold. A trial is rejected if a <strong>fraction κ</strong> of all channels marks it as bad. If less than κ channels are bad, up to <strong>ρ are interpolated</strong> to repair the epoch. All parameters, τ κ and ρ are <strong>estimated from the data</strong> using cross-validation. Thus the optimal set of parameters are those that <strong>minimize the difference</strong> between testing and training data. In this sense, <code>autoreject</code> acts similar to a <strong>human observer</strong> identifying outliers in the data. After installing the module with <code>pip install autoreject</code>, we can simply apply it to the epoched data. I also plot the <strong>rejection log</strong> to visualize the effect of <code>autoreject</code> on the data.</p>
-<div id="a9608083" class="cell" data-execution_count="7">
+<div id="1675e42f" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> autoreject <span class="im" style="color: #00769E;
@@ -3560,7 +3500,7 @@ font-style: inherit;">=</span>ax)<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span></span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Dropped 2 epochs: 32, 40</code></pre>
+<pre><code>Dropped 1 epoch: 40</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -3624,7 +3564,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 <p>To follow along with the examles, you’ll have to install several packages. I recommend creating a new environment and using pip to install:</p>
 <pre><code>pip install mne meegkit pyprep</code></pre>
 <p>We’ll use <strong>sample data</strong> provided by MNE-Python which will be downloaded automatically when you call the <code>data_path</code> function for the first time. Then, we load the raw data, find <strong>events</strong> in the data (we’ll need those later) and remove everything but the EEG channels <sup>2</sup>. Finally, we <strong>downsample</strong> the data so processing will be quicker.</p>
-<div id="6b628f92" class="cell" data-execution_count="1">
+<div id="01332969" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> mne.io <span class="im" style="color: #00769E;
@@ -3680,7 +3620,7 @@ Event IDs: [ 1  2  3  4  5 32]</code></pre>
 <section id="channel-drifts-and-offsets" class="level1">
 <h1>Channel drifts and offsets</h1>
 <p>Channels differ in their <strong>conductivity</strong> with the scalp and this conductivity may also change across time, for example if the subject is sweating. This results in different and <strong>drifting baselines</strong> that can overshadow neural activity. Let’s look at two exemplar channels:</p>
-<div id="3c470511" class="cell" data-execution_count="2">
+<div id="d53ea3b2" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> matplotlib <span class="im" style="color: #00769E;
@@ -3721,7 +3661,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 </div>
 <p>A common way to deal with fluctuating baselines is to apply a <strong>high pass filter</strong>, suppressing all fluctuations at frequencies below some threshold (often 0.5 or 1 Hz). While this effectively removes channel offsets and drifts, it may also <strong>smear</strong> the signal or even introduce <strong>spurious</strong> features <sup>3</sup>.</p>
 <p>An alternative is to detrend the data by fitting a polynomial and subtracting the fit. Here, I use an algorithm for <strong>robust detrending</strong> that ignores outliers <sup>4</sup>. I apply detrending twice - first using a line and then a <strong>higher-order</strong> polynomial to remove faster baseline fluctuations.</p>
-<div id="36111440" class="cell" data-execution_count="3">
+<div id="f3462870" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> meegkit.detrend <span class="im" style="color: #00769E;
@@ -3772,7 +3712,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier."><img src="https://olebialas.github.io/posts/2024-01-16-eeg_preprocessing_1/index_files/figure-html/cell-4-output-1.png" width="625" height="429" alt="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier." class="figure-img"></a></p>
+<p><a href="index_files/figure-html/cell-4-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier."><img src="https://olebialas.github.io/posts/2024-01-16-eeg_preprocessing_1/index_files/figure-html/cell-4-output-1.png" width="626" height="429" alt="The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier." class="figure-img"></a></p>
 <figcaption>The same two EEG channels after detrending. Note how removing the offset makes comparing the signals much easier.</figcaption>
 </figure>
 </div>
@@ -3782,7 +3722,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 <section id="removing-power-line-noise" class="level1">
 <h1>Removing power line noise</h1>
 <p>Another ubiquitous problem is the presence of power line noise. This takes the form of an oscillation at the frequency of the <strong>alternating current</strong> signal which is <strong>60 Hz</strong> in the US and <strong>50 Hz</strong> in the rest of the world. To see this, we can plot the power spectral density (PSD), which shows the signals <strong>power content</strong> across frequencies.</p>
-<div id="e03a3201" class="cell" data-execution_count="4">
+<div id="7bb1c5fd" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">fig, ax <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> plt.subplots()</span>
@@ -3813,7 +3753,7 @@ Plotting power spectral density (dB=True).</code></pre>
 </div>
 <p>Even though this recording is very clean, you can make out a little spike in the PSD at 60 Hz. The most common solution to power line noise is to apply a <strong>low pass or notch filter</strong> that removes all activity within the contaminated frequency band. However, to sharply separate noise and signal frequencies, the filter must have a steep transfer function which results in a long impulse response that introduces <strong>ringing artifacts</strong> into the signal.</p>
 <p>Alternatively, one may use a <strong>spatial filter</strong> but this only works if noise and neural signal are <strong>linearly separable</strong>. Here, I use an algorithm that <strong>combines</strong> the advantages of both approaches to remove power line noise while minimizing distortions and loss of data <sup>5</sup>.</p>
-<div id="a5dae1d2" class="cell" data-execution_count="5">
+<div id="e4b17dd4" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> meegkit.dss <span class="im" style="color: #00769E;
@@ -3842,7 +3782,7 @@ font-style: inherit;">=</span> X.T</span></code></pre></div></div>
 </div>
 </div>
 <p>To verify that the algorithm worked as expected we visualize the power content of the removed noise. The PSD should be <strong>mostly flat</strong>, except for a spike at the power line frequency.</p>
-<div id="8a7c07f9" class="cell" data-execution_count="6">
+<div id="9b23eba9" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> mne.io <span class="im" style="color: #00769E;
@@ -3890,7 +3830,7 @@ Plotting power spectral density (dB=True).</code></pre>
 <p>This is done by simply <strong>subtracting</strong> a channel or combination of channels. While this changes the absolute magnitudes, it does not alter the <strong>relations</strong> between channels. Imagine the peaks and valleys in voltage as a landscape and re-referencing as <strong>changing your standpoint</strong>. Depending on where you stand, any <strong>single point</strong> may be above or below you, but the landscape stays the same!</p>
 <p>A common reference choice is to use the <strong>average</strong> of all channels. However, single “bad” channels, containing large artifacts may skew the average and <strong>leak</strong> those artifacts into all other channels. To prevent this from happening, we can <strong>identify and interpolate</strong> those bad channels before computing the average.</p>
 <p>I use the random sample consensus (RANSAC) method <sup>6</sup> to identify bad channels. RANSAC <strong>predicts EEG</strong> channels from their neighbors and marks them as bad if their correlation with that prediction fails to meet some <strong>threshold</strong>.</p>
-<div id="76093b15" class="cell" data-execution_count="7">
+<div id="7abff3d8" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> pyprep.ransac <span class="im" style="color: #00769E;
@@ -3950,7 +3890,7 @@ This may take a while, so be patient...</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"f946be2a914a45bd980337c1a921ac21","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+{"model_id":"44ffed75879c4c359f479016200671c0","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
 </script>
 </div>
 <div class="cell-output cell-output-stdout">
@@ -3959,7 +3899,7 @@ RANSAC done!</code></pre>
 </div>
 </div>
 <p>Because we don’t actually want to remove anything yet (data rejection will be addressed in the next post), we <strong>copy the data</strong> before interpolating the bad channels. Then, we compute the average reference on this cleaned copy and apply it to the original data as a <strong>projection</strong>.</p>
-<div id="63f6ba82" class="cell" data-execution_count="8">
+<div id="ac9feb4c" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1">raw_clean <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> raw.copy()</span>
@@ -3996,8 +3936,8 @@ font-style: inherit;"># apply the reference</span></span></code></pre></div></di
 <pre><code>Setting channel interpolation method to {'eeg': 'spline'}.
 Interpolating bad channels.
     Automatic origin fit: head of radius 91.2 mm
-Computing interpolation matrix from 51 sensor positions
-Interpolating 9 sensors
+Computing interpolation matrix from 47 sensor positions
+Interpolating 13 sensors
 EEG channel type selected for re-referencing
 Adding average EEG reference projection.
 1 projection items deactivated
@@ -4154,7 +4094,7 @@ this file apply (plus whatever default styling the IDE applies).
 <col style="width: 33%">
 </colgroup>
 <tbody>
-<tr class="mne-repr-section-header general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd" title="Hide section" onclick="toggleVisibility('general-c82ac63b-1d68-4561-8f35-ad716f25c083')">
+<tr class="mne-repr-section-header general-04cd53d8-e8ad-4c17-bf93-120e5962575d odd" title="Hide section" onclick="toggleVisibility('general-04cd53d8-e8ad-4c17-bf93-120e5962575d')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -4162,32 +4102,32 @@ this file apply (plus whatever default styling the IDE applies).
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>General</strong></th>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d even">
 <td class="mne-repr-section-toggle"></td>
 <td>Filename(s)</td>
 <td>sample_audvis_raw.fif</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d odd">
 <td class="mne-repr-section-toggle"></td>
 <td>MNE object type</td>
 <td>Raw</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d even">
 <td class="mne-repr-section-toggle"></td>
 <td>Measurement date</td>
 <td>2002-12-03 at 19:01:10 UTC</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 odd">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Participant</td>
 <td>Unknown</td>
 </tr>
-<tr class="repr-element general-c82ac63b-1d68-4561-8f35-ad716f25c083 even">
+<tr class="repr-element general-04cd53d8-e8ad-4c17-bf93-120e5962575d even">
 <td class="mne-repr-section-toggle"></td>
 <td>Experimenter</td>
 <td>MEG</td>
 </tr>
-<tr class="mne-repr-section-header acquisition-15116e97-e841-45c8-b98d-0452de39d627 odd" title="Hide section" onclick="toggleVisibility('acquisition-15116e97-e841-45c8-b98d-0452de39d627')">
+<tr class="mne-repr-section-header acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 odd" title="Hide section" onclick="toggleVisibility('acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -4195,22 +4135,22 @@ this file apply (plus whatever default styling the IDE applies).
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>Acquisition</strong></th>
 </tr>
-<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 even">
+<tr class="repr-element acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 even">
 <td class="mne-repr-section-toggle"></td>
 <td>Duration</td>
 <td>00:04:38 (HH:MM:SS)</td>
 </tr>
-<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 odd">
+<tr class="repr-element acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Sampling frequency</td>
 <td>150.00 Hz</td>
 </tr>
-<tr class="repr-element acquisition-15116e97-e841-45c8-b98d-0452de39d627 even">
+<tr class="repr-element acquisition-32d18acc-3e96-43f0-9ee7-6193940fe7f2 even">
 <td class="mne-repr-section-toggle"></td>
 <td>Time points</td>
 <td>41,657</td>
 </tr>
-<tr class="mne-repr-section-header channels-9eee3439-0775-4fe8-9f91-d02f08fd238f odd" title="Hide section" onclick="toggleVisibility('channels-9eee3439-0775-4fe8-9f91-d02f08fd238f')">
+<tr class="mne-repr-section-header channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844 odd" title="Hide section" onclick="toggleVisibility('channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -4218,7 +4158,7 @@ this file apply (plus whatever default styling the IDE applies).
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>Channels</strong></th>
 </tr>
-<tr class="repr-element channels-9eee3439-0775-4fe8-9f91-d02f08fd238f even">
+<tr class="repr-element channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844 even">
 <td class="mne-repr-section-toggle"></td>
 <td>EEG</td>
 <td><button class="mne-ch-names-btn sd-sphinx-override sd-btn sd-btn-info sd-text-wrap sd-shadow-sm" onclick="alert('Good EEG:\n\nEEG&nbsp;001, EEG&nbsp;002, EEG&nbsp;003, EEG&nbsp;004, EEG&nbsp;005, EEG&nbsp;006, EEG&nbsp;007, EEG&nbsp;008, EEG&nbsp;009, EEG&nbsp;010, EEG&nbsp;011, EEG&nbsp;012, EEG&nbsp;013, EEG&nbsp;014, EEG&nbsp;015, EEG&nbsp;016, EEG&nbsp;017, EEG&nbsp;018, EEG&nbsp;019, EEG&nbsp;020, EEG&nbsp;021, EEG&nbsp;022, EEG&nbsp;023, EEG&nbsp;024, EEG&nbsp;025, EEG&nbsp;026, EEG&nbsp;027, EEG&nbsp;028, EEG&nbsp;029, EEG&nbsp;030, EEG&nbsp;031, EEG&nbsp;032, EEG&nbsp;033, EEG&nbsp;034, EEG&nbsp;035, EEG&nbsp;036, EEG&nbsp;037, EEG&nbsp;038, EEG&nbsp;039, EEG&nbsp;040, EEG&nbsp;041, EEG&nbsp;042, EEG&nbsp;043, EEG&nbsp;044, EEG&nbsp;045, EEG&nbsp;046, EEG&nbsp;047, EEG&nbsp;048, EEG&nbsp;049, EEG&nbsp;050, EEG&nbsp;051, EEG&nbsp;052, EEG&nbsp;054, EEG&nbsp;055, EEG&nbsp;056, EEG&nbsp;057, EEG&nbsp;058, EEG&nbsp;059, EEG&nbsp;060')" title="(Click to open in popup)
@@ -4233,12 +4173,12 @@ EEG&nbsp;053">
 1 bad
 </button></td>
 </tr>
-<tr class="repr-element channels-9eee3439-0775-4fe8-9f91-d02f08fd238f odd">
+<tr class="repr-element channels-36fefe0f-cbcb-4de8-8386-f7cd324d4844 odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Head &amp; sensor digitization</td>
 <td>146 points</td>
 </tr>
-<tr class="mne-repr-section-header filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 even" title="Hide section" onclick="toggleVisibility('filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50')">
+<tr class="mne-repr-section-header filters-01b4dddc-e975-4d03-98ac-a2708936234a even" title="Hide section" onclick="toggleVisibility('filters-01b4dddc-e975-4d03-98ac-a2708936234a')">
 <th class="mne-repr-section-toggle" data-quarto-table-cell-role="th"><button>
 <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 512 512">
 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"></path>
@@ -4246,17 +4186,17 @@ EEG&nbsp;053">
 </button></th>
 <th colspan="2" data-quarto-table-cell-role="th"><strong>Filters</strong></th>
 </tr>
-<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 odd">
+<tr class="repr-element filters-01b4dddc-e975-4d03-98ac-a2708936234a odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Highpass</td>
 <td>0.10 Hz</td>
 </tr>
-<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 even">
+<tr class="repr-element filters-01b4dddc-e975-4d03-98ac-a2708936234a even">
 <td class="mne-repr-section-toggle"></td>
 <td>Lowpass</td>
 <td>75.00 Hz</td>
 </tr>
-<tr class="repr-element filters-4ddbe2f5-8bc6-4296-a464-d24738c23d50 odd">
+<tr class="repr-element filters-01b4dddc-e975-4d03-98ac-a2708936234a odd">
 <td class="mne-repr-section-toggle"></td>
 <td>Projections</td>
 <td>Average EEG reference (on)</td>
@@ -4271,7 +4211,7 @@ EEG&nbsp;053">
 <p>Now we can epoch the data which means rearranging it into <strong>short segments</strong> centered around the presented stimuli. The segment duration is defined by the parameters <code>tmin</code> and <code>tmax</code> that are passed to MNE’s <code>Epochs</code> class. Per default, the signal before 0, the stimulus onset, is used as a <strong>baseline</strong> which means that it’s average is subtracted from the rest of the epoch.</p>
 <p>I think this is <strong>not a good default</strong> choice because activity in the baseline period (e.g.&nbsp;due to anticipation of the stimulus) can be projected into the rest of the epoch and <strong>create spurious features</strong> that look like actual brain responses. In most cases, baselining is <strong>not necessary</strong> if the data were detrended or high pass filtered.</p>
 <p>After epoching,we can average all segments to obtain the <strong>event related potential</strong> (ERP), which is the part of the brain response, evoked by the stimuli (since spontaneous activity will average out). We can visualize the ERP to make sure that our preprocessing was effective and we have <strong>clean data</strong>.</p>
-<div id="961ce55a" class="cell" data-execution_count="9">
+<div id="1b5f78ff" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> mne.epochs <span class="im" style="color: #00769E;
