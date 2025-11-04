@@ -1,0 +1,268 @@
+---
+title: What's "neural" about neural networks?
+subtitle: On the similarities and differences between artificial and natural intelligence
+format: clean-revealjs
+author:
+  - name: Ole Bialas
+    orcid: 0000-0000-0000-0000
+    email: bialas@uni-bonn.de
+    affiliations: iBehave Open Technology Support (iBOTS)
+date: 2025-11-04
+bibliography: references.bib
+toc: false
+number-sections: false
+---
+
+
+## Agenda
+
+::: {.incremental}
+- The (historical) relationship between neuroscience and AI
+- Why AI researchers should care about neuroscience
+- How to compare ANNs and brains
+- Fundamental difference between ANNs and intelligent biological agents
+:::
+
+<div style="position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); text-align: center;">
+{{< qrcode https://olebialas.github.io width=250 height=250 >}}
+<br>
+<a href="https://olebialas.github.io">olebialas.github.io</a>
+</div>
+
+
+## How it started ...
+
+::: {.fragment}
+:::: {.columns}
+
+::: {.column width="40%"}
+<figure style="display: inline-block; text-align: center; margin: 0px 20px 20px 20px;">
+  <img src="https://historyofinformation.com/images/Screen_Shot_2020-09-09_at_6.46.46_AM_big.png" style="border-radius: 50%; width: 250px; height: 250px; object-fit: cover;">
+</figure>
+:::
+
+::: {.column width="60%"}
+**Neural computation**: neurons can implement logical operations and networks of such neurons are capable of universal computation [@mcculloch1943].
+:::
+
+::::
+:::
+
+::: {.fragment}
+:::: {.columns}
+
+::: {.column width="40%"}
+<figure style="display: inline-block; text-align: center; margin: 0px 20px 20px 20px;">
+  <img src="https://d3d0lqu00lnqvz.cloudfront.net/donaldoldinghebb/donaldhebb.jpg" style="border-radius: 50%; width: 250px; height: 250px; object-fit: cover;">
+</figure>
+:::
+
+::: {.column width="60%" style="margin-top: 20px;"}
+**Hebbian learning**: Randomly wired networks can learn through input driven reinforcement of synaptic connections [@hebb1949]
+
+:::
+
+::::
+:::
+
+## How it's going...
+
+<img src="https://i.imgflip.com/a9nfqq.jpg">
+
+
+# You can't brute force intelligence
+
+## What is Intelligence ?
+
+::: {.incremental}
+- **Skill** is how is the ability to perform a given task (e.g. playing chess)
+- **Intelligence** is the ability to acquire-new skills and generalize to new problems [@chollet2019]
+- The Abstraction and Reasoning Corpus (**ARC**) is a set of tests aiming to benchmark intelligence ([ARC leaderboard](https://arcprize.org/leaderboard))
+:::
+
+## Example of an ARC task
+
+<figure style="text-align: center;">
+<img src="https://arcprize.org/media/images/blog/arc-agi-2-unsolved-1.png">
+<figcaption>ARC-AGI-2 Public Eval Task #e3721c99</figcaption>
+</figure>
+
+
+# Comparing Brains and Neural Networks
+
+## Relating Model Activation to Brain Recordings
+
+::: {.incremental}
+- Show the same stimuli (e.g images) to Humans and Models
+- Find mapping $W$ between brain activity $Y$ and model activation $X$
+- Correlate the prediction from model activation to the actual brain recording: $R^{(d)} = \text{corr}(WX_{test}, y_{test})$
+:::
+
+::: {.fragment}
+
+<figure style="text-align: center;">
+<img src="https://arxiv.org/html/2508.18226v1/Figures_DinoxBrain/fig1.png">
+<figcaption style="margin-top: -20px;">
+@raugel2025: Disentangling factors of convergence between brains and computer vision models
+</figcaption>
+</figure>
+:::
+
+## Corresponding Representational Hierarchies
+
+::: {.fragment}
+- Early and late layers align with the earliest and latest brain responses
+<div style="text-align: center; margin-top: -20px; margin-bottom: -40px">
+![](img/temporal.png){width=650}
+</div>
+:::
+
+::: {.fragment}
+- Early and late layers map onto lower-level and higher-level regions
+<div style="text-align: center; margin-top: -20px; margin-bottom: -40px">
+![](img/spatial.png){width=650}
+</div>
+:::
+
+## Different Architecture, Convergent Solutions
+
+:::: {.columns}
+
+::: {.column}
+::: {.fragment}
+- Better ImageNets are more predictive of brain activity
+<figure style="text-align: center;">
+<img src="img/b_score.png" style="height: 400px;">
+<figcaption style="font-size: 14px; margin-top: 5px;">@schrimpf2018: Brain-score: Which artificial neural network for object recognition is most brain-like?</figcaption>
+</figure>
+:::
+:::
+
+::: {.column}
+::: {.fragment}
+- Not every model maps onto the neural hierarchy
+<figure style="text-align: center;">
+<img src="img/bh_score.jpg" style="height: 400px;">
+<figcaption style="font-size: 14px; margin-top: 5px;">@nonaka2021: Brain hierarchy score: Which deep neural networks are hierarchically brain-like?</figcaption>
+</figure>
+:::
+:::
+
+::::
+
+
+## Comparing Humand and Model Behavior
+
+::: {.fragment}
+<div style="text-align: center; margin-top: -20px">
+<img src="img/odd-one-out.png" width="650">
+</div>
+:::
+
+::: {.fragment}
+<figure style="text-align: center; margin-top: -20px">
+<img src="img/dimensions.png" width="650">
+<figcaption style="font-size: 14px; margin-top: -10px;">@hebart2020: Revealing the multidimensional mental representations of natural objects underlying human similarity judgements</figcaption>
+</figure>
+:::
+
+
+## Different Dimensions of Interest
+
+<figure style="text-align: center; margin-top: -20px">
+<img src="img/ai-dimensions.png" width="800">
+<figcaption style="font-size: 14px; margin-top: -10px;">@mahner2025: Dimensions underlying the representational alignment of deep neural networks with humans</figcaption>
+</figure>
+
+
+
+# Fundamental Differences between Artifical and Biological Intelligence
+
+## Emodied Cognition
+
+:::: {.columns}
+
+::: {.column}
+
+::: {.fragment data-fragment-index="1"}
+- AI is purely computational/statistical inference but human cognition is physically embodied
+:::
+::: {.fragment data-fragment-index="2"}
+- Human cognition can extend beyond the brain into the body and environment
+:::
+::: {.fragment data-fragment-index="3"}
+- Example: the gaze heuristic
+:::
+:::
+
+::: {.column}
+::: {.fragment data-fragment-index="3"}
+<figure style="text-align: center; margin-top: -50px">
+<img src="https://www.frontiersin.org/files/Articles/711289/fpsyg-12-711289-HTML/image_m/fpsyg-12-711289-g002.jpg" width="400">
+<figcaption style="font-size: 14px; margin-top: 60px;">@gigerenzer2021: Embodied Heuristics</figcaption>
+</figure>
+:::
+
+:::
+
+::::
+
+::: {.fragment data-fragment-index="4"}
+- Because human cognition is embodied, **complicated inference** problems can be solved by **simple heuristics**
+:::
+
+
+##  Are AI "Agents" Real Agents?
+
+:::: {.columns}
+
+::: {.column}
+**Biological Agents**
+
+::: {.fragment data-fragment-index="1"}
+- Are **autopoietic** (i.e. self-manufacturing)
+:::
+::: {.fragment data-fragment-index="2"}
+- Are **internally motivated** to self-preserve and act autonomously
+:::
+::: {.fragment data-fragment-index="3"}
+- Live in a large world of **ill-defined** problems and have to decide what is relevant
+:::
+:::
+
+::: {.column}
+**Artificial Agents**
+
+::: {.fragment data-fragment-index="1"}
+- Are programmed by an **external agent**
+:::
+::: {.fragment data-fragment-index="2"}
+- Are **externally motivated** and triggered by an external agent
+:::
+::: {.fragment data-fragment-index="3"}
+- Live in a small world of **well-defined** problems and operate within **predefined** formalized ontology
+:::
+:::
+
+::::
+
+::: {.fragment}
+See @jaeger2024: Naturalizing relevance realization: why agency and cognition are fundamentally not computational
+:::
+
+## {background-color="black" background-image="https://techcrunch.com/wp-content/uploads/2015/11/humanrobotoverlap.jpg"}
+
+<div style="position: absolute; top: 25%; left: 50%; transform: translate(-50%, -50%); color: black; font-size: 2.5em; text-align: center;">
+Thank<br>you
+</div>
+
+<div style="position: absolute; bottom: 0px; right: -40px; color: white; font-size: 14px">
+Image Credits: <a href="www.shutterstock.com/g/razumhttp://www.shutterstock.com/gallery-935953p1.html" style="color: white;">razum</a> /<a href="https://www.shutterstock.com/" style="color: white;">Shutterstock</a>
+</div>
+
+
+
+
+## {visibility="uncounted"}
+
+References

@@ -1,0 +1,14 @@
+---
+image: featured.png
+title: What's "neural" about neural networks? - On the similarities and differences between artificial and natural intelligence
+author:
+  - name: Ole Bialas
+    affiliations: 
+      - University of Bonn
+description: |
+  A talk on how human brains and artifical neural networks are similar in some regards but ultimately very different, presented at the AI & Machine Learning Meetup in Cologne.
+abstract: In this talk, I cover the historical relationship between neuroscience and AI, why AI researchers should pay attention to neuroscience, how to comapre brains and neural networks and why the two differ in some fundamental ways.
+date: "2025-11-04"
+---
+
+<iframe src="talk.html" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
