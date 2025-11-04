@@ -839,7 +839,7 @@ font-style: inherit;">"SNR Distribution in Recording 3"</span>)</span></code></p
 </figure>
 </div>
 <div class="cell-output cell-output-display">
-<div id="fig-hist-5" class="quarto-float quarto-figure quarto-figure-center anchored" width="597" height="449">
+<div id="fig-hist-5" class="quarto-float quarto-figure quarto-figure-center anchored" height="449" width="597">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-hist-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <a href="index_files/figure-html/fig-hist-output-8.png" class="lightbox" data-gallery="fig-hist" title="Figure&nbsp;4&nbsp;(e): "><img src="https://olebialas.github.io/posts/2025-10-02-unitmatch/index_files/figure-html/fig-hist-output-8.png" id="fig-hist-5" data-ref-parent="fig-hist" width="597" height="449" class="figure-img"></a>
