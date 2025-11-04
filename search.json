@@ -67,7 +67,7 @@
     "href": "talks.html",
     "title": "Talks",
     "section": "",
-    "text": "Managing Scientific Data and Workflows with DataLad\n\n\nAn introdury tutorial to the DataLad software for scientific data management.\n\n\n\n\n\nWednesday, the 20th of August, 2025\n\n\nOle Bialas, Michał Szczepanik\n\n\n\n\n\n\n\n\n\n\n\n\nZwischen Lab und Laptop - Technische Herausforderungen der Modernen Neurowissenschaft\n\n\nA talk about the technical challenges neuroscientists face today.\n\n\n\n\n\nSunday, the 19th of January, 2025\n\n\nOle Bialas\n\n\n\n\n\n\n\n\n\n\n\n\nStandardizing and Sharing EEG Data\n\n\nAn introduction to the Brain Imaging Data Structure (BIDS) and the OpenNeuro platform.\n\n\n\n\n\nMonday, the 8th of April, 2024\n\n\nOle Bialas\n\n\n\n\n\n\n\n\n\n\n\n\nFundamentals of TRF-analyses in Python\n\n\nA demo of the mTRFpy Python toolbox for modeling neural responses to continuous stimuli.\n\n\n\n\n\nTuesday, the 19th of September, 2023\n\n\nOle Bialas\n\n\n\n\n\nNo matching items\n Back to top"
+    "text": "What’s “neural” about neural networks?\n\n\nOn the similarities and differences between artificial and natural intelligence\n\n\n\n\n\n\n\n\nTuesday, the 4th of November, 2025\n\n\nOle Bialas\n\n\n\n\n\n\n\n\n\n\n\n\nWhat’s “neural” about neural networks? - On the similarities and differences between artificial and natural intelligence\n\n\n\n\n\nA talk on how human brains and artifical neural networks are similar in some regards but ultimately very different, presented at the AI & Machine Learning Meetup in Cologne.\n\n\n\n\n\nTuesday, the 4th of November, 2025\n\n\nOle Bialas\n\n\n\n\n\n\n\n\n\n\n\n\nManaging Scientific Data and Workflows with DataLad\n\n\n\n\n\nAn introdury tutorial to the DataLad software for scientific data management.\n\n\n\n\n\nWednesday, the 20th of August, 2025\n\n\nOle Bialas, Michał Szczepanik\n\n\n\n\n\n\n\n\n\n\n\n\nZwischen Lab und Laptop - Technische Herausforderungen der Modernen Neurowissenschaft\n\n\n\n\n\nA talk about the technical challenges neuroscientists face today.\n\n\n\n\n\nSunday, the 19th of January, 2025\n\n\nOle Bialas\n\n\n\n\n\n\n\n\n\n\n\n\nStandardizing and Sharing EEG Data\n\n\n\n\n\nAn introduction to the Brain Imaging Data Structure (BIDS) and the OpenNeuro platform.\n\n\n\n\n\nMonday, the 8th of April, 2024\n\n\nOle Bialas\n\n\n\n\n\n\n\n\n\n\n\n\nFundamentals of TRF-analyses in Python\n\n\n\n\n\nA demo of the mTRFpy Python toolbox for modeling neural responses to continuous stimuli.\n\n\n\n\n\nTuesday, the 19th of September, 2023\n\n\nOle Bialas\n\n\n\n\n\nNo matching items\n Back to top"
   },
   {
     "objectID": "posts/2025-10-02-unitmatch/index.html",
@@ -126,6 +126,104 @@
     "text": "Slides: get the slides as PDF\n\n\n\n\n Back to top"
   },
   {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#agenda",
+    "href": "talks/2025-11-04-neuroai/talk.html#agenda",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Agenda",
+    "text": "Agenda\n\nThe (historical) relationship between neuroscience and AI\nWhy AI researchers should care about neuroscience\nHow to compare ANNs and brains\nFundamental difference between ANNs and intelligent biological agents\n\n\n\n\n      olebialas.github.io"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#how-it-started",
+    "href": "talks/2025-11-04-neuroai/talk.html#how-it-started",
+    "title": "What’s “neural” about neural networks?",
+    "section": "How it started …",
+    "text": "How it started …\n\n\n\n\n\n\n\nNeural computation: neurons can implement logical operations and networks of such neurons are capable of universal computation (McCulloch and Pitts 1943).\n\n\n\n\n\n\n\n\n\nHebbian learning: Randomly wired networks can learn through input driven reinforcement of synaptic connections (Hebb 1949)"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#how-its-going",
+    "href": "talks/2025-11-04-neuroai/talk.html#how-its-going",
+    "title": "What’s “neural” about neural networks?",
+    "section": "How it’s going…",
+    "text": "How it’s going…"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#what-is-intelligence",
+    "href": "talks/2025-11-04-neuroai/talk.html#what-is-intelligence",
+    "title": "What’s “neural” about neural networks?",
+    "section": "What is Intelligence ?",
+    "text": "What is Intelligence ?\n\nSkill is how is the ability to perform a given task (e.g. playing chess)\nIntelligence is the ability to acquire-new skills and generalize to new problems (Chollet 2019)\nThe Abstraction and Reasoning Corpus (ARC) is a set of tests aiming to benchmark intelligence (ARC leaderboard)"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#example-of-an-arc-task",
+    "href": "talks/2025-11-04-neuroai/talk.html#example-of-an-arc-task",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Example of an ARC task",
+    "text": "Example of an ARC task\n\n\n\nARC-AGI-2 Public Eval Task #e3721c99"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#relating-model-activation-to-brain-recordings",
+    "href": "talks/2025-11-04-neuroai/talk.html#relating-model-activation-to-brain-recordings",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Relating Model Activation to Brain Recordings",
+    "text": "Relating Model Activation to Brain Recordings\n\nShow the same stimuli (e.g images) to Humans and Models\nFind mapping \\(W\\) between brain activity \\(Y\\) and model activation \\(X\\)\nCorrelate the prediction from model activation to the actual brain recording: \\(R^{(d)} = \\text{corr}(WX_{test}, y_{test})\\)\n\n\n\n\n\nRaugel et al. (2025): Disentangling factors of convergence between brains and computer vision models"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#corresponding-representational-hierarchies",
+    "href": "talks/2025-11-04-neuroai/talk.html#corresponding-representational-hierarchies",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Corresponding Representational Hierarchies",
+    "text": "Corresponding Representational Hierarchies\n\n\nEarly and late layers align with the earliest and latest brain responses\n\n\n\n\n\n\n\nEarly and late layers map onto lower-level and higher-level regions"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#different-architecture-convergent-solutions",
+    "href": "talks/2025-11-04-neuroai/talk.html#different-architecture-convergent-solutions",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Different Architecture, Convergent Solutions",
+    "text": "Different Architecture, Convergent Solutions\n\n\n\n\nBetter ImageNets are more predictive of brain activity\n\n\n\nSchrimpf et al. (2018): Brain-score: Which artificial neural network for object recognition is most brain-like?\n\n\n\n\n\n\n\nNot every model maps onto the neural hierarchy\n\n\n\nNonaka et al. (2021): Brain hierarchy score: Which deep neural networks are hierarchically brain-like?"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#comparing-humand-and-model-behavior",
+    "href": "talks/2025-11-04-neuroai/talk.html#comparing-humand-and-model-behavior",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Comparing Humand and Model Behavior",
+    "text": "Comparing Humand and Model Behavior\n\n\n\n\n\n\n\n\n\nHebart et al. (2020): Revealing the multidimensional mental representations of natural objects underlying human similarity judgements"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#different-dimensions-of-interest",
+    "href": "talks/2025-11-04-neuroai/talk.html#different-dimensions-of-interest",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Different Dimensions of Interest",
+    "text": "Different Dimensions of Interest\n\n\n\nMahner et al. (2025): Dimensions underlying the representational alignment of deep neural networks with humans"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#emodied-cognition",
+    "href": "talks/2025-11-04-neuroai/talk.html#emodied-cognition",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Emodied Cognition",
+    "text": "Emodied Cognition\n\n\n\n\nAI is purely computational/statistical inference but human cognition is physically embodied\n\n\n\n\nHuman cognition can extend beyond the brain into the body and environment\n\n\n\n\nExample: the gaze heuristic\n\n\n\n\n\n\n\nGigerenzer (2021): Embodied Heuristics\n\n\n\n\n\n\nBecause human cognition is embodied, complicated inference problems can be solved by simple heuristics"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#are-ai-agents-real-agents",
+    "href": "talks/2025-11-04-neuroai/talk.html#are-ai-agents-real-agents",
+    "title": "What’s “neural” about neural networks?",
+    "section": "Are AI “Agents” Real Agents?",
+    "text": "Are AI “Agents” Real Agents?\n\n\nBiological Agents\n\n\nAre autopoietic (i.e. self-manufacturing)\n\n\n\n\nAre internally motivated to self-preserve and act autonomously\n\n\n\n\nLive in a large world of ill-defined problems and have to decide what is relevant\n\n\n\nArtificial Agents\n\n\nAre programmed by an external agent\n\n\n\n\nAre externally motivated and triggered by an external agent\n\n\n\n\nLive in a small world of well-defined problems and operate within predefined formalized ontology\n\n\n\n\nSee Jaeger et al. (2024): Naturalizing relevance realization: why agency and cognition are fundamentally not computational"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#section",
+    "href": "talks/2025-11-04-neuroai/talk.html#section",
+    "title": "What’s “neural” about neural networks?",
+    "section": "",
+    "text": "Thankyou\n\n\nImage Credits: razum /Shutterstock"
+  },
+  {
+    "objectID": "talks/2025-11-04-neuroai/talk.html#section-1",
+    "href": "talks/2025-11-04-neuroai/talk.html#section-1",
+    "title": "What’s “neural” about neural networks?",
+    "section": "",
+    "text": "References\n\n\n\n\nChollet, François. 2019. “On the Measure of Intelligence.” arXiv Preprint arXiv:1911.01547.\n\n\nGigerenzer, Gerd. 2021. “Embodied Heuristics.” Frontiers in Psychology 12: 711289.\n\n\nHebart, Martin N, Charles Y Zheng, Francisco Pereira, and Chris I Baker. 2020. “Revealing the Multidimensional Mental Representations of Natural Objects Underlying Human Similarity Judgements.” Nature Human Behaviour 4 (11): 1173–85.\n\n\nHebb, DO. 1949. “The Organization of Behavior. A Neuropsychological Theory.”\n\n\nJaeger, Johannes, Anna Riedl, Alex Djedovic, John Vervaeke, and Denis Walsh. 2024. “Naturalizing Relevance Realization: Why Agency and Cognition Are Fundamentally Not Computational.” Frontiers in Psychology 15: 1362658.\n\n\nMahner, Florian P, Lukas Muttenthaler, Umut Güçlü, and Martin N Hebart. 2025. “Dimensions Underlying the Representational Alignment of Deep Neural Networks with Humans.” Nature Machine Intelligence 7 (6): 848–59.\n\n\nMcCulloch, Warren S, and Walter Pitts. 1943. “A Logical Calculus of the Ideas Immanent in Nervous Activity.” The Bulletin of Mathematical Biophysics 5 (4): 115–33.\n\n\nNonaka, Soma, Kei Majima, Shuntaro C Aoki, and Yukiyasu Kamitani. 2021. “Brain Hierarchy Score: Which Deep Neural Networks Are Hierarchically Brain-Like?” IScience 24 (9).\n\n\nRaugel, Joséphine, Marc Szafraniec, Huy V Vo, Camille Couprie, Patrick Labatut, Piotr Bojanowski, Valentin Wyart, and Jean-Rémi King. 2025. “Disentangling the Factors of Convergence Between Brains and Computer Vision Models.” arXiv Preprint arXiv:2508.18226.\n\n\nSchrimpf, Martin, Jonas Kubilius, Ha Hong, Najib J Majaj, Rishi Rajalingham, Elias B Issa, Kohitij Kar, et al. 2018. “Brain-Score: Which Artificial Neural Network for Object Recognition Is Most Brain-Like?” BioRxiv, 407007."
+  },
+  {
     "objectID": "talks/2024-04-08-bids/index.html",
     "href": "talks/2024-04-08-bids/index.html",
     "title": "Standardizing and Sharing EEG Data",
@@ -147,6 +245,13 @@
     "text": "Slides and exercise notebooks: https://olebialas.github.io/DataLad-EuroScipy25/\nCode: https://github.com/OleBialas/DataLad-EuroScipy25\n\n\n\n\n Back to top"
   },
   {
+    "objectID": "talks/2025-11-04-neuroai/index.html",
+    "href": "talks/2025-11-04-neuroai/index.html",
+    "title": "What’s “neural” about neural networks? - On the similarities and differences between artificial and natural intelligence",
+    "section": "",
+    "text": "Back to top"
+  },
+  {
     "objectID": "talks/2023-09-19-cnsp/index.html",
     "href": "talks/2023-09-19-cnsp/index.html",
     "title": "Fundamentals of TRF-analyses in Python",
@@ -158,7 +263,7 @@
     "href": "index.html",
     "title": "Ole Bialas",
     "section": "",
-    "text": "I am currently working as a research software consultant in the field of neuroscience at the University of Bonn in Germany where I am helping researchers to leverage technology for generating scientific insights. This includes things like data science, data management and software engineering practices (e.g. version control, continuous integration).\nBefore that, I was an auditory neurscientist🧠, researching how the brain processes spatial sound and naturalistic speech. During this time, I also developed Python 🐍 packages to run psychoacoustic experiments (slab) and model brain responses to continuous speech (mTRFpy)\nIf you are interested in consulting — send me an ✉ email (ole.bialas at posteo dot de), if you want to receive updates about the free online workshops that me and my colleagues are offering, subscribe to our 📬 mailing list You may also want to take a look at my complete 📄 curriculum vitae.\n\n\n\n\n Back to top"
+    "text": "{{&lt; iconify fa6-solid:envelope title=\"Envelope logo for email\" label=\"Envelope logo for email\" &gt;}}\n  \n  \n     {{&lt; iconify fa6-brands:orcid title=\"ORCID account link\" label=\"ORCID account link\" &gt;}}\n  \n  \n     {{&lt; iconify fa6-brands:bluesky title=\"BlueSky account link\" label=\"BlueSky account link\" &gt;}}\n  \n  \n     {{&lt; iconify fa6-brands:linkedin title=\"LinkedIn account link\" label=\"LinkedIn account link\" &gt;}}\n  \n  \n     {{&lt; iconify fa6-brands:mastodon title=\"Mastodon link\" label=\"Mastodon link\" &gt;}}\n  \n  \n     {{&lt; iconify fa6-brands:x-twitter title=\"X (Twitter) account link\" label=\"X (Twitter) account link\" &gt;}}\n  \n  \n     {{&lt; iconify octicon:mark-github-16 title=\"GitHub account link\" label=\"GitHub account link\" &gt;}}\n  \n\n      \n\n    \n    \n  \n\n\nI am currently working as a research software consultant in the field of neuroscience at the University of Bonn in Germany where I am helping researchers to leverage technology for generating scientific insights. This includes things like data science, data management and software engineering practices (e.g. version control, continuous integration).\nBefore that, I was an auditory neurscientist🧠, researching how the brain processes spatial sound and naturalistic speech. During this time, I also developed Python 🐍 packages to run psychoacoustic experiments (slab) and model brain responses to continuous speech (mTRFpy)\nIf you are interested in consulting — send me an ✉ email (ole.bialas at posteo dot de), if you want to receive updates about the free online workshops that me and my colleagues are offering, subscribe to our 📬 mailing list You may also want to take a look at my complete 📄 curriculum vitae.\n\n\n\n\n Back to top"
   },
   {
     "objectID": "posts/2025-09-03-psth_with_pandas/index.html",

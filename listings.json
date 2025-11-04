@@ -2,6 +2,8 @@
   {
     "listing": "/talks.html",
     "items": [
+      "/talks/2025-11-04-neuroai/talk.html",
+      "/talks/2025-11-04-neuroai/index.html",
       "/talks/2025-08-20-datalad/index.html",
       "/talks/2025-01-18-deutsches-museum/index.html",
       "/talks/2024-04-08-bids/index.html",
